@@ -157,6 +157,10 @@ const SIDEBAR_ITEMS = [
     textId: "sidebarSettingsText",
     sectionId: "settingsSection"
   },
+  
+];
+
+const LOGOUT_TABS = [
   {
   linkId: "sidebarLogoutLink",
   iconId: "sidebarLogoutIcon",
