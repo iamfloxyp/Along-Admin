@@ -1,0 +1,3475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Along Admin Dashboard</title>
+  <link rel="stylesheet" href="assets/css/output.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="m-0 p-0 bg-[#F9F9F9] overflow-hidden">
+
+  <!-- FULL PAGE -->
+<main
+  id="dashboardPage"
+  class="w-screen h-screen flex items-center  justify-center gap-[20px] overflow-auto"
+>
+  <!-- FIXED DASHBOARD CANVAS -->
+  <section
+    id="dashboardCanvas"
+    class="relative w-full max-w-[1300px] aspect-[1280/832] max-h-screen  mx-auto"
+  >
+    <!-- TOP HEADER -->
+    <header
+      id="adminHeader"
+      class="absolute top-0 left-0 w-full h-[80px] bg-white rounded-[10px]"
+    >
+      <div
+        id="adminHeaderInner"
+        class="w-full h-full flex items-center justify-between pt-[11px] pr-[16px] pb-[11px] pl-[16px] gap-[18px]"
+      >
+        <!-- LEFT SECTION -->
+        <div
+          id="adminHeaderLeft"
+          class="w-[179px] h-[54px] flex items-center shrink-0"
+        >
+          <a
+            id="adminHeaderLogoLink"
+            href="#"
+            class="block w-[179px] h-[54px]"
+          >
+            <img
+              id="adminHeaderLogo"
+              src="./assets/images/along-logo.png"
+              alt="Along Logo"
+              class="w-full h-full object-contain"
+            />
+          </a>
+        </div>
+
+        <!-- MIDDLE SPACER -->
+        <div
+          id="adminHeaderSpacer"
+          class="flex-1 h-[20px]"
+        ></div>
+
+        <!-- RIGHT SECTION -->
+        <div
+          id="adminHeaderRight"
+          class="flex items-center gap-[12px] shrink-0"
+        >
+          <!-- NOTIFICATION -->
+          <button
+            id="adminNotificationBtn"
+            type="button"
+            class="relative w-[41px] h-[41px] rounded-[4.56px] bg-[#EAEFF7] flex items-center justify-center shrink-0"
+          >
+            <span
+              id="adminNotificationIcon"
+              class="text-[18px] leading-none text-[#11313B]"
+            >
+              🔔
+            </span>
+
+            <span
+              id="adminNotificationBadge"
+              class="absolute top-[6px] right-[6px] w-[8px] h-[8px] rounded-full bg-[#FF4D4F]"
+            ></span>
+          </button>
+
+          <!-- PROFILE BLOCK -->
+          <div
+            id="adminProfileBlock"
+            class="flex items-center gap-[8px] shrink-0"
+          >
+            <div
+              id="adminProfileAvatarWrap"
+              class="w-[47px] h-[47px] rounded-full overflow-hidden shrink-0"
+            >
+              <img
+  id="adminProfileAvatar"
+  src=""
+  alt="Admin profile"
+  class="w-full h-full object-cover hidden"
+/>
+
+<span
+  id="adminProfileInitials"
+  class="w-full h-full flex items-center justify-center bg-[#EAFBFD] text-[#30BBC7] text-[15px] font-semibold"
+>
+  RN
+</span>
+            </div>
+
+            <div
+              id="adminProfileTextWrap"
+              class="flex flex-col justify-center"
+            >
+              <p
+                id="adminProfileName"
+                class="m-0 text-[12px] leading-[16px] tracking-[0.4px] font-medium text-[#11313B]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Ronaldo Nazario
+              </p>
+
+              <button
+                id="adminStatusDropdownBtn"
+                type="button"
+                class="mt-[4px] flex items-center gap-[6px] text-[12px] leading-[16px] tracking-[0.4px] text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                <span id="adminCurrentStatus" class="text-green">Online</span>
+                <span id="adminStatusArrow" class="mb-[10px] text-[15px]">⌄</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <section
+      id="dashboardMainSection"
+      class="absolute top-[100px] left-0 w-full bg-[#F9F9F9] h-[752px] justify-between gap-[60px]"
+    >
+      <!-- ========== SIDEBAR ========== -->
+      <aside
+        id="dashboardSidebar"
+        class="absolute top-0 left-0 w-[210px] h-[752px] bg-white pt-[20px] pr-[13px] pb-[20px] pl-[13px] rounded-[6px]"
+      >
+        <div
+          id="dashboardSidebarInner"
+          class="w-full h-full flex flex-col gap-[30px] bg-red"
+        >
+          <!-- TOP SECTION -->
+          <div
+            id="sidebarTopSection"
+            class="w-full flex flex-col gap-[8px]"
+          >
+            <!-- DASHBOARD -->
+            <a
+              id="sidebarDashboardLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarDashboardIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5Z"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarDashboardText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Dashboard
+              </span>
+            </a>
+
+            <!-- DRIVERS ACTIVE -->
+            <a
+              id="sidebarDriversLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-[#49D6F2]"
+            >
+              <span
+                id="sidebarDriversIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-white shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 18h6m-3-3v6M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 0c-3.314 0-6 2.239-6 5v1h10"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarDriversText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-white"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Drivers
+              </span>
+            </a>
+
+            <!-- SENDERS -->
+            <a
+              id="sidebarCustomersLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarCustomersIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19a6 6 0 1 0-12 0m18 0a6 6 0 0 0-9-5.197M15 19h6m-3-3v6M9 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm9 2a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarCustomersText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Customers
+              </span>
+            </a>
+
+            <!-- DELIVERIES -->
+            <a
+              id="sidebarDeliveriesLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarDeliveriesIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 7h13v10H3V7Zm13 3h2l3 3v4h-5v-7Zm-9 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarDeliveriesText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Tags
+              </span>
+            </a>
+
+          
+
+            <!-- SUPPORT REQUESTS -->
+            <a
+              id="sidebarSupportRequestsLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarSupportRequestsIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8m-8 4h5m7 6-4-4H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2Z"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarSupportRequestsText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Support Tickets 
+              </span>
+            </a>
+
+              <!-- PAYMENTS -->
+            <a
+              id="sidebarPaymentsLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarPaymentsIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2 10h20"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarPaymentsText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                 Earnings & Payout 
+              </span>
+            </a>
+
+            <!-- SETTINGS -->
+            <a
+              id="sidebarSettingsLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarSettingsIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317a1.724 1.724 0 0 1 3.35 0 1.724 1.724 0 0 0 2.573 1.066 1.724 1.724 0 0 1 2.362 2.362 1.724 1.724 0 0 0 1.066 2.573 1.724 1.724 0 0 1 0 3.35 1.724 1.724 0 0 0-1.066 2.573 1.724 1.724 0 0 1-2.362 2.362 1.724 1.724 0 0 0-2.573 1.066 1.724 1.724 0 0 1-3.35 0 1.724 1.724 0 0 0-2.573-1.066 1.724 1.724 0 0 1-2.362-2.362 1.724 1.724 0 0 0-1.066-2.573 1.724 1.724 0 0 1 0-3.35 1.724 1.724 0 0 0 1.066-2.573 1.724 1.724 0 0 1 2.362-2.362 1.724 1.724 0 0 0 2.573-1.066Z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 15.75A3.75 3.75 0 1 0 12 8.25a3.75 3.75 0 0 0 0 7.5Z"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarSettingsText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Settings
+              </span>
+            </a>
+          </div>
+
+          <!-- BOTTOM SECTION -->
+       
+<div
+  id="sidebarBottomSection"
+  class="w-full flex flex-col"
+>
+  <a
+    id="sidebarLogoutLink"
+    href="#"
+    class="group w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-[#FFF5F5] hover:bg-[#FEECEE] transition-all duration-200"
+  >
+
+    <!-- ICON -->
+    <span
+      id="sidebarLogoutIcon"
+      class="w-[20px] h-[20px] flex items-center justify-center text-[#E5484D] shrink-0 transition-all duration-200 group-hover:text-[#C81E1E]"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-[16px] h-[16px]"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-7.5a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 6 21h7.5a2.25 2.25 0 0 0 2.25-2.25V15"
+        />
+
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M18 12H9m0 0 3-3m-3 3 3 3"
+        />
+      </svg>
+    </span>
+
+    <!-- TEXT -->
+    <span
+      id="sidebarLogoutText"
+      class="text-[14px] font-semibold tracking-[0.2px] text-[#E5484D] transition-all duration-200 group-hover:text-[#C81E1E]"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      Logout
+    </span>
+
+  </a>
+</div>
+        </div>
+      </aside>
+
+      <!-- ========== MAIN CONTENT AREA ========== -->
+      <section
+        id="dashboardPageContentArea"
+        class="absolute top-0 left-[230px] w-[1080px] h-[752px] bg-white rounded-[6px]"
+      >
+
+      <!-- ================= NOTIFICATION BELL ICON SECTION ================= -->
+       <section
+  id="notificationsSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[668px] p-[20px] bg-white"
+>
+  <div class="w-full h-full rounded-[16px] bg-white p-[20px]">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-[#11313B] text-[28px] leading-[34px] font-semibold">
+          Notifications
+        </h1>
+        <p class="mt-[4px] text-[#7C8AA0] text-[14px]">
+          View recent platform updates and alerts
+        </p>
+      </div>
+
+      <button
+        id="backFromNotificationsBtn"
+        type="button"
+        class="h-[38px] px-[14px] rounded-[8px] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold"
+      >
+        Back
+      </button>
+    </div>
+
+    <div id="notificationsList" class="mt-[20px] flex flex-col gap-[12px]">
+      <div class="rounded-[12px] bg-white p-[16px] shadow-[0px_1px_4px_rgba(178,163,163,0.65)]">
+        <p class="text-[#11313B] text-[14px] font-semibold">
+          No notifications yet
+        </p>
+        <p class="mt-[4px] text-[#7C8AA0] text-[13px]">
+          New alerts will appear here.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+        <!-- ================= DASHBOARD HOME SECTION ================= -->
+  
+<section
+  id="dashboardHomeSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-full p-[20px] bg-white rounded-[6px]"
+>
+  <div class="w-full h-full flex flex-col gap-[18px]">
+    <!-- HEADER -->
+    <div>
+      <h1 class="text-[#11313B] text-[34px] leading-[36px] font-semibold">
+        Welcome back, Admin
+      </h1>
+
+      <p class="mt-[8px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium">
+        Here's a quick look at today's activity across Along.
+      </p>
+    </div>
+
+    <!-- TOP ROW -->
+<div class="w-full flex items-start gap-[16px]">
+  <!-- DRIVERS -->
+  <div
+    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Drivers</h3>
+    </div>
+
+    <div class="mt-[10px] h-[120px]">
+      <canvas id="driversChart"></canvas>
+    </div>
+
+    <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
+      <p class="flex items-center gap-[8px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+          Total
+        </span>
+        <b id="dashboardTotalDrivers" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+          Approved
+        </span>
+        <b id="dashboardApprovedDrivers" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
+          Pending
+        </span>
+        <b id="dashboardPendingDrivers" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#E57373]"></span>
+          Rejected
+        </span>
+        <b id="dashboardRejectedDrivers" class="text-[#11313B]">0</b>
+      </p>
+    </div>
+  </div>
+
+  <!-- SENDERS -->
+  <div
+    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Sender</h3>
+    </div>
+
+    <div class="mt-[12px] h-[120px]">
+      <canvas id="sendersChart"></canvas>
+    </div>
+
+    <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+          Active
+        </span>
+        <b id="dashboardActiveSenders" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+          Verified
+        </span>
+        <b id="dashboardVerifiedUsers" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#9B51E0]"></span>
+          Today
+        </span>
+        <b id="dashboardNewUsersToday" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
+          Total
+        </span>
+        <b id="dashboardSenders" class="text-[#11313B]">0</b>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM ROW -->
+<div class="w-full flex items-start gap-[16px]">
+  <!-- DELIVERIES -->
+  <div
+    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Deliveries</h3>
+    </div>
+
+    <div class="mt-[12px] h-[120px]">
+      <canvas id="deliveriesChart"></canvas>
+    </div>
+
+    <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+          Total
+        </span>
+        <b id="dashboardTotalDeliveries" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
+          In Progress
+        </span>
+        <b id="dashboardInProgressDeliveries" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+          Completed
+        </span>
+        <b id="dashboardCompletedDeliveries" class="text-[#11313B]">0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#E57373]"></span>
+          Failed
+        </span>
+        <b id="dashboardFailedDeliveries" class="text-[#11313B]">0</b>
+      </p>
+    </div>
+  </div>
+
+  <!-- PAYMENTS -->
+  <div
+    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Payments</h3>
+    </div>
+
+    <div class="mt-[12px] h-[120px]">
+      <canvas id="paymentsChart"></canvas>
+    </div>
+
+    <div class="mt-[14px] grid grid-cols-1 gap-y-[10px] text-[12px]">
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+          Total Revenue
+        </span>
+        <b id="dashboardTotalRevenue" class="text-[#11313B]">$0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#9B51E0]"></span>
+          Pending Payouts
+        </span>
+        <b id="dashboardPendingPayouts" class="text-[#11313B]">$0</b>
+      </p>
+
+      <p class="flex items-center gap-[12px]">
+        <span class="flex items-center gap-[7px] text-[#344054]">
+          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+          Completed Payouts
+        </span>
+        <b id="dashboardCompletedPayouts" class="text-[#11313B]">$0</b>
+      </p>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
+
+        <!-- ================= DRIVERS MANAGEMENT SECTION ================= -->
+        <section
+          id="driversManagementSection"
+          class="absolute top-0 left-0 w-[1070px]  h-[800px] p-[20px] bg-white flex flex-col gap-[14px] rounded-[6px]"
+        >
+          <!-- ================= DRIVER MANAGEMENT INTRO ================= -->
+          <section
+            id="driverManagementIntroSection"
+            class="w-[1070px] h-[56px] flex flex-col"
+          >
+            <h1
+              id="driverManagementTitle"
+              class="text-[#11313B] text-[34px] leading-[36px] font-semibold"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              Driver Management
+            </h1>
+
+            <p
+              id="driverManagementSubtitle"
+              class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              Monitor and manage driver accounts
+            </p>
+          </section>
+
+      <!-- ================= STATS CARDS ================= -->
+<section
+  id="driverStatsSection"
+  class="w-full h-[92px] flex items-start gap-[16px]"
+>
+
+  <!-- TOTAL DRIVERS -->
+  <div
+    id="totalDriversCard"
+    class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#EEF4FF] flex items-center justify-center">
+        <i class="fa-solid fa-users text-[#2F80ED] text-[12px]"></i>
+      </div>
+
+      <p
+        id="totalDriversLabel"
+        class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
+        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      >
+        Total Drivers
+      </p>
+    </div>
+
+    <p
+      id="totalDriversValue"
+      class="mt-[10px] text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      --
+    </p>
+  </div>
+
+  <!-- ACTIVE DRIVERS -->
+  <div
+    id="activeDriversCard"
+    class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#F3EEFF] flex items-center justify-center">
+        <i class="fa-solid fa-car-side text-[#7B61FF] text-[12px]"></i>
+      </div>
+
+      <p
+        id="activeDriversLabel"
+        class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
+        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      >
+        Active Drivers
+      </p>
+    </div>
+
+    <p
+      id="activeDriversValue"
+      class="mt-[10px] text-[#7B61FF] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      --
+    </p>
+  </div>
+
+  <!-- AVG RATING -->
+  <div
+    id="avgRatingCard"
+    class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#FFF4EE] flex items-center justify-center">
+        <i class="fa-solid fa-star text-[#B26B5E] text-[12px]"></i>
+      </div>
+
+      <p
+        id="avgRatingLabel"
+        class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
+        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      >
+        Avg Rating
+      </p>
+    </div>
+
+    <p
+      id="avgRatingValue"
+      class="mt-[10px] text-[#B26B5E] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      --
+    </p>
+  </div>
+
+  <!-- NOT APPROVED -->
+<div
+  id="notApprovedDriversCard"
+  class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+  style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+>
+
+  <div class="flex items-center gap-[8px]">
+    <div class="w-[28px] h-[28px] rounded-full bg-[#FDECEF] flex items-center justify-center">
+      <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+    </div>
+
+    <p
+      id="notApprovedDriversLabel"
+      class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      Not Approved
+    </p>
+  </div>
+
+  <p
+    id="notApprovedDriversValue"
+    class="mt-[10px] text-[#E57373] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+    --
+  </p>
+</div>
+
+</section>
+
+          <!-- ================= DRIVER DIRECTORY ================= -->
+          <section
+            id="driverDirectorySection"
+            class="w-full  rounded-[16px] p-[16px] flex flex-col "
+          >
+            <!-- DIRECTORY TITLE -->
+            <div
+              id="driverDirectoryTitleWrap"
+              class="w-full "
+            >
+              <h2
+                id="driverDirectoryTitle"
+                class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Driver Directory
+              </h2>
+            </div>
+
+            <!-- CONTROLS -->
+            <div
+              id="driverDirectoryControls"
+              class="mt-[16px] w-full flex items-center justify-between"
+            >
+              <!-- search feature -->
+              <div
+                id="driverSearchWrap"
+                class="w-[409px] h-[38px] rounded-[5px] bg-[#F1F5F8] px-[8px] py-[11px] flex items-center gap-[10px]"
+              >
+                <span
+                  id="driverSearchIcon"
+                  class="text-[#7C8AA0] text-[14px] leading-none"
+                >
+                  🔍
+                </span>
+
+                <input
+                  id="driverSearchInput"
+                  type="text"
+                  placeholder="Search by name, or email "
+                  class="w-full bg-transparent outline-none text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium placeholder:text-[#7C8AA0]"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                />
+              </div>
+
+              <div id="driverStatusFilterWrap" class="relative w-[143px]">
+                <button
+                  id="driverStatusFilterBtn"
+                  type="button"
+                  class="w-[143px] h-[36px] rounded-[5px] bg-[#F1F5F8] px-[8px] flex items-center justify-between text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  <span id="driverStatusFilterText">All Status</span>
+                  <i  class="fa-solid fa-chevron-down text-[12px]"></i>
+                </button>
+
+                <div
+                  id="driverStatusDropdownMenu"
+                  class="hidden absolute top-[42px] left-0 w-[143px] rounded-[8px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.08)] p-[8px] z-20 flex flex-col gap-[2px]"
+                >
+                  <button
+                    type="button"
+                    data-status="all"
+                    class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] cursor transition-all duration-200 hover:bg-[#F1F5F8] hover:text-[#11313B]"
+                  >
+                    All Status
+                  </button>
+
+                  <button
+                    type="button"
+                    data-status="active"
+                    class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] transition-all duration-200 hover:bg-[#EAF8F1] hover:text-[#3BB273]"
+                  >
+                    Approved 
+                  </button>
+
+                  <button
+                    type="button"
+                    data-status="pending"
+                    class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] transition-all duration-200 hover:bg-[#FFF8EE] hover:text-[#F2B66D]"
+                  >
+                    Not Approved 
+                  </button>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- TABLE -->
+            <div
+              id="driverDirectoryTableWrap"
+              class="mt-[16px] w-full flex  flex-col "
+            >
+              <!-- TABLE HEADER -->
+              <div
+                id="driverDirectoryTableHeader"
+                class="w-full h-[36px] bg-[#F1F5F8] rounded-[5px] flex items-center"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                <div id="thDriverName" class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Driver Name</div>
+                <div id="thEmail" class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Email</div>
+                <div id="thAddress" class="w-[160px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Address</div>
+                <div id="thRatings" class="w-[88px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Ratings</div>
+                <div id="thDeliveries" class="w-[92px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Deliveries</div>
+                <div id="thEarnings" class="w-[96px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Earnings</div>
+                <div id="thApprovalStatus" class="w-[132px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Verification Status</div>
+                <div id="thLicenseExpiry" class="w-[108px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">License Expiry</div>
+                <div id="thActions" class="w-[95px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Actions</div>
+              </div>
+
+              <!-- TABLE BODY -->
+              <div
+                id="driverDirectoryTableBody"
+                class="w-full flex flex-col"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+              </div>
+            </div>
+
+            <!-- FOOT ROW -->
+            <div
+              id="driverDirectoryFooterRow"
+              class="mt-auto w-full flex items-center justify-between"
+            >
+              <p
+                id="driverDirectorySelectionText"
+                class="text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                1 of 6 row(s) selected
+              </p>
+
+              <div
+                id="driverDirectoryPagination"
+                class="flex items-center gap-[8px]"
+              >
+                <button
+                  id="paginationPrev"
+                  type="button"
+                  class="w-[24px] h-[24px] rounded-[4px] border border-[#D0D5DD] text-[#98A2B3] text-[12px] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  ‹
+                </button>
+
+                <div id="paginationNumbers" class="flex items-center gap-[8px]"></div>
+
+                <button
+                  id="paginationNext"
+                  type="button"
+                  class="w-[24px] h-[24px] rounded-[4px] border border-[#D0D5DD] text-[#667085] text-[12px] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ================= DRIVER DETAILS SECTION ================= -->
+        <section
+          id="driverDetailsSection"
+          class="hidden absolute top-0 left-0 w-[1050px] bg-white min-h-[668px] p-[20px] flex flex-col gap-[20px] rounded-[6px]"
+        >
+          <!-- TOP BAR -->
+          <section
+            id="driverDetailsTopBar"
+            class="w-full h-[56px] rounded-[8px] bg-white px-[20px] flex items-center justify-between"
+          >
+            <div
+              id="driverDetailsTopBarLeft"
+              class="flex items-center gap-[14px]"
+            >
+              <button
+                id="driverDetailsBackBtn"
+                type="button"
+                class="w-[24px] h-[24px] flex items-center justify-center text-[#11313B]"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+
+              <h2
+                id="driverDetailsTopBarTitle"
+                class="text-[#11313B] text-[20px] leading-[24px] font-semibold"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Driver Details
+              </h2>
+            </div>
+     <span
+  id="driverDetailsTopStatusBadge"
+  class="inline-flex items-center gap-[8px] h-[38px] px-[16px] rounded-[999px] bg-[#EAF8F1] text-[#3BB273] text-[15px] font-bold"
+>
+  <i class="fa-solid fa-circle-check text-[14px]"></i>
+  Approved
+</span>
+          </section>
+
+
+          <!-- DOCUMENT PREVIEW OVERLAY -->
+          <div
+            id="documentPreviewOverlay"
+            class="hidden fixed inset-0 bg-black/40 z-[999] flex items-center justify-center"
+          >
+            <div
+              id="documentPreviewModal"
+              class="w-[820px] max-h-[90vh] overflow-auto rounded-[14px] bg-white p-[20px] shadow-[0_16px_40px_rgba(0,0,0,0.16)]"
+            >
+              <div class="flex items-center justify-between">
+                <h3
+                  id="documentPreviewTitle"
+                  class="text-[#11313B] text-[18px] leading-[24px] font-semibold"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Document Preview
+                </h3>
+
+                <button
+                  id="closeDocumentPreviewBtn"
+                  type="button"
+                  class="w-[28px] h-[28px] flex items-center justify-center text-[#7C8AA0]"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div id="documentPreviewContent" class="mt-[16px]"></div>
+            </div>
+          </div>
+<!-- TOP THREE CARDS -->
+<section
+  id="driverDetailsMainRow"
+  class="w-full flex items-stretch gap-[20px]"
+>
+
+  <!-- DRIVER INFORMATION -->
+  <section
+    id="driverInformationCard"
+    class="w-[300px] min-h-[340px] rounded-[16px] bg-white p-[20px] flex flex-col"
+     style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  
+  >
+    <h3
+      id="driverInformationTitle"
+      class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      Driver Information
+    </h3>
+
+    <div
+      id="driverInformationProfileRow"
+      class="mt-[16px] flex items-start gap-[12px]"
+    >
+      <div
+        id="driverInformationAvatarWrap"
+        class="w-[64px] h-[64px] rounded-full overflow-hidden shrink-0 bg-[#F1F5F8]"
+      >
+        <img
+          id="driverInformationAvatar"
+          src="assets/images/profile icon.png"
+          alt="Driver Avatar"
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <div
+        id="driverInformationProfileText"
+        class="flex flex-col min-w-0"
+      >
+        <p
+          id="driverInformationName"
+          class="text-[#11313B] text-[16px] leading-[24px] font-semibold break-words"
+        >
+          Driver Name
+        </p>
+
+        <p
+          id="driverInformationMemberSince"
+          class="mt-[2px] text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium"
+        >
+          Member Since: --
+        </p>
+      </div>
+    </div>
+
+    <div
+      id="driverInformationContactWrap"
+      class="mt-[20px] flex flex-col gap-[14px]"
+    >
+
+      <!-- PHONE -->
+      <div class="flex items-center gap-[10px]">
+        <span class="w-[20px] h-[20px] text-[#7C8AA0] flex items-center justify-center">
+          <i class="fa-solid fa-phone text-[14px]"></i>
+        </span>
+
+        <p
+          id="driverInformationPhoneText"
+          class="text-[#11313B] text-[14px] leading-[20px] font-medium break-all"
+        >
+          --
+        </p>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="flex items-center gap-[10px]">
+        <span class="w-[20px] h-[20px] text-[#7C8AA0] flex items-center justify-center">
+          <i class="fa-regular fa-envelope text-[14px]"></i>
+        </span>
+
+        <p
+          id="driverInformationEmailText"
+          class="text-[#11313B] text-[14px] leading-[20px] font-medium break-all"
+        >
+          --
+        </p>
+      </div>
+
+      <!-- ADDRESS -->
+      <div class="flex items-start gap-[10px]">
+        <span class="w-[20px] h-[20px] text-[#7C8AA0] flex items-center justify-center mt-[2px]">
+          <i class="fa-solid fa-location-dot text-[14px]"></i>
+        </span>
+
+        <div class="flex-1 min-w-0">
+          <p
+            id="driverInformationAddressText"
+            class="text-[#11313B] text-[14px] leading-[20px] font-medium break-words line-clamp-2"
+          >
+            --
+          </p>
+
+          <button
+            id="driverAddressSeeMoreBtn"
+            type="button"
+            class="hidden mt-[4px] text-[#30BBC7] text-[12px] cursor-pointer font-semibold"
+          >
+            See more
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="driverDeactivationReasonCard"
+      class="hidden mt-[16px] rounded-[12px] border border-[#E5E7EB] bg-white p-[16px]"
+    >
+      <h4
+        class="text-[#11313B] text-[14px] leading-[20px] font-semibold"
+      >
+        Reason for Deactivation
+      </h4>
+
+      <p
+        id="driverDeactivationReasonText"
+        class="mt-[8px] text-[#7C8AA0] text-[13px] leading-[20px] font-medium"
+      >
+        --
+      </p>
+    </div>
+  </section>
+
+  <!-- PERFORMANCE -->
+  <section
+    id="driverPerformanceCard"
+    class="w-[360px] min-h-[340px] rounded-[16px] bg-white p-[20px]"
+     style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  
+  >
+    <h3
+      id="driverPerformanceTitle"
+      class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+    >
+      Performance
+    </h3>
+
+    <!-- GRID -->
+    <div
+      id="driverPerformanceTopStats"
+      class="mt-[22px] grid grid-cols-2 gap-[16px]"
+    >
+
+      <!-- RATINGS -->
+      <div class="rounded-[18px] bg-[#FFF9F0] p-[18px] min-h-[120px]">
+        <div class="flex items-center gap-[10px]">
+          <span class="w-[38px] h-[38px] rounded-[12px] bg-[#FFF4E8] text-[#C76A3A] flex items-center justify-center">
+            <i class="fa-solid fa-star text-[15px]"></i>
+          </span>
+
+          <p class="text-[#11313B] text-[14px] font-semibold">
+            Ratings
+          </p>
+        </div>
+
+        <h3
+          id="driverPerformanceRatingsValue"
+          class="mt-[14px] text-[#11313B] text-[28px] font-bold"
+        >
+          0.0
+        </h3>
+      </div>
+
+      <!-- DELIVERIES -->
+      <div class="rounded-[18px] bg-[#EAFBFD] p-[18px] min-h-[120px]">
+        <div class="flex items-center gap-[10px]">
+          <span class="w-[38px] h-[38px] rounded-[12px] bg-white text-[#30BBC7] flex items-center justify-center">
+            <i class="fa-solid fa-truck-fast text-[15px]"></i>
+          </span>
+
+          <p class="text-[#11313B] text-[14px] font-semibold">
+            Deliveries
+          </p>
+        </div>
+
+        <h3
+          id="driverPerformanceDeliveriesValue"
+          class="mt-[14px] text-[#11313B] text-[28px] font-bold"
+        >
+          0
+        </h3>
+      </div>
+
+      <!-- EARNINGS -->
+      <div class="rounded-[18px] bg-[#EAF8F1] p-[18px] min-h-[120px]">
+        <div class="flex items-center gap-[10px]">
+          <span class="w-[38px] h-[38px] rounded-[12px] bg-white text-[#3BB273] flex items-center justify-center">
+            <i class="fa-solid fa-money-bill-wave text-[15px]"></i>
+          </span>
+
+          <p class="text-[#11313B] text-[14px] font-semibold">
+            Earnings
+          </p>
+        </div>
+
+        <h3
+          id="driverPerformanceEarningsValue"
+          class="mt-[14px] text-[#11313B] text-[28px] font-bold"
+        >
+          ₦0
+        </h3>
+      </div>
+
+     
+      <!-- SENDERS -->
+<div class="rounded-[18px] bg-[#F4F1FF] p-[18px] min-h-[120px] flex flex-col justify-between">
+  <div class="flex items-center gap-[10px]">
+    <span class="w-[38px] h-[38px] rounded-[12px] bg-white text-[#7C3AED] flex items-center justify-center">
+      <i class="fa-solid fa-wallet text-[15px]"></i>
+    </span>
+
+    <p class="text-[#11313B] text-[14px] font-semibold">
+     Completed Payouts
+    </p>
+  </div>
+
+  <h3
+    id="driverPerformanceSendersValue"
+    class="text-[#11313B] text-[28px] font-bold"
+  >
+    $0
+  </h3>
+</div>
+
+    </div>
+  </section>
+
+  <!-- DOCUMENT VERIFICATION -->
+<section
+  id="driverDocumentVerificationCard"
+  class="w-[320px]  rounded-[16px] bg-white p-[20px] flex flex-col"
+   style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  
+>
+  <h3 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
+    Document Verification
+  </h3>
+
+  <div class="mt-[18px] flex flex-col gap-[14px]" id="driverVerificationItems">
+
+    <!-- PERSONAL INFORMATION -->
+    <div class="w-full min-h-[58px] rounded-[14px] bg-[#F7FAFC] px-[12px] flex items-center justify-between gap-[8px]">
+      <div class="flex items-center gap-[10px] min-w-0">
+        <span class="w-[38px] h-[38px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0">
+          <i class="fa-regular fa-id-card text-[15px]"></i>
+        </span>
+
+        <p class="text-[#11313B] text-[13px] font-semibold truncate">
+          Personal Info
+        </p>
+      </div>
+
+      <div
+        id="driverPersonalVerificationStatus"
+        class="inline-flex items-center gap-[5px] h-[28px] px-[10px] rounded-full bg-[#EAF8F1] text-[#3BB273] text-[12px] font-semibold shrink-0"
+      >
+        <i class="fa-solid fa-circle-check text-[13px]"></i>
+        Verified
+      </div>
+    </div>
+
+    <!-- VEHICLE INFORMATION -->
+    <div class="w-full min-h-[58px] rounded-[14px] bg-[#FFF8F2] px-[12px] flex items-center justify-between gap-[8px]">
+      <div class="flex items-center gap-[10px] min-w-0">
+        <span class="w-[38px] h-[38px] rounded-full bg-[#FFF4E8] text-[#C76A3A] flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-car text-[14px]"></i>
+        </span>
+
+        <p class="text-[#11313B] text-[13px] font-semibold truncate">
+          Vehicle Info
+        </p>
+      </div>
+
+      <div
+        id="driverVehicleVerificationStatus"
+        class="inline-flex items-center gap-[5px] h-[28px] px-[10px] rounded-full bg-[#FDECEF] text-[#E57373] text-[12px] font-semibold shrink-0"
+      >
+        <i class="fa-solid fa-circle-xmark text-[13px]"></i>
+        Failed
+      </div>
+    </div>
+
+    <!-- DOCUMENTS & COMPLIANCE -->
+    <div class="w-full min-h-[58px] rounded-[14px] bg-[#F7F5FF] px-[12px] flex items-center justify-between gap-[8px]">
+      <div class="flex items-center gap-[10px] min-w-0">
+        <span class="w-[38px] h-[38px] rounded-full bg-[#F4F1FF] text-[#7C3AED] flex items-center justify-center shrink-0">
+          <i class="fa-regular fa-file-lines text-[14px]"></i>
+        </span>
+
+        <p class="text-[#11313B] text-[13px] font-semibold truncate">
+          Documents & Compliance
+        </p>
+      </div>
+
+      <div
+        id="driverComplianceVerificationStatus"
+        class="inline-flex items-center gap-[5px] h-[28px] px-[10px] rounded-full bg-[#EAF8F1] text-[#3BB273] text-[12px] font-semibold shrink-0"
+      >
+        <i class="fa-solid fa-circle-check text-[13px]"></i>
+        Verified
+      </div>
+    </div>
+
+  </div>
+
+  <button
+    id="notifyDriverComplianceBtn"
+    type="button"
+    class="mt-auto h-[50px] rounded-[12px] bg-[#30BBC7] text-white text-[14px] font-semibold hover:bg-[#27AAB5] transition-all"
+  >
+    Notify Driver
+  </button>
+</section>
+</section>
+
+          <!-- DRIVER REVIEW SECTION -->
+          <section
+            id="driverKycReviewSection"
+            class="w-full rounded-[16px] bg-white p-[20px] flex flex-col gap-[20px]"
+          >
+            <!-- PERSONAL INFORMATION -->
+            <div class="flex flex-col gap-[8px]">
+              <div class="flex items-center gap-[10px]">
+                <h3
+                  class="text-[#11313B] text-[16px] leading-[24px] font-semibold"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Personal Information
+                </h3>
+              </div>
+
+              <div class="w-full rounded-[12px] border border-[#E5E7EB] p-[16px]">
+                <div class="flex items-start justify-between gap-[20px]" id="reviewPersonalInfoContainer">
+                  <div class="flex-1">
+                    <div class="grid grid-cols-2 gap-x-[30px] gap-y-[12px]">
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">Legal Name</p>
+                        <p id="reviewPersonalLegalName" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-words">-</p>
+                      </div>
+
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">Phone Number</p>
+                        <p id="reviewPersonalPhone" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-all">-</p>
+                      </div>
+
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">Email</p>
+                        <p id="reviewPersonalEmail" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-all">-</p>
+                      </div>
+
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">Driver ID</p>
+                        <p id="reviewPersonalDriverId" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-all">-</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="shrink-0 flex items-center gap-[10px] self-start">
+                    <button
+                      id="approvePersonalInfoBtn"
+                      type="button"
+                      class="h-[38px] px-[14px] rounded-[8px] bg-[#EAF8F1] cursor-pointer text-[#3BB273] text-[13px] font-medium"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      id="rejectPersonalInfoBtn"
+                      type="button"
+                      class="h-[38px] px-[14px] rounded-[8px] bg-[#FDECEF] cursor-pointer text-[#E57373] text-[13px] font-medium"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div> 
+              </div>
+            </div>
+
+            <!-- VEHICLE INFORMATION -->
+            <div class="flex flex-col gap-[8px]">
+              <div class="flex items-center gap-[10px]">
+                <h3
+                  class="text-[#11313B] text-[16px] leading-[24px] font-semibold"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Vehicle Information
+                </h3>
+              </div>
+
+              <div class="w-full rounded-[12px] border border-[#E5E7EB] p-[16px]">
+                <div class="flex items-start justify-between gap-[20px]" id="reviewVehicleInfoContainer">
+                  <div class="flex-1">
+                    <div class="grid grid-cols-2 gap-x-[30px] gap-y-[12px]">
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">Vehicle Type</p>
+                        <p id="reviewVehicleType" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-words">-</p>
+                      </div>
+
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">License Plate</p>
+                        <p id="reviewVehiclePlate" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-words">-</p>
+                      </div>
+
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">Driver's License Number</p>
+                        <p id="reviewVehicleLicenseNumber" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-words">-</p>
+                      </div>
+
+                      <div>
+                        <p class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium">License Expiry</p>
+                        <p id="reviewVehicleLicenseExpiry" class="mt-[4px] text-[#11313B] text-[14px] leading-[20px] font-medium break-words">-</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="shrink-0 flex items-center gap-[10px] self-start">
+                    <button
+                      id="approveVehicleInfoBtn"
+                      type="button"
+                      class="h-[38px] px-[14px] rounded-[8px] bg-[#EAF8F1] cursor-pointer text-[#3BB273] text-[13px] font-medium"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      id="rejectVehicleInfoBtn"
+                      type="button"
+                      class="h-[38px] px-[14px] rounded-[8px] bg-[#FDECEF] cursor-pointer text-[#E57373] text-[13px] font-medium"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- COMPLIANCE & DOCUMENTS -->
+            <div class="flex flex-col gap-[8px]">
+              <div class="flex items-center gap-[10px]">
+                <h3
+                  class="text-[#11313B] text-[16px] leading-[24px] font-semibold"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Compliance & Documents
+                </h3>
+              </div>
+
+              <div class="w-full rounded-[12px] border border-[#E5E7EB] p-[16px]">
+                <div
+                  id="reviewDocumentsList"
+                  class="flex flex-col gap-[14px]"
+                >
+                  <!-- JS WILL RENDER ONE DOCUMENT PER ROW HERE -->
+                </div>
+
+                <div
+                  id="reviewDocumentsEmptyState"
+                  class="hidden rounded-[12px] bg-[#F9FAFB] px-[16px] py-[24px] text-center text-[#7C8AA0] text-[14px] leading-[20px] font-medium"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  No documents uploaded for this driver yet.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- DRIVER FINAL ACTIONS -->
+<section
+  id="driverFinalActionsSection"
+  class="w-full h-[56px] rounded-[16px]  px-[20px] flex items-center justify-end"
+>
+  <button
+    id="driverDetailsUpdateStatusBtn"
+    type="button" 
+    class="h-[40px] rounded-[8px] cursor-pointer border border-[#30BBC7] px-[18px] text-[#30BBC7] text-[14px] leading-[20px] font-medium bg-white"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+    Update Driver status
+  </button>
+
+  
+</section>
+
+          <!-- RECENT ACTIVITY -->
+          <section
+            id="driverRecentActivitySection"
+            class="w-full rounded-[16px] bg-white p-[20px] flex flex-col"
+          >
+            <h3
+              id="driverRecentActivityTitle"
+              class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              Recent Activity
+            </h3>
+
+            <div
+              id="driverRecentActivityList"
+              class="mt-[20px] flex flex-col gap-[12px]"
+            >
+              <div
+                class="w-full min-h-[52px] rounded-[12px] bg-[#ffffff] border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+              >
+                <p class="text-[#11313B] text-[14px] leading-[20px] font-medium">
+                  No recent activity yet
+                </p>
+                <span class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium">
+                  --
+                </span>
+              </div>
+            </div>
+          </section>
+
+
+
+          <!-- REUSABLE REJECT MODAL -->
+          <div
+            id="rejectReasonOverlay"
+            class="hidden fixed inset-0 bg-black/40 z-[4000] flex items-center justify-center"
+          >
+            <div
+              id="rejectReasonModal"
+              class="w-[420px] rounded-[14px] bg-white p-[20px] shadow-[0_16px_40px_rgba(0,0,0,0.16)]"
+            >
+              <div class="flex items-center justify-between">
+                <h3
+                  id="rejectReasonModalTitle"
+                  class="text-[#11313B] text-[18px] leading-[24px] font-semibold"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Reject Item
+                </h3>
+
+                <button
+                  id="closeRejectReasonModalBtn"
+                  type="button"
+                  class="w-[28px] h-[28px] flex items-center justify-center text-[#7C8AA0] text-[20px] leading-none cursor-pointer"
+                >
+                  ×
+                </button>
+              </div>
+
+              <p
+                id="rejectReasonModalSubtitle"
+                class="mt-[8px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Select a reason for rejection
+              </p>
+
+              <div class="mt-[16px]">
+                <label
+                  for="rejectReasonSelect"
+                  class="block text-[#11313B] text-[14px] leading-[20px] font-medium"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Rejection Reason
+                </label>
+
+                <select
+                  id="rejectReasonSelect"
+                  class="mt-[8px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px] outline-none"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  <option value="">Select reason</option>
+                </select>
+              </div>
+
+              <div class="mt-[14px]">
+                <label
+                  for="rejectReasonExtraNote"
+                  class="block text-[#11313B] text-[14px] leading-[20px] font-medium"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                >
+                  Extra Note, optional
+                </label>
+
+                <textarea
+                  id="rejectReasonExtraNote"
+                  rows="4"
+                  class="mt-[8px] w-full rounded-[8px] border border-[#D0D5DD] px-[12px] py-[10px] text-[#11313B] text-[14px] outline-none resize-none"
+                  placeholder="Add more details if needed"
+                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+                ></textarea>
+              </div>
+
+              <div class="mt-[20px] flex items-center justify-end gap-[10px]">
+                <button
+                  id="cancelRejectReasonBtn"
+                  type="button"
+                  class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#344054] text-[14px] font-medium bg-white cursor-pointer"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  id="submitRejectReasonBtn"
+                  type="button"
+                  class="h-[40px] px-[16px] rounded-[8px] bg-[#E57373] text-white text-[14px] font-medium cursor-pointer"
+                >
+                  Submit Rejection
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+       
+<!-- ================= SENDERS/CUSTOMERS SECTION ================= -->
+<section
+  id="customersSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[800px] p-[20px] bg-white rounded-[6px]"
+>
+  <div
+    id="sendersListView"
+    class="w-full h-full rounded-[16px] bg-white p-[20px] flex flex-col"
+ 
+  >
+   <h1
+  class="text-[#11313B] text-[34px] leading-[36px] font-semibold"
+  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+>
+  Customers Management
+</h1>
+
+<p
+  class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
+  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+>
+  Manage and moderate customer accounts
+</p>
+
+    <!-- STATS -->
+    <div class="mt-[18px] grid grid-cols-4 gap-[12px]">
+      <!-- TOTAL USERS -->
+      <div
+        class="h-[86px] rounded-[12px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+      >
+        <div class="flex items-center gap-[8px]">
+          <div class="w-[26px] h-[26px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-users text-[12px]"></i>
+          </div>
+
+          <p class="text-[#7C8AA0] text-[13px] font-medium">
+            Total Customers
+          </p>
+        </div>
+
+        <h3 id="senderTotalUsers" class="mt-[12px] text-[#11313B] text-[20px] font-semibold">
+          --
+        </h3>
+      </div>
+
+      <!-- ACTIVE USERS -->
+      <div
+        class="h-[86px] rounded-[12px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+      >
+        <div class="flex items-center gap-[8px]">
+          <div class="w-[26px] h-[26px] rounded-full bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-user-check text-[12px]"></i>
+          </div>
+
+          <p class="text-[#7C8AA0] text-[13px] font-medium">
+            Active Customers
+          </p>
+        </div>
+
+        <h3 id="senderActiveUsers" class="mt-[12px] text-[#4F46E5] text-[20px] font-semibold">
+          --
+        </h3>
+      </div>
+
+      <!-- DISABLED USERS -->
+      <div
+        class="h-[86px] rounded-[12px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+      >
+        <div class="flex items-center gap-[8px]">
+          <div class="w-[26px] h-[26px] rounded-full bg-[#FDECEF] text-[#E57373] flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-user-xmark text-[12px]"></i>
+          </div>
+
+          <p class="text-[#7C8AA0] text-[13px] font-medium">
+            Disabled Customers
+          </p>
+        </div>
+
+        <h3 id="senderDisabledUsers" class="mt-[12px] text-[#E57373] text-[20px] font-semibold">
+          --
+        </h3>
+      </div>
+
+      <!-- NEW THIS MONTH -->
+      <div
+        class="h-[86px] rounded-[12px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+      >
+        <div class="flex items-center gap-[8px]">
+          <div class="w-[26px] h-[26px] rounded-full bg-[#EAF4FF] text-[#2F80ED] flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-user-plus text-[12px]"></i>
+          </div>
+
+          <p class="text-[#7C8AA0] text-[13px] font-medium">
+            New This Month
+          </p>
+        </div>
+
+        <h3 id="senderNewThisMonth" class="mt-[12px] text-[#2F80ED] text-[20px] font-semibold">
+          --
+        </h3>
+      </div>
+    </div>
+
+    <!-- USER DIRECTORY -->
+    <div class="mt-[22px]">
+      <h2 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
+        Customer Directory
+      </h2>
+
+      <div class="mt-[18px] w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+        <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
+
+        <input
+          id="senderSearchInput"
+          type="text"
+          placeholder="Search by name"
+          class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
+        />
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="mt-[16px] w-full flex-1 flex flex-col">
+      <div class="w-full h-[42px] bg-[#F1F5F8] flex items-center text-[#667085] text-[12px] font-semibold rounded-[6px]">
+        <div class="w-[150px] px-[10px]">Sender</div>
+        <div class="w-[180px] px-[10px]">Email</div>
+        <div class="w-[220px] px-[10px]">Address</div>
+        <div class="w-[105px] px-[10px]">Status</div>
+        <div class="w-[120px] px-[10px]">Join Date</div>
+        <div class="w-[130px] px-[10px]">Last Activity</div>
+        <div class="w-[70px] px-[10px]">Orders</div>
+        <div class="w-[70px] px-[10px]">Actions</div>
+      </div>
+
+      <div id="senderTableBody" class="w-full"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="mt-[30px] w-full flex items-center justify-between shrink-0">
+      <p id="senderCountText" class="text-[#98A2B3] text-[12px]">
+        1-5 of 0 row(s) selected
+      </p>
+
+      <div
+        id="senderPagination"
+        class="flex items-center gap-[10px] text-[13px] text-[#11313B]"
+      ></div>
+    </div>
+  </div>
+
+  <!-- SENDERS VIEW DETAILS -->
+  <div
+    id="senderDetailsView"
+    class="hidden w-full h-full rounded-[16px] bg-white p-[24px]"
+    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  >
+    <div class="flex items-center justify-between">
+      <h2 class="text-[#11313B] text-[26px] font-semibold">User Details</h2>
+
+      <button
+        id="closeSenderDetailsBtn"
+        type="button"
+        class="w-[32px] h-[32px] rounded-full border border-[#11313B] cursor-pointer flex items-center justify-center text-[#11313B]"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="mt-[24px]">
+      <div id="senderDetailsImageWrap"></div>
+    </div>
+
+    <div class="mt-[24px] grid grid-cols-2 gap-[16px]">
+      <div>
+        <label class="text-[#7C8AA0] text-[14px] font-medium">First Name</label>
+        <div id="senderFirstName" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
+      </div>
+
+      <div>
+        <label class="text-[#7C8AA0] text-[14px] font-medium">Last Name</label>
+        <div id="senderLastName" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
+      </div>
+    </div>
+
+    <div class="mt-[16px]">
+      <label class="text-[#7C8AA0] text-[14px] font-medium">Phone Number</label>
+      <div id="senderPhone" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
+    </div>
+
+    <div class="mt-[16px]">
+      <label class="text-[#7C8AA0] text-[14px] font-medium">Email</label>
+      <div id="senderEmail" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
+    </div>
+
+    <div class="mt-[16px]">
+      <label class="text-[#7C8AA0] text-[14px] font-medium">Address</label>
+      <div id="senderAddress" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
+    </div>
+
+    <button
+      id="senderDetailsCloseBottomBtn"
+      type="button"
+      class="mt-[24px] h-[44px] px-[28px] cursor-pointer rounded-[8px] bg-[#EAFBFD] text-[#30BBC7] text-[14px] font-semibold"
+    >
+      Close
+    </button>
+  </div>
+</section>
+
+ <!-- ================= DELIVERIES SECTION ================= -->
+
+<section
+  id="deliveriesSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[750px] p-[20px] bg-white rounded-[6px]"
+>
+  <!-- DELIVERY LIST VIEW -->
+  <div
+    id="deliveriesListView"
+    class="w-full h-full rounded-[16px] bg-white p-[20px] flex flex-col"
+    
+  >
+    <div class="w-full h-full rounded-[16px] bg-transparent flex flex-col">
+
+      <!-- TOP CONTAINER: HEADER + STATS -->
+      <div class="w-full rounded-[16px] bg-white p-[18px]">
+        <div class="flex items-start justify-between">
+          <div>
+            <h1 class="text-[#11313B] text-[34px] leading-[30px] font-semibold">
+              Tags
+            </h1>
+            <p class="mt-[4px] text-[#7C8AA0] text-[13px] font-medium">
+              Monitor and track all active tags requests
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-[14px] grid grid-cols-4 gap-[12px]">
+          <div
+            class="h-[80px] rounded-[12px] bg-white p-[14px]"
+            style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+          >
+            <div class="flex items-center gap-[8px]">
+              <span class="w-[24px] h-[24px] rounded-full bg-[#EAFBFD] flex items-center justify-center">
+                <i class="fa-solid fa-box text-[#30BBC7] text-[11px]"></i>
+              </span>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">Active Requests</p>
+            </div>
+            <h3 class="mt-[10px] text-[#11313B] text-[18px] font-semibold" id="activeRequests">--</h3>
+          </div>
+
+          <div
+            class="h-[80px] rounded-[12px] bg-white p-[14px]"
+            style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+          >
+            <div class="flex items-center gap-[8px]">
+              <span class="w-[24px] h-[24px] rounded-full bg-[#EAF3FF] flex items-center justify-center">
+                <i class="fa-solid fa-truck-fast text-[#2F80ED] text-[11px]"></i>
+              </span>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">In Transit</p>
+            </div>
+            <h3 class="mt-[10px] text-[#2F80ED] text-[18px] font-semibold" id="inTransit">--</h3>
+          </div>
+
+          <div
+            class="h-[80px] rounded-[12px] bg-white p-[14px]"
+            style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+          >
+            <div class="flex items-center gap-[8px]">
+              <span class="w-[24px] h-[24px] rounded-full bg-[#FFF8EE] flex items-center justify-center">
+                <i class="fa-regular fa-clock text-[#F2B66D] text-[11px]"></i>
+              </span>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">Pending Requests</p>
+            </div>
+            <h3 class="mt-[10px] text-[#E57373] text-[18px] font-semibold" id="pendingRequests">--</h3>
+          </div>
+
+          <div
+            class="h-[80px] rounded-[12px] bg-white p-[14px]"
+            style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+          >
+            <div class="flex items-center gap-[8px]">
+              <span class="w-[24px] h-[24px] rounded-full bg-[#FDECEF] flex items-center justify-center">
+                <i class="fa-solid fa-triangle-exclamation text-[#E57373] text-[11px]"></i>
+              </span>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">Failed Requests</p>
+            </div>
+            <h3 class="mt-[10px] text-[#E57373] text-[18px] font-semibold" id="failedRequests">--</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECOND ROW: TWO SEPARATE CONTAINERS -->
+      <div class="mt-[16px] flex-1 flex gap-[24px] items-start">
+        <!-- DELIVERY REQUEST MONITOR CONTAINER -->
+        <div class="w-full h-full rounded-[16px] bg-white p-[16px] shrink-0 flex flex-col">
+          <h2 class="text-[#11313B] text-[17px] font-semibold">
+            Tags Request Monitor
+          </h2>
+
+          <div class="mt-[12px] flex items-center justify-between gap-[10px]">
+            <!-- SEARCH -->
+            <div class="w-[360px] h-[38px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+              <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[12px]"></i>
+              <input
+                id="deliverySearch"
+                type="text"
+                placeholder="Search by tag ID, user, location"
+                class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[12px]"
+              />
+            </div>
+
+            <!-- FILTERS -->
+            <div class="flex items-center gap-[8px]">
+              <!-- STATUS FILTER -->
+              <select
+                id="statusFilter"
+                class="h-[38px] w-[130px] cursor-pointer rounded-[8px] bg-[#F1F5F8] px-[10px] text-[12px] text-[#7C8AA0] outline-none"
+              >
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="in_transit">In Transit</option>
+                <option value="delivered">Delivered</option>
+                <option value="arrived">Arrived</option>
+                <option value="failed">Failed</option>
+              </select>
+
+              
+            </div>
+          </div>
+
+          <div class="mt-[12px] w-full">
+            <div class="h-[38px] bg-[#F1F5F8] flex items-center text-[#667085] text-[11px] font-semibold w-full rounded-[6px]">
+              <div class="flex-1 px-[8px]">Delivery ID</div>
+              <div class="flex-[2] px-[8px]">Sender</div>
+              <div class="flex-[2] px-[8px]">Pick-Up</div>
+              <div class="flex-[2] px-[8px]">Drop-Off</div>
+              <div class="w-[100px] px-[8px] text-center">Action</div>
+            </div>
+
+            <div id="deliveryTableBody" class="w-full"></div>
+          </div>
+
+          <div class="mt-[30px] w-full flex items-center justify-between">
+            <p id="deliveryCountText" class="text-[#98A2B3] text-[12px]">
+              0-0 of 0 row(s) selected
+            </p>
+
+            <div
+              id="deliveryPagination"
+              class="flex items-center gap-[10px] text-[12px] text-[#11313B]"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /DELIVERIES/TAG DETAILS VIEW -->
+  <div
+    id="tagDetailsView"
+    class="hidden w-full h-full rounded-[16px] bg-white p-[20px]"
+  >
+    <div class="h-[54px] rounded-[12px] bg-[#F1F5F8] px-[16px] flex items-center justify-between">
+      <!-- LEFT SIDE -->
+      <div class="flex items-center gap-[14px]">
+        <button
+          id="backToDeliveriesFromTagBtn"
+          type="button"
+          class="w-[30px] h-[30px] cursor-pointer flex items-center justify-center text-[#11313B] text-[20px]"
+        >
+          ←
+        </button>
+
+        <h2 class="text-[#11313B] text-[18px] font-semibold">
+          Tag Details
+        </h2>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <p
+        id="tagDetailsOrderNumber"
+        class="text-[#11313B] text-[14px] font-semibold"
+      >
+        #
+      </p>
+    </div>
+
+    <div class="mt-[18px] grid grid-cols-3 gap-[14px]">
+      <!-- STATUS -->
+      <div class="rounded-[12px] bg-white p-[14px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#EAFBFD] flex items-center justify-center">
+            <i class="fa-solid fa-circle-check text-[#30BBC7] text-[12px]"></i>
+          </span>
+          <p class="text-[#7C8AA0] text-[15px]">Status</p>
+        </div>
+
+        <div id="tagDetailsStatus" class="mt-[10px]"></div>
+      </div>
+
+      <!-- PRICE -->
+      <div class="rounded-[12px] bg-white p-[14px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#EAF3FF] flex items-center justify-center">
+            <i class="fa-solid fa-money-bill-wave text-[#2F80ED] text-[12px]"></i>
+          </span>
+          <p class="text-[#7C8AA0] text-[15px]">Total Price</p>
+        </div>
+
+        <h3 id="tagDetailsPrice" class="mt-[10px] text-[#11313B] text-[18px] font-semibold"></h3>
+      </div>
+
+      <!-- TIME -->
+      <div class="rounded-[12px] bg-white p-[14px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#FFF8EE] flex items-center justify-center">
+            <i class="fa-regular fa-clock text-[#F2B66D] text-[12px]"></i>
+          </span>
+          <p class="text-[#7C8AA0] text-[15px]">Estimated Time</p>
+        </div>
+
+        <h3 id="tagDetailsDuration" class="mt-[10px] text-[#11313B] text-[18px] font-semibold"></h3>
+      </div>
+    </div>
+
+    <div class="mt-[18px] grid grid-cols-2 gap-[16px]">
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Customer Details</h3>
+
+        <div class="mt-[14px] space-y-[12px] text-[13px]">
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Name:</span> <span id="tagCustomerName" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Email:</span> <span id="tagCustomerEmail" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Phone:</span> <span id="tagCustomerPhone" class="text-[#11313B] font-semibold"></span></p>
+        </div>
+      </div>
+
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Recipient Details</h3>
+
+        <div class="mt-[14px] space-y-[12px] text-[13px]">
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Name:</span> <span id="tagRecipientName" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Phone:</span> <span id="tagRecipientPhone" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Vehicle:</span> <span id="tagVehiclePreference" class="text-[#11313B] font-semibold"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-[18px] grid grid-cols-2 gap-[16px]">
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Pick-Up Location</h3>
+        <p id="tagPickupAddress" class="mt-[12px] text-[#11313B] text-[13px] leading-[20px]"></p>
+      </div>
+
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Drop-Off Location</h3>
+        <p id="tagDropoffAddress" class="mt-[12px] text-[#11313B] text-[13px] leading-[20px]"></p>
+      </div>
+    </div>
+
+    <div class="mt-[18px] rounded-[14px] border border-[#E5E7EB] p-[16px]">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Package Details</h3>
+
+      <div class="mt-[14px] grid grid-cols-4 gap-[12px] text-[13px]">
+        <p><span class="text-[#7C8AA0]">Type:</span><br><span id="tagPackageType" class="font-semibold text-[#11313B]"></span></p>
+        <p><span class="text-[#7C8AA0]">Size:</span><br><span id="tagPackageSize" class="font-semibold text-[#11313B]"></span></p>
+        <p><span class="text-[#7C8AA0]">Weight:</span><br><span id="tagPackageWeight" class="font-semibold text-[#11313B]"></span></p>
+        <p><span class="text-[#7C8AA0]">Distance:</span><br><span id="tagDistance" class="font-semibold text-[#11313B]"></span></p>
+      </div>
+
+      <p id="tagPackageDescription" class="mt-[14px] text-[#7C8AA0] text-[13px] leading-[20px]"></p>
+    </div>
+
+    <div class="mt-[18px] rounded-[14px] border border-[#E5E7EB] p-[16px]">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Package Images</h3>
+      <div id="tagPackageImages" class="mt-[14px] flex gap-[12px] flex-wrap"></div>
+    </div>
+  </div>
+</section>
+        
+
+     <!-- ================= PAYOUT SECTION ================= -->
+<section
+  id="paymentsSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[800px] p-[20px] bg-white  rounded-[6px]"
+>
+  <div class="w-full h-full rounded-[16px] bg-white p-[20px] flex flex-col o ">
+
+    <div id="paymentsListView" class="w-full h-full flex flex-col ">
+      <div class="flex items-start justify-between shrink-0">
+        <div>
+          <h1 class="text-[#11313B] text-[34px] leading-[34px] font-semibold">
+            Earnings & Payout 
+          </h1>
+          <p class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium">
+            View and manage payout and earnings
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-[18px] px-[4px]">
+
+  <!-- TOP ROW -->
+  <div class="grid grid-cols-3 gap-[12px]">
+
+    <!-- All Payments -->
+    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#E8F5FB] flex items-center justify-center">
+          <i class="fa-solid fa-wallet text-[#49D6F2] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">All Payments</p>
+      </div>
+
+      <h3
+        id="paymentTotalStats"
+        class="mt-[10px] text-[#11313B] text-[20px] font-semibold"
+      ></h3>
+    </div>
+
+    <!-- Completed Payments -->
+    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+          <i class="fa-solid fa-circle-check text-[#3BB273] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Payments</p>
+      </div>
+
+      <h3
+        id="paymentCompletedStats"
+        class="mt-[10px] text-[#3BB273] text-[20px] font-semibold"
+      ></h3>
+    </div>
+
+    <!-- Pending Payments -->
+    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
+          <i class="fa-solid fa-clock text-[#C76A3A] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Payments</p>
+      </div>
+
+      <h3
+        id="paymentPendingStats"
+        class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold"
+      ></h3>
+    </div>
+
+  </div>
+
+  <!-- GAP BETWEEN ROWS -->
+  <div class="mt-[24px]"></div>
+
+  <!-- BOTTOM ROW -->
+  <div class="grid grid-cols-3 gap-[12px]">
+
+    <!-- Failed Payments -->
+    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
+          <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">Failed Payments</p>
+      </div>
+
+      <h3
+        id="paymentFailedStats"
+        class="mt-[10px] text-[#E57373] text-[20px] font-semibold"
+      ></h3>
+    </div>
+
+    <!-- Total Earnings -->
+    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+          <i class="fa-solid fa-sack-dollar text-[#3BB273] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">Total Earnings</p>
+      </div>
+
+      <h3
+        id="paymentTotalEarningsStats"
+        class="mt-[10px] text-[#3BB273] text-[20px] font-semibold"
+      ></h3>
+    </div>
+
+    <!-- Earnings This Month -->
+    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#EEF4FF] flex items-center justify-center">
+          <i class="fa-solid fa-calendar-days text-[#2F80ED] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">Earnings This Month</p>
+      </div>
+
+      <h3
+        id="paymentMonthlyEarningsStats"
+        class="mt-[10px] text-[#2F80ED] text-[20px] font-semibold"
+      ></h3>
+    </div>
+
+  </div>
+
+</div>
+
+      <div class="mt-[18px] shrink-0">
+        <h2 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
+          Payment Directory
+        </h2>
+      </div>
+
+      <div class="mt-[14px] flex items-center justify-between gap-[12px] shrink-0">
+        <div class="w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+          <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
+          <input
+            id="paymentSearchInput"
+            type="text"
+            placeholder="Search by Transaction ID, or  Driver"
+            class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
+          />
+        </div>
+
+        <div class="flex items-center gap-[10px]">
+          <select
+            id="paymentStatusFilter"
+            class="h-[40px] w-[118px] rounded-[8px] bg-[#F1F5F8] px-[10px] text-[13px] text-[#7C8AA0] outline-none"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="approved">Approved</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+          </select>
+
+        </div>
+      </div>
+<div class="mt-[16px] w-full shrink-0">
+  <div class="w-full h-[42px] bg-[#F1F5F8] flex items-center text-[#667085] text-[12px] leading-[16px] font-semibold">
+    <div class="w-[160px] px-[10px]">Transaction ID</div>
+    <div class="w-[190px] px-[10px]">Driver Name</div>
+    <div class="w-[130px] px-[10px]">Amount</div>
+    <div class="w-[140px] px-[10px]">Date Requested</div>
+    <div class="w-[140px] px-[10px]">Date Processed</div>
+    <div class="w-[140px] px-[10px]">Status</div>
+    <div class="w-[150px] px-[10px]">Action</div>
+  </div>
+
+  <div id="paymentTableBody" class="w-full h-[280px]"></div>
+</div>
+
+      <div class="mt-[18px] h-[36px] flex items-center justify-between shrink-0">
+        <p id="paymentCountText" class="text-[#98A2B3] text-[12px]">
+          1-6 of 20 row(s) selected
+        </p>
+
+        <div
+          id="paymentPagination"
+          class="flex items-center gap-[8px] h-[36px] justify-end text-[14px] text-[#11313B]"
+        ></div>
+      </div>
+    </div>
+
+    <!-- view payout -->
+    <div id="payoutDetailsView" class="hidden w-full ">
+      <button
+        type="button"
+        onclick="closePayoutDetailsPage()"
+        class="mb-[18px] inline-flex items-center gap-[8px] cursor-pointer h-[38px] px-[14px] rounded-[8px] bg-[#F1F5F8] text-[#11313B] text-[13px] font-semibold"
+      >
+        <i class="fa-solid fa-arrow-left"></i>
+        Back to Payouts
+      </button>
+
+      <div class="rounded-[16px] bg-white p-[22px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <h2 class="text-[#11313B] text-[22px] font-semibold">Payout Details</h2>
+
+        <div class="mt-[20px] grid grid-cols-2 gap-[16px] text-[13px]">
+          <div><p class="text-[#7C8AA0]">Payout Number</p><p id="payoutDetailsNumber" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Driver</p><p id="payoutDetailsDriver" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Driver Email</p><p id="payoutDetailsEmail" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Amount</p><p id="payoutDetailsAmount" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Method</p><p id="payoutDetailsMethod" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Status</p><div id="payoutDetailsStatus" class="mt-[5px]"></div></div>
+          <div><p class="text-[#7C8AA0]">Date Requested</p><p id="payoutDetailsRequestedDate" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Date Processed</p><p id="payoutDetailsProcessedDate" class="mt-[5px] font-semibold"></p></div>
+        </div>
+      </div>
+
+      <div class="mt-[18px] rounded-[16px] bg-white p-[22px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <h3 class="text-[#11313B] text-[18px] font-semibold">Bank Details</h3>
+
+        <div class="mt-[18px] grid grid-cols-2 gap-[16px] text-[13px]">
+          <div><p class="text-[#7C8AA0]">Bank Name</p><p id="payoutDetailsBankName" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Account Name</p><p id="payoutDetailsAccountName" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Account Type</p><p id="payoutDetailsAccountType" class="mt-[5px] font-semibold capitalize"></p></div>
+          <div><p class="text-[#7C8AA0]">Masked Account Number</p><p id="payoutDetailsMaskedAccount" class="mt-[5px] font-semibold"></p></div>
+        </div>
+      </div>
+
+      <div class="mt-[18px] rounded-[16px] bg-white p-[22px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <h3 class="text-[#11313B] text-[18px] font-semibold">Admin Information</h3>
+
+        <div class="mt-[18px] grid grid-cols-1 gap-[16px] text-[13px]">
+          <div><p class="text-[#7C8AA0]">Admin Notes</p><p id="payoutDetailsAdminNotes" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Rejection Reason</p><p id="payoutDetailsRejectionReason" class="mt-[5px] font-semibold"></p></div>
+        </div>
+      </div>
+
+      <div
+        id="payoutDetailsActionWrap"
+        class="mt-[22px] flex items-center justify-end gap-[12px]"
+      ></div>
+    </div>
+
+    <div
+      id="rejectPayoutOverlay"
+      class="hidden fixed inset-0 bg-[#101828]/60 z-[5000] flex items-center justify-center"
+    >
+      <div class="w-[420px] rounded-[14px] bg-white p-[20px]">
+        <h3 class="text-[#11313B] text-[18px] font-semibold">
+          Reject Payout
+        </h3>
+
+        <p class="mt-[6px] text-[#7C8AA0] text-[13px]">
+          Enter the reason for rejecting this payout.
+        </p>
+
+        <textarea
+          id="rejectPayoutReasonInput"
+          class="mt-[16px] w-full h-[110px] rounded-[10px] border border-[#D0D5DD] p-[12px] text-[13px] outline-none resize-none"
+          placeholder="Type rejection reason..."
+        ></textarea>
+
+        <div class="mt-[18px] flex items-center justify-end gap-[10px]">
+          <button
+            type="button"
+            onclick="closeRejectPayoutModal()"
+            class="h-[38px] px-[14px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[13px] font-medium"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            onclick="submitRejectPayout()"
+            class="h-[38px] px-[14px] rounded-[8px] bg-[#E57373] text-white text-[13px] font-medium"
+          >
+            Reject Payout
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="completePayoutModal"
+      class="hidden fixed inset-0 bg-[#101828]/60 z-[5000] flex items-center justify-center"
+    >
+      <div class="w-[420px] rounded-[16px] bg-white p-[24px] shadow-xl">
+        <div class="flex items-center justify-between">
+          <h3 class="text-[#11313B] text-[18px] font-semibold">
+            Complete Payout
+          </h3>
+
+          <button
+            id="closeCompletePayoutModal"
+            type="button"
+            class="w-[28px] h-[28px] rounded-full border border-[#D0D5DD] text-[#7C8AA0] flex items-center justify-center"
+          >
+            ×
+          </button>
+        </div>
+
+        <p class="mt-[8px] text-[#7C8AA0] text-[13px] leading-[20px]">
+          Enter the transaction ID for this completed payout.
+        </p>
+
+        <input
+          id="completePayoutTransactionInput"
+          type="text"
+          placeholder="Enter transaction ID"
+          class="mt-[18px] w-full h-[44px] rounded-[10px] border border-[#D0D5DD] px-[14px] text-[14px] outline-none text-[#11313B]"
+        />
+
+        <div class="mt-[22px] flex items-center justify-end gap-[10px]">
+          <button
+            id="cancelCompletePayoutBtn"
+            type="button"
+            class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[13px] font-semibold"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="submitCompletePayoutBtn"
+            type="button"
+            class="h-[40px] px-[16px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-semibold"
+          >
+            Mark Completed
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+        <!-- ================= SUPPORT REQUESTS SECTION ================= -->
+
+<section
+  id="supportRequestsSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[800px] p-[20px] overflow-hidden bg-white rounded-[6px]"
+>
+  <div
+    class="w-full h-full rounded-[16px] bg-white p-[20px] flex flex-col overflow-hidden" 
+  >
+    <h1 class="text-[#11313B] text-[34px] leading-[34px] font-semibold">
+      Support Ticket
+    </h1>
+
+    <div class="mt-[14px] grid grid-cols-4 gap-[12px]">
+      <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center">
+            <i class="fa-solid fa-ticket text-[12px]"></i>
+          </span>
+          <p class="text-[#11313B] text-[13px] font-semibold">Total Tickets</p>
+        </div>
+
+        <h3 id="supportTotalTickets" class="mt-[12px] text-[#11313B] text-[20px] leading-none font-semibold">
+          0
+        </h3>
+      </div>
+
+      <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#FFF8EE] text-[#F2B66D] flex items-center justify-center">
+            <i class="fa-solid fa-folder-open text-[12px]"></i>
+          </span>
+          <p class="text-[#11313B] text-[13px] font-semibold">Open</p>
+        </div>
+
+        <h3 id="supportUrgentTickets" class="mt-[12px] text-[#F2B66D] text-[20px] leading-none font-semibold">
+          0
+        </h3>
+      </div>
+
+      <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#EAF8F1] text-[#3BB273] flex items-center justify-center">
+            <i class="fa-solid fa-circle-check text-[12px]"></i>
+          </span>
+          <p class="text-[#11313B] text-[13px] font-semibold">Resolved Ticket</p>
+        </div>
+
+        <h3 id="supportCompletedTickets" class="mt-[12px] text-[#3BB273] text-[20px] leading-none font-semibold">
+          0
+        </h3>
+      </div>
+
+      <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <div class="flex items-center gap-[8px]">
+          <span class="w-[26px] h-[26px] rounded-full bg-[#EEF4FF] text-[#2F80ED] flex items-center justify-center">
+            <i class="fa-solid fa-bars-progress text-[12px]"></i>
+          </span>
+          <p class="text-[#11313B] text-[13px] font-semibold">In Progress</p>
+        </div>
+
+        <h3 id="supportOpenTickets" class="mt-[12px] text-[#2F80ED] text-[20px] leading-none font-semibold">
+          0
+        </h3>
+      </div>
+    </div>
+
+    
+    <!-- MAIN TICKET CHAT CONTENT -->
+    <div class="mt-[18px]  h-[550px] rounded-[18px] flex border border-[#E5E7EB] bg-white shadow-sm overflow-hidden">
+
+      <!-- LEFT TICKET LIST -->
+      <div class=" w-[40%]   bg-[#F8FAFC] border-r border-[#E5E7EB] flex flex-col ">
+        <div class="p-[14px] border-b border-[#E5E7EB] shrink-0">
+        <div class="flex items-center gap-[8px] relative">
+
+  <div class="flex-1 relative">
+    <i class="fa-solid fa-magnifying-glass absolute left-[12px] top-1/2 -translate-y-1/2 text-[#98A2B3] text-[12px]"></i>
+
+    <input
+      id="supportTicketSearchInput"
+      type="text"
+      placeholder="Search tickets or users..."
+      class="w-full h-[42px] rounded-[10px] border border-[#D0D5DD] bg-white pl-[34px] pr-[12px] text-[13px] outline-none text-[#11313B] placeholder:text-[#98A2B3]"
+    />
+  </div>
+
+  <button
+    id="supportFilterBtn"
+    type="button"
+    class="w-[42px] h-[42px] rounded-[10px] border border-[#D0D5DD] bg-[#EAFBFD] hover:bg-[#DDF7FA] transition-all-200 flex items-center justify-center text-[#7C8AA0]"
+  >
+    <i class="fa-solid fa-sliders text-[13px]"></i>
+  </button>
+
+  <!-- FILTER DROPDOWN -->
+<div
+  id="supportFilterDropdown"
+  class="hidden absolute top-[58px] right-0 w-[220px] rounded-[14px] border border-[#E5E7EB] bg-white shadow-xl z-[100] p-[14px]"
+>
+  
+  <h3 class="text-[#11313B] text-[13px] font-semibold mb-[12px]">
+    Filter Tickets
+  </h3>
+
+  <!-- STATUS -->
+  <div class="mb-[14px]">
+    <p class="text-[#7C8AA0] text-[11px] font-medium mb-[8px]">
+      Status
+    </p>
+
+    <select
+      id="supportStatusFilter"
+      class="w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[12px] outline-none"
+    >
+      <option value="all">All Status</option>
+      <option value="open">Open</option>
+      <option value="in_progress">In Progress</option>
+      <option value="resolved">Resolved</option>
+    </select>
+  </div>
+
+  <!-- PRIORITY -->
+  <div class="mb-[14px]">
+    <p class="text-[#7C8AA0] text-[11px] font-medium mb-[8px]">
+      Priority
+    </p>
+
+    <select
+      id="supportPriorityFilter"
+      class="w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[12px] outline-none"
+    >
+      <option value="all">All Priority</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+      <option value="urgent">Urgent</option>
+    </select>
+  </div>
+
+  <!-- UNASSIGNED -->
+  <label class="flex items-center gap-[8px] mb-[16px] cursor-pointer">
+    <input
+      id="supportUnassignedFilter"
+      type="checkbox"
+      class="w-[15px] h-[15px]"
+    />
+
+    <span class="text-[#11313B] text-[12px]">
+      Unassigned Only
+    </span>
+  </label>
+
+  <!-- ACTION BUTTONS -->
+  <div class="flex items-center gap-[8px]">
+
+    <button
+      id="applySupportFilterBtn"
+      type="button"
+      class="flex-1 h-[38px] rounded-[8px] bg-[#30BBC7] text-white text-[12px] font-semibold"
+    >
+      Apply
+    </button>
+
+    <button
+      id="resetSupportFilterBtn"
+      type="button"
+      class="flex-1 h-[38px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[12px] font-semibold"
+    >
+      Reset
+    </button>
+
+  </div>
+</div>
+
+</div>
+        </div>
+
+        <div id="supportTicketList" class="w-full   h-[900px]"></div>
+      </div>
+
+      <!-- RIGHT CHAT AREA -->
+      <div class="flex-1 h-full flex flex-col bg-[#F9FAFB] min-h-0">
+
+        <div class="h-[72px] bg-white border-b border-[#E5E7EB] px-[18px] flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-[12px]">
+            <div
+              id="supportChatAvatar"
+              class="w-[42px] h-[42px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center text-[14px] font-bold"
+            >
+              U
+            </div>
+
+            <div>
+              <h3 id="supportChatName" class="text-[#11313B] text-[15px] font-semibold">
+                Select a ticket
+              </h3>
+              <p id="supportChatSubtitle" class="text-[#7C8AA0] text-[12px] mt-[2px]">
+                Open a ticket to view conversation
+              </p>
+            </div>
+          </div>
+
+          <span
+            id="supportChatStatus"
+            class="hidden h-[26px] px-[10px] rounded-full bg-[#FFF8EE] text-[#F2B66D] text-[12px] font-medium items-center justify-center"
+          >
+            Pending
+          </span>
+        </div>
+
+        <div
+          id="supportChatMessages"
+          class="flex-1 min-h-0 overflow-y-auto px-[22px] py-[18px] space-y-[16px]"
+        >
+          <div class="w-full h-full flex items-center justify-center text-[#98A2B3] text-[14px]">
+            Select a ticket from the left side
+          </div>
+        </div>
+
+        <div class="h-[82px] bg-white border-t border-[#E5E7EB] px-[18px] flex items-center gap-[12px] shrink-0">
+            <!-- attach button -->
+             <label
+  for="supportAttachmentInput"
+  class="w-[44px] h-[44px] rounded-[10px] border border-[#D0D5DD] bg-white flex items-center justify-center cursor-pointer text-[#7C8AA0]"
+>
+  <i class="fa-solid fa-paperclip text-[14px]"></i>
+</label>
+
+<input
+  id="supportAttachmentInput"
+  type="file"
+  multiple
+  accept="image/*"
+  class="hidden"
+/>
+
+          <input
+            id="supportReplyInput"
+            type="text"
+            placeholder="Type your reply..."
+            class="flex-1 h-[44px] rounded-[10px] border border-[#D0D5DD] px-[14px] text-[14px] outline-none"
+          />
+
+          <button
+            id="sendSupportReplyBtn"
+            type="button"
+            class="h-[44px] px-[20px] rounded-[10px] bg-[#30BBC7] cursor-pointer text-white text-[14px] font-semibold"
+          >
+            Send
+          </button>
+        </div>
+
+      </div>
+      
+  </div>
+
+  
+
+    <div
+      id="supportTicketPagination"
+      class="h-[40px] mt-[30px] flex items-center cursor-pointer justify-end gap-[6px] bg-white shrink-0"
+    ></div>
+  </div>
+</section>
+
+
+     <!-- ================= SETTINGS SECTION ================= -->
+<section
+  id="settingsSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[800px] p-[20px] bg-white rounded-[6px]"
+>
+  <div class="w-full h-full rounded-[16px] bg-white p-[20px] box-border">
+    <h1 class="text-[#11313B] text-[34px] leading-[34px] font-semibold">
+      Settings
+    </h1>
+
+    <p class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium">
+      Manage your logistics platform configuration
+    </p>
+
+    <div class="mt-[18px] grid grid-cols-[410px_1fr] gap-[28px] items-start w-full">
+      <!-- SETTINGS SIDEBAR -->
+      <div class="w-full flex flex-col gap-[16px]">
+        <button
+          type="button"
+          class="settingsTabBtn settingsActiveTab w-full h-[86px] rounded-[14px] border border-[#30BBC7] bg-white px-[18px] flex items-center justify-between "style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+          data-target="settingsProfilePanel"
+        >
+          <div class="flex items-center gap-[16px]">
+            <span class="w-[48px] h-[48px] rounded-full bg-[#EAFBFD] flex items-center justify-center text-[#30BBC7]">
+              <i class="fa-regular fa-user text-[18px]"></i>
+            </span>
+            <span class="text-left">
+              <span class="block text-[#11313B] text-[15px] font-semibold">Profile</span>
+              <span class="block mt-[6px] text-[#7C8AA0] text-[13px]">Manage your profile photo and contact information.</span> 
+            </span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#7C8AA0] text-[13px]"></i>
+        </button>
+
+        <button
+  type="button"
+  class="settingsTabBtn w-full h-[86px] rounded-[14px] bg-white px-[18px] flex items-center justify-between"
+  style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+  data-target="settingsPasswordPanel"
+>
+  <div class="flex items-center gap-[16px]">
+    <span class="w-[48px] h-[48px] rounded-full bg-[#EAFBFD] flex items-center justify-center text-[#30BBC7]">
+      <i class="fa-solid fa-lock text-[18px]"></i>
+    </span>
+
+    <span class="text-left">
+      <span class="block text-[#11313B] text-[15px] font-semibold">
+        Password
+      </span>
+
+      <span class="block mt-[6px] text-[#7C8AA0] text-[13px]">
+        Update your admin password securely
+      </span>
+    </span>
+  </div>
+
+  <i class="fa-solid fa-chevron-right text-[#7C8AA0] text-[13px]"></i>
+</button>
+
+
+
+        <!-- <button type="button" class="settingsTabBtn w-full h-[86px] rounded-[14px] bg-white px-[18px] flex items-center justify-between"style="filter: drop-shadow(0px 1px 2px #b2a3a3);" data-target="settingsUsersPanel">
+          <div class="flex items-center gap-[16px]">
+            <span class="w-[48px] h-[48px] rounded-full bg-[#EAFBFD] flex items-center justify-center text-[#30BBC7]">
+              <i class="fa-solid fa-users text-[18px]"></i>
+            </span>
+            <span class="text-left">
+              <span class="block text-[#11313B] text-[15px] font-semibold">Users</span>
+              <span class="block mt-[6px] text-[#7C8AA0] text-[13px]">Configure user registration and permissions</span>
+            </span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#7C8AA0] text-[13px]"></i>
+        </button>
+
+        <button type="button" class="settingsTabBtn w-full h-[86px] rounded-[14px] bg-white px-[18px] flex items-center justify-between"style="filter: drop-shadow(0px 1px 2px #b2a3a3);" data-target="settingsNotificationsPanel">
+          <div class="flex items-center gap-[16px]">
+            <span class="w-[48px] h-[48px] rounded-full bg-[#EAFBFD] flex items-center justify-center text-[#30BBC7]">
+              <i class="fa-regular fa-bell text-[18px]"></i>
+            </span>
+            <span class="text-left">
+              <span class="block text-[#11313B] text-[15px] font-semibold">Notifications</span>
+              <span class="block mt-[6px] text-[#7C8AA0] text-[13px]">Configure how and when notifications are sent</span>
+            </span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#7C8AA0] text-[13px]"></i>
+        </button>
+
+        <button type="button" class="settingsTabBtn w-full h-[86px] rounded-[14px] bg-white px-[18px] flex items-center justify-between"style="filter: drop-shadow(0px 1px 2px #b2a3a3);" data-target="settingsSecurityPanel">
+          <div class="flex items-center gap-[16px]">
+            <span class="w-[48px] h-[48px] rounded-full bg-[#EAFBFD] flex items-center justify-center text-[#30BBC7]">
+              <i class="fa-solid fa-shield-halved text-[18px]"></i>
+            </span>
+            <span class="text-left">
+              <span class="block text-[#11313B] text-[15px] font-semibold">Security</span>
+              <span class="block mt-[6px] text-[#7C8AA0] text-[13px]">Configure security and authentication settings</span>
+            </span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#7C8AA0] text-[13px]"></i>
+        </button>
+
+        <button type="button" class="settingsTabBtn w-full h-[86px] rounded-[14px] bg-white px-[18px] flex items-center justify-between "style="filter: drop-shadow(0px 1px 2px #b2a3a3);" data-target="settingsSystemPanel">
+          <div class="flex items-center gap-[16px]">
+            <span class="w-[48px] h-[48px] rounded-full bg-[#EAFBFD] flex items-center justify-center text-[#30BBC7]">
+              <i class="fa-solid fa-gears text-[18px]"></i>
+            </span>
+            <span class="text-left">
+              <span class="block text-[#11313B] text-[15px] font-semibold">System</span>
+              <span class="block mt-[6px] text-[#7C8AA0] text-[13px]">Configure system-wide settings and maintenance</span>
+            </span>
+          </div>
+          <i class="fa-solid fa-chevron-right text-[#7C8AA0] text-[13px]"></i>
+        </button> -->
+      </div>
+
+      <!-- RIGHT CONTENT AREA -->
+      <div class="w-full min-w-0 rounded-[14px] bg-white px-[22px] py-[18px] " style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+        <!-- profile content  -->
+        <div id="settingsProfilePanel" class="settingsPanel">
+          <div class="flex justify-center">
+            <div class="relative">
+              <img src="assets/images/profile icon.png" class="w-[86px] h-[86px] rounded-full object-cover" />
+              <button type="button" class="absolute bottom-0 right-0 w-[30px] h-[30px] rounded-full bg-[#C98A3B] text-white flex items-center justify-center">
+                <i class="fa-solid fa-camera text-[12px]"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-[24px] grid grid-cols-2 gap-[14px]">
+            <div>
+              <label class="text-[#7C8AA0] text-[13px] font-medium">First Name</label>
+              <input id="settingsFirstName" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="Wade" />
+            </div>
+
+            <div>
+              <label class="text-[#7C8AA0] text-[13px] font-medium">Last Name</label>
+              <input id="settingsLastName" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="Warren" />
+            </div>
+
+            <div>
+              <label class="text-[#7C8AA0] text-[13px] font-medium">Email</label>
+              <input id="settingsEmail" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="Wade@gmail.com" />
+            </div>
+
+            <div>
+              <label class="text-[#7C8AA0] text-[13px] font-medium">Phone Number</label>
+              <input id="settingsPhone" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="(207) 555-0119" />
+            </div>
+          </div>
+
+       
+
+          <div class="mt-[22px] flex justify-end">
+            <button id="settingsProfileUpdateBtn" type="button" class="h-[42px] px-[22px] rounded-[8px] bg-[#30BBC7] text-white text-[14px] font-medium">
+              Update
+            </button>
+          </div>
+        </div>
+<div id="settingsPasswordPanel" class="settingsPanel hidden">
+  <div>
+    <h2 class="text-[#11313B] text-[18px] font-semibold">
+      Password Settings
+    </h2>
+
+    <p class="mt-[6px] text-[#7C8AA0] text-[13px]">
+      Update your account password securely.
+    </p>
+  </div>
+
+  <div class="mt-[24px] flex flex-col gap-[14px]">
+
+    <div class="h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] flex items-center">
+      <input
+        id="settingsOldPassword"
+        type="password"
+        placeholder="Old Password"
+        class="w-full h-full outline-none text-[14px]"
+      />
+
+      <button
+        type="button"
+        class="settingsPasswordToggle text-[#7C8AA0]"
+        data-target="settingsOldPassword"
+      >
+        <i class="fa-regular fa-eye"></i>
+      </button>
+    </div>
+
+    <div class="h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] flex items-center">
+      <input
+        id="settingsNewPassword"
+        type="password"
+        placeholder="New Password"
+        class="w-full h-full outline-none text-[14px]"
+      />
+
+      <button
+        type="button"
+        class="settingsPasswordToggle text-[#7C8AA0]"
+        data-target="settingsNewPassword"
+      >
+        <i class="fa-regular fa-eye"></i>
+      </button>
+    </div>
+
+    <div class="h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] flex items-center">
+      <input
+        id="settingsConfirmPassword"
+        type="password"
+        placeholder="Confirm New Password"
+        class="w-full h-full outline-none text-[14px]"
+      />
+
+      <button
+        type="button"
+        class="settingsPasswordToggle text-[#7C8AA0]"
+        data-target="settingsConfirmPassword"
+      >
+        <i class="fa-regular fa-eye"></i>
+      </button>
+    </div>
+
+
+  </div>
+
+  <div class="mt-[22px] flex justify-end">
+    <button
+      id="settingsPasswordUpdateBtn"
+      type="button"
+      class="h-[42px] px-[22px] rounded-[8px] bg-[#30BBC7] text-white text-[14px] font-medium"
+    >
+      Update Password
+    </button>
+  </div>
+</div>
+        <!-- user content -->
+        <div id="settingsUsersPanel" class="settingsPanel hidden flex-1 rounded-[14px] bg-white p-[18px]">
+          <div class="flex flex-col gap-[18px]">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[15px] font-semibold">Allow User Registration</p>
+                <p class="text-[#7C8AA0] text-[13px]">Enable new users to register</p>
+              </div>
+
+              <button class="toggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="allowRegistration">
+                <span class="toggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[15px] font-semibold">Email Verification Required</p>
+                <p class="text-[#7C8AA0] text-[13px]">Require email verification for new accounts</p>
+              </div>
+
+              <button class="toggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="emailVerification">
+                <span class="toggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[15px] font-semibold">Auto-approve Driver Applications</p>
+                <p class="text-[#7C8AA0] text-[13px]">Automatically approve new driver registrations</p>
+              </div>
+
+              <button class="toggleBtn w-[46px] h-[24px] rounded-full bg-[#D0D5DD] relative" data-key="autoApprove">
+                <span class="toggleCircle absolute top-[2px] left-[2px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-[24px] grid grid-cols-2 gap-[14px]">
+            <div>
+              <label class="text-[#7C8AA0] text-[13px] font-medium">Maximum Users</label>
+              <input
+                id="settingsMaxUsers"
+                type="number"
+                value="50000"
+                class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px]"
+              />
+            </div>
+
+            <div>
+              <label class="text-[#7C8AA0] text-[13px] font-medium">Default User Role</label>
+              <select
+                id="settingsDefaultRole"
+                class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px]"
+              >
+                <option value="">Select role</option>
+                <option value="user">User</option>
+                <option value="driver">Driver</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-[20px] flex justify-end">
+            <button
+              id="settingsUsersSaveBtn"
+              class="h-[42px] px-[20px] rounded-[8px] bg-[#30BBC7] text-white text-[14px]"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification content -->
+        <div id="settingsNotificationsPanel" class="settingsPanel hidden flex-1 rounded-[14px] bg-white p-[18px]">
+          <div class="flex flex-col gap-[20px]">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[15px] font-semibold">Email Notifications</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[13px]">Send notifications via email</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="emailNotifications">
+                <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[15px] font-semibold">Push Notifications</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[13px]">Send browser push notifications</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="pushNotifications">
+                <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[15px] font-semibold">SMS Notifications</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[13px]">Send notifications via SMS</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#D0D5DD] relative" data-key="smsNotifications">
+                <span class="settingsToggleCircle absolute top-[2px] left-[2px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-[24px] border-t border-[#E5E7EB] pt-[20px]">
+            <h3 class="text-[#11313B] text-[15px] font-semibold">Notification Types</h3>
+
+            <div class="mt-[20px] flex flex-col gap-[20px]">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[#11313B] text-[15px] font-semibold">New User Registrations</p>
+                  <p class="mt-[6px] text-[#7C8AA0] text-[13px]">Notify when new users register</p>
+                </div>
+
+                <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="newUserRegistrations">
+                  <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-[#11313B] text-[15px] font-semibold">System Alerts</p>
+                  <p class="mt-[6px] text-[#7C8AA0] text-[13px]">Critical system notifications</p>
+                </div>
+
+                <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="systemAlerts">
+                  <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-[28px] flex justify-end">
+            <button
+              id="settingsNotificationsSaveBtn"
+              type="button"
+              class="h-[42px] px-[22px] rounded-[8px] bg-[#30BBC7] text-white text-[14px] font-medium"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+
+        <!-- security content -->
+        <div id="settingsSecurityPanel" class="settingsPanel hidden flex-1 rounded-[14px] bg-white p-[28px]">
+          <div class="flex flex-col gap-[24px]">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[16px] font-semibold">Two-Factor Authentication</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[14px]">Require 2FA for admin accounts</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="twoFactor">
+                <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[16px] font-semibold">Password Complexity</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[14px]">Enforce strong password requirements</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative" data-key="passwordComplexity">
+                <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-[34px] grid grid-cols-2 gap-x-[24px] gap-y-[22px]">
+            <div>
+              <label class="block text-[#7C8AA0] text-[14px] font-medium">
+                Session Timeout (Minutes)
+              </label>
+              <input
+                id="settingsSessionTimeout"
+                type="number"
+                value="30"
+                class="mt-[8px] w-full h-[50px] rounded-[8px] border border-[#D0D5DD] px-[14px] text-[#11313B] text-[15px] outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[#7C8AA0] text-[14px] font-medium">
+                Max Login Attempts
+              </label>
+              <input
+                id="settingsMaxAttempts"
+                type="number"
+                value="5"
+                class="mt-[8px] w-full h-[50px] rounded-[8px] border border-[#D0D5DD] px-[14px] text-[#11313B] text-[15px] outline-none"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[#7C8AA0] text-[14px] font-medium">
+                Account Lockout Duration (Minutes)
+              </label>
+              <input
+                id="settingsLockoutDuration"
+                type="number"
+                value="30"
+                class="mt-[8px] w-full h-[50px] rounded-[8px] border border-[#D0D5DD] px-[14px] text-[#11313B] text-[15px] outline-none"
+              />
+            </div>
+          </div>
+
+          <div class="mt-[34px] flex justify-end">
+            <button
+              id="settingsSecuritySaveBtn"
+              type="button"
+              class="h-[46px] px-[30px] rounded-[8px] bg-[#30BBC7] text-white text-[15px] font-semibold"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+
+        <!-- system content -->
+        <div id="settingsSystemPanel" class="settingsPanel hidden flex-1 rounded-[14px] bg-white p-[28px]">
+          <div class="flex flex-col gap-[24px]">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[16px] font-semibold">Maintenance Mode</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[14px]">Enable maintenance mode for system updates</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative">
+                <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-[#11313B] text-[16px] font-semibold">Automatic Backups</p>
+                <p class="mt-[6px] text-[#7C8AA0] text-[14px]">Enable daily automatic database backups</p>
+              </div>
+
+              <button class="settingsToggleBtn w-[46px] h-[24px] rounded-full bg-[#30BBC7] relative">
+                <span class="settingsToggleCircle absolute top-[2px] left-[24px] w-[20px] h-[20px] bg-white rounded-full"></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="mt-[34px] grid grid-cols-2 gap-[24px]">
+            <div>
+              <label class="block text-[#7C8AA0] text-[14px] font-medium">
+                Data Retention Period (Days)
+              </label>
+              <input
+                id="settingsRetention"
+                type="number"
+                value="30"
+                class="mt-[8px] w-full h-[50px] rounded-[8px] border border-[#D0D5DD] px-[14px] text-[15px]"
+              />
+            </div>
+
+            <div>
+              <label class="block text-[#7C8AA0] text-[14px] font-medium">
+                Backup Frequency (Days)
+              </label>
+              <input
+                id="settingsBackupFrequency"
+                type="number"
+                value="5"
+                class="mt-[8px] w-full h-[50px] rounded-[8px] border border-[#D0D5DD] px-[14px] text-[15px]"
+              />
+            </div>
+          </div>
+
+          <div class="mt-[36px]">
+            <h3 class="text-[#11313B] text-[16px] font-semibold">System Status</h3>
+
+            <div class="mt-[18px] grid grid-cols-3 gap-[16px]">
+              <div class="h-[90px] rounded-[12px] border border-[#E5E7EB] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-database text-[#30BBC7] text-[18px]"></i>
+                <p class="mt-[8px] text-[#11313B] text-[14px] font-medium">Database</p>
+                <p class="text-[#3BB273] text-[13px]">Healthy</p>
+              </div>
+
+              <div class="h-[90px] rounded-[12px] border border-[#E5E7EB] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-server text-[#C76A3A] text-[18px]"></i>
+                <p class="mt-[8px] text-[#11313B] text-[14px] font-medium">API</p>
+                <p class="text-[#3BB273] text-[13px]">Online</p>
+              </div>
+
+              <div class="h-[90px] rounded-[12px] border border-[#E5E7EB] flex flex-col items-center justify-center">
+                <i class="fa-solid fa-envelope text-[#7C3AED] text-[18px]"></i>
+                <p class="mt-[8px] text-[#11313B] text-[14px] font-medium">Email Service</p>
+                <p class="text-[#3BB273] text-[13px]">Active</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-[36px] flex justify-end">
+            <button
+              id="settingsSystemSaveBtn"
+              class="h-[46px] px-[28px] rounded-[8px] bg-[#30BBC7] text-white text-[15px] font-semibold"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS SUCCESS POPUP -->
+  <div
+  id="settingsSuccessOverlay"
+  class="hidden fixed inset-0 z-[5000] flex items-center justify-center"
+  style="background: rgba(16, 24, 40, 0.7);"
+>
+  <div
+    style="width: 420px; background: #ffffff; border-radius: 16px; padding: 28px 24px; text-align: center; position: relative;"
+  >
+    <button
+      id="closeSettingsSuccessBtn"
+      type="button"
+      style="position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border-radius: 50%; border: 1px solid #7C8AA0; color: #7C8AA0; background: white; cursor: pointer;"
+    >
+      ×
+    </button>
+
+    <div style="display: flex; justify-content: center;">
+      <div
+        style="width: 70px; height: 70px; border-radius: 50%; border: 6px solid #3BB273; display: flex; align-items: center; justify-content: center;"
+      >
+        <i class="fa-solid fa-check" style="color: #3BB273; font-size: 26px;"></i>
+      </div>
+    </div>
+
+    <p
+      id="settingsSuccessMessage"
+      style="margin-top: 18px; color: #11313B; font-size: 16px; font-weight: 500;"
+    >
+      Update has been made successfully.
+    </p>
+  </div>
+</div>
+  </div>
+</section>
+      </section>
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+    
+    <!-- <footer
+      id="dashboardFooter"
+      class="absolute top-[790px] h-[71px] left-0 w-[1280px] bg-white flex items-center justify-between"
+    >
+      <div id="footerLogoWrap" class="flex items-center">
+        <img
+          id="footerLogo"
+          src="assets/images/along-logo.png"
+          alt="Along Logo"
+          class="absolute w-[55px] h-auto object-contain left-[154px]"
+        />
+      </div>
+
+      <p
+        id="footerCopyrightText"
+        class="text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium"
+        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      >
+        Copyright ©️ <span id="footerCurrentYear"></span> Along. All rights reserved.
+      </p>
+    </footer> -->
+    
+  </section>
+  <!-- loader -->
+  <div
+  id="globalPageLoader"
+  class="fixed inset-0 z-[99999] hidden items-center justify-center bg-white/70 backdrop-blur-[2px]"
+>
+  <div class="flex flex-col items-center gap-[12px]">
+    <div class="w-[42px] h-[42px] rounded-full border-[4px] border-[#EAFBFD] border-t-[#30BBC7] animate-spin"></div>
+    <p class="text-[#11313B] text-[13px] font-semibold">Loading...</p>
+  </div>
+</div>
+
+</main>
+
+
+          <!-- UPDATE STATUS OVERLAY -->
+          <div
+  id="updateDriverStatusOverlay"
+  class="hidden fixed  bottom-[120px]  right-[110px] z-[3000] flex items-center justify-center"
+>
+  <div
+    id="updateDriverStatusModal"
+    class="w-[320px] rounded-[12px] bg-white border border-[#E5E7EB] shadow-[0_12px_32px_rgba(0,0,0,0.12)] p-[16px]"
+  >
+    <div class="flex items-center justify-between">
+      <h3 class="text-[#11313B] text-[16px] leading-[24px] font-semibold">
+        Update Driver Status
+      </h3>
+
+      <button
+        id="closeUpdateDriverStatusModalBtn"
+        type="button"
+        class="w-[24px] h-[24px] flex items-center justify-center text-[#7C8AA0]"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="mt-[16px] flex flex-col gap-[10px]">
+      <button
+        id="approveDriverStatusBtn"
+        type="button"
+        class="w-full h-[42px] rounded-[8px] bg-[#EAF8F1] text-[#3BB273] text-[14px] font-medium"
+      >
+        Approve
+      </button>
+
+      <button
+        id="rejectDriverStatusBtn"
+        type="button"
+        class="w-full h-[42px] rounded-[8px] bg-[#FDECEF] text-[#E57373] text-[14px] font-medium"
+      >
+        Reject
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Attachment preview -->
+ <div
+  id="supportAttachmentModal"
+  class="hidden fixed inset-0 bg-black/70 z-[9999] flex items-center justify-center"
+>
+  <div class="w-[520px] max-w-[92%] bg-white rounded-[16px] overflow-hidden">
+
+    <div class="flex items-center justify-between px-[16px] py-[12px] border-b border-[#E5E7EB]">
+      <h3 class="text-[15px] font-semibold text-[#11313B]">
+        Preview attachment
+      </h3>
+
+      <button
+        type="button"
+        id="closeSupportAttachmentPreview"
+        class="text-[#7C8AA0] text-[22px] cursor-pointer"
+      >
+        ×
+      </button>
+    </div>
+
+    <div
+      id="supportAttachmentPreview"
+      class="w-full min-h-[320px] max-h-[420px] bg-[#F9FAFB] flex items-center justify-center p-[16px] overflow-auto"
+    ></div>
+
+    <div class="flex items-center gap-[10px] p-[14px] border-t border-[#E5E7EB] bg-white">
+      <input
+        id="supportAttachmentMessageInput"
+        type="text"
+        placeholder="Type your reply..."
+        class="flex-1 h-[44px] rounded-[10px] border border-[#D0D5DD] px-[14px] text-[13px] outline-none"
+      />
+
+      <button
+        type="button"
+        id="sendSupportAttachmentBtn"
+        class="h-[44px] px-[20px] rounded-[10px] cursor-pointer bg-[#1687A7] text-white text-[13px] font-medium"
+      >
+        Send
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Driver document preview pop image  -->
+
+<div
+  id="documentPreviewOverlay"
+  class="hidden fixed inset-0 z-[5000] bg-black/60 backdrop-blur-sm flex items-center justify-center px-[20px]"
+>
+  <div
+    class="relative w-full max-w-[760px] bg-white rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.25)] overflow-hidden"
+  >
+    <div class="h-[64px] px-[22px] flex items-center justify-between border-b border-[#E5E7EB]">
+      <div>
+        <h3 id="documentPreviewTitle" class="text-[#11313B] text-[17px] font-semibold">
+          Document Preview
+        </h3>
+        <p id="documentPreviewCounter" class="text-[#7C8AA0] text-[12px] mt-[2px]">
+          1 of 1
+        </p>
+      </div>
+
+      <button
+        id="closeDocumentPreviewBtn"
+        type="button"
+        class="w-[36px] h-[36px] rounded-full bg-[#F1F5F8] text-[#11313B] flex items-center justify-center cursor-pointer"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="relative bg-[#F8FAFC] min-h-[420px] flex items-center justify-center p-[24px]">
+      <!-- <button
+        id="documentPreviewPrevBtn"
+        type="button"
+        class="hidden absolute left-[18px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] rounded-full bg-white shadow text-[#11313B] flex items-center justify-center cursor-pointer" style="display: none; z-index: 99999;"
+      >
+        <i class="fa-solid fa-chevron-left"></i>
+      </button> -->
+
+      <div id="documentPreviewContent" class="w-full flex items-center justify-center w-full min-h-[500px]"></div>
+
+      <!-- <button
+        id="documentPreviewNextBtn"
+        type="button"
+        class="hidden absolute right-[18px] top-1/2 -translate-y-1/2 w-[42px] h-[42px] rounded-full bg-white shadow text-[#11313B] flex items-center justify-center cursor-pointer  " style="display: none; z-index: 99999;"
+      >
+        <i class="fa-solid fa-chevron-right"></i>
+      </button> -->
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
+<script src="./assets/js/dashboard.js"></script>
+</body>
+</html>

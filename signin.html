@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Sign In</title>
+  <link rel="stylesheet" href="assets/css/output.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="m-0 p-0 bg-[#F9F9F9] overflow-hidden">
+
+  <main class="relative w-screen h-screen overflow-hidden bg-[#F9F9F9]">
+  <!-- BACKGROUND -->
+  <div class="absolute inset-0 w-full h-full">
+    <img
+      src="assets/images/background.png"
+      alt="Background"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-black/40"></div>
+  </div>
+
+  <!-- CENTERED CARD WRAPPER -->
+  <div class="relative z-10 w-full h-full flex items-center justify-center px-[20px]">
+    <!-- CARD -->
+    <section
+      class="w-[452px] max-w-full h-[593px] rounded-[10px] bg-white pt-[40px] pr-[33px] pb-[40px] pl-[33px] shadow-[0_48px_100px_0_rgba(17,12,46,0.15)]"
+    >
+      <div class="h-full flex flex-col items-center">
+        <!-- LOGO -->
+        <div class="shrink-0">
+          <img
+            src="assets/images/along-logo.png"
+            alt="Along Logo"
+            class="w-[124px] h-[102px] object-contain"
+          />
+        </div>
+
+        <!-- TITLE BLOCK -->
+        <div class="mt-[8px] flex flex-col items-center shrink-0">
+          <h1
+            class="w-[386px] max-w-full h-[72px] text-center text-[34px] leading-[36px] font-semibold text-[#11313B]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Admin Dashboard<br />
+            Sign-In
+          </h1>
+
+          <p
+            class="mt-[16px] w-[203px] max-w-full h-[20px] whitespace-nowrap text-center text-[14px] leading-[20px] font-medium tracking-[0.25px] text-[#7C8AA0]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Access your admin tools securely
+          </p>
+        </div>
+
+        <div
+          id="signinMessage"
+          class="hidden w-[320px] max-w-full rounded-[6px] px-[12px] py-[10px] text-center text-[14px] font-medium mb-[16px]"
+          style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+        ></div>
+
+        <!-- FORM -->
+        <form id="adminSignInForm" class="mt-[20px] w-[320px] max-w-full flex flex-col">
+          <!-- EMAIL -->
+          <div class="flex flex-col">
+            <label
+              for="email"
+              class="w-full text-[12px] leading-[16px] font-medium tracking-[0.4px] text-[#7C8AA0]"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              Email
+            </label>
+
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="mt-[4px] w-full h-[45px] rounded-[5px] border border-black/10 bg-white px-3 text-[#11313B] outline-none"
+            />
+          </div>
+
+          <!-- PASSWORD -->
+          <div class="mt-[16px] flex flex-col">
+            <label
+              for="password"
+              class="w-full text-[12px] leading-[16px] font-medium tracking-[0.4px] text-[#7C8AA0]"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              Password
+            </label>
+
+            <div class="relative mt-[4px] w-full h-[45px]">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                class="w-full h-full rounded-[5px] border border-black/10 bg-white px-3 pr-10 text-[#11313B] outline-none"
+              />
+
+              <button
+                type="button"
+                id="togglePassword"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-[#7C8AA0]"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7Z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- FORGOT + REMEMBER -->
+          <div class="mt-[12px] flex flex-col gap-[4px]">
+            <a
+              href="./create-new-password.html"
+              class="text-[12px] leading-[16px] font-medium tracking-[0.25px] text-[#F08B7E]"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              Forgot Password?
+            </a>
+
+            <label
+              class="flex items-center gap-2 text-[12px] leading-[16px] font-medium tracking-[0.25px] text-[#7C8AA0]"
+              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+            >
+              <input type="checkbox" id="rememberMe" class="w-4 h-4" />
+              Remember Me
+            </label>
+          </div>
+
+          <!-- BUTTON -->
+          <button
+            type="submit"
+            id="signInBtn"
+            class="mt-[16px] w-full h-[45px] rounded-[5px] bg-gradient-to-r from-[#6FE7F7] to-[#49D6F2] text-white text-[14px] font-medium"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Sign In
+          </button>
+
+          <!-- SUPPORT -->
+          <p
+            class="mt-[16px] text-center text-[12px] leading-[16px] font-medium tracking-[0.25px] text-[#7C8AA0]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Need help?
+            <a href="#" class="text-[#F08B7E]">Contact Support</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+
+  <script src="/assets/js/signin.js"></script>
+</body>
+</html>

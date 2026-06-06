@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Your Phone Number</title>
+  <link rel="stylesheet" href="assets/css/output.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="m-0 p-0 bg-[#F9F9F9] overflow-hidden">
+
+ <main class="relative w-screen h-screen overflow-hidden bg-[#F9F9F9]">
+  <!-- BACKGROUND -->
+  <div class="absolute inset-0 w-full h-full">
+    <img
+      src="assets/images/background.png"
+      alt="Background"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-black/40"></div>
+  </div>
+
+  <!-- CENTERED CARD WRAPPER -->
+  <div class="relative z-10 w-full h-full flex items-center justify-center px-[20px]">
+    <!-- CARD -->
+    <section
+      class="w-[452px] max-w-full h-[593px] rounded-[10px] bg-white pt-[40px] pr-[33px] pb-[40px] pl-[33px] shadow-[0_48px_100px_0_rgba(17,12,46,0.15)]"
+    >
+      <div class="h-full flex flex-col items-center">
+        <!-- LOGO -->
+        <div class="shrink-0">
+          <img
+            src="assets/images/along-logo.png"
+            alt="Along Logo"
+            class="w-[124px] h-[102px] object-contain"
+          />
+        </div>
+
+        <!-- MESSAGE BAR -->
+        <div
+          id="otpMessage"
+          class="hidden w-[320px] max-w-full mb-[10px] rounded-[5px] px-[12px] py-[10px] text-[12px] font-medium text-center"
+          style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+        ></div>
+
+        <!-- TITLE -->
+        <div class="mt-[60px] flex flex-col items-center shrink-0">
+          <h1
+            class="w-[386px] max-w-full text-center text-[34px] leading-[36px] font-semibold text-[#11313B]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Verify your phone number
+          </h1>
+
+          <p
+            class="mt-[20px] w-[376px] max-w-full text-center text-[#7C8AA0] text-[13.52px] leading-[17.74px] font-medium tracking-[0.42px]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            We just sent an OTP code to your phone number
+            <!-- <span class="text-[#F08B7E]">(480) ***-0103</span>. -->
+            Enter your OTP code.
+          </p>
+        </div>
+
+        <!-- OTP BLOCK -->
+        <div class="mt-[28px] w-[320px] max-w-full flex flex-col">
+          <label
+            for="otp-1"
+            class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium tracking-[0.4px]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            OTP
+          </label>
+
+          <div class="mt-[8px] flex items-center justify-between gap-[8px]">
+            <input type="text" maxlength="1" id="otp-1" class="otp-input" />
+            <input type="text" maxlength="1" id="otp-2" class="otp-input" />
+            <input type="text" maxlength="1" id="otp-3" class="otp-input" />
+            <input type="text" maxlength="1" id="otp-4" class="otp-input" />
+            <input type="text" maxlength="1" id="otp-5" class="otp-input" />
+            <input type="text" maxlength="1" id="otp-6" class="otp-input" />
+          </div>
+
+          <p
+            class="mt-[16px] text-[#7C8AA0] text-[11.83px] leading-[16.9px] font-medium tracking-[0.21px]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Resend Code in <span id="countdown">01:56</span>
+          </p>
+
+          <p
+            class="mt-[8px] text-[11.83px] leading-[16.9px] font-medium tracking-[0.21px] text-[#7C8AA0]"
+            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+          >
+            Didn't get a code?
+            <a href="#" id="resendOtp" class="text-[#F08B7E]">Resend OTP</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+  <script src="assets/js/verify.js"></script>
+
+  <style>
+    .otp-input {
+      width: 45px;
+      height: 45px;
+      border-radius: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: #F9F9F9;
+      text-align: center;
+      font-size: 20px;
+      color: #11313B;
+      outline: none;
+      font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    .otp-input:focus {
+      border-color: #49D6F2;
+      box-shadow: 0 0 0 1px #49D6F2;
+    }
+  </style>
+</body>
+</html>
