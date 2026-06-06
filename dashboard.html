@@ -291,7 +291,7 @@
                 class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
                 style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
               >
-                 Earnings & Payout 
+                Payout 
               </span>
             </a>
 
@@ -1739,7 +1739,7 @@
     <!-- USER DIRECTORY -->
     <div class="mt-[22px]">
       <h2 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
-        Customer Directory
+        Customers
       </h2>
 
       <div class="mt-[18px] w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
@@ -1953,10 +1953,9 @@
               >
                 <option value="">All Status</option>
                 <option value="pending">Pending</option>
-                <option value="in_transit">In Transit</option>
+                <option value="in_progress">In progress</option>
                 <option value="delivered">Delivered</option>
-                <option value="arrived">Arrived</option>
-                <option value="failed">Failed</option>
+               
               </select>
 
               
@@ -2124,7 +2123,7 @@
       <div class="flex items-start justify-between shrink-0">
         <div>
           <h1 class="text-[#11313B] text-[34px] leading-[34px] font-semibold">
-            Earnings & Payout 
+             Payout 
           </h1>
           <p class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium">
             View and manage payout and earnings
@@ -2135,7 +2134,7 @@
       <div class="mt-[18px] px-[4px]">
 
   <!-- TOP ROW -->
-  <div class="grid grid-cols-3 gap-[12px]">
+  <div class="grid grid-cols-4 gap-[12px]">
 
     <!-- All Payments -->
     <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
@@ -2182,15 +2181,7 @@
       ></h3>
     </div>
 
-  </div>
-
-  <!-- GAP BETWEEN ROWS -->
-  <div class="mt-[24px]"></div>
-
-  <!-- BOTTOM ROW -->
-  <div class="grid grid-cols-3 gap-[12px]">
-
-    <!-- Failed Payments -->
+       <!-- Failed Payments -->
     <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
       <div class="flex items-center gap-[8px]">
         <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
@@ -2205,8 +2196,31 @@
       ></h3>
     </div>
 
+  </div>
+
+  <!-- GAP BETWEEN ROWS -->
+  <div class="mt-[24px]"></div>
+
+  <!-- BOTTOM ROW -->
+  <div class="grid grid-cols-3 gap-[12px]">
+
+    <!-- Failed Payments -->
+    <!-- <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
+          <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[13px] font-medium">Failed Payments</p>
+      </div>
+
+      <h3
+        id="paymentFailedStats"
+        class="mt-[10px] text-[#E57373] text-[20px] font-semibold"
+      ></h3>
+    </div> -->
+
     <!-- Total Earnings -->
-    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <!-- <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
       <div class="flex items-center gap-[8px]">
         <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
           <i class="fa-solid fa-sack-dollar text-[#3BB273] text-[12px]"></i>
@@ -2218,10 +2232,10 @@
         id="paymentTotalEarningsStats"
         class="mt-[10px] text-[#3BB273] text-[20px] font-semibold"
       ></h3>
-    </div>
+    </div> -->
 
     <!-- Earnings This Month -->
-    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <!-- <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
       <div class="flex items-center gap-[8px]">
         <div class="w-[28px] h-[28px] rounded-full bg-[#EEF4FF] flex items-center justify-center">
           <i class="fa-solid fa-calendar-days text-[#2F80ED] text-[12px]"></i>
@@ -2233,7 +2247,7 @@
         id="paymentMonthlyEarningsStats"
         class="mt-[10px] text-[#2F80ED] text-[20px] font-semibold"
       ></h3>
-    </div>
+    </div> -->
 
   </div>
 
@@ -2241,7 +2255,7 @@
 
       <div class="mt-[18px] shrink-0">
         <h2 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
-          Payment Directory
+          Payout
         </h2>
       </div>
 
@@ -2320,6 +2334,8 @@
           <div><p class="text-[#7C8AA0]">Status</p><div id="payoutDetailsStatus" class="mt-[5px]"></div></div>
           <div><p class="text-[#7C8AA0]">Date Requested</p><p id="payoutDetailsRequestedDate" class="mt-[5px] font-semibold"></p></div>
           <div><p class="text-[#7C8AA0]">Date Processed</p><p id="payoutDetailsProcessedDate" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]">Transaction Id</p><p id="payoutDetailsTransactionId" class="mt-[5px] font-semibold"></p></div>
+          
         </div>
       </div>
 
@@ -2330,7 +2346,7 @@
           <div><p class="text-[#7C8AA0]">Bank Name</p><p id="payoutDetailsBankName" class="mt-[5px] font-semibold"></p></div>
           <div><p class="text-[#7C8AA0]">Account Name</p><p id="payoutDetailsAccountName" class="mt-[5px] font-semibold"></p></div>
           <div><p class="text-[#7C8AA0]">Account Type</p><p id="payoutDetailsAccountType" class="mt-[5px] font-semibold capitalize"></p></div>
-          <div><p class="text-[#7C8AA0]">Masked Account Number</p><p id="payoutDetailsMaskedAccount" class="mt-[5px] font-semibold"></p></div>
+          <div><p class="text-[#7C8AA0]"> Account Number</p><p id="payoutDetailsMaskedAccount" class="mt-[5px] font-semibold"></p></div>
         </div>
       </div>
 
@@ -2826,45 +2842,81 @@
       <div class="w-full min-w-0 rounded-[14px] bg-white px-[22px] py-[18px] " style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
         <!-- profile content  -->
         <div id="settingsProfilePanel" class="settingsPanel">
-          <div class="flex justify-center">
-            <div class="relative">
-              <img src="assets/images/profile icon.png" class="w-[86px] h-[86px] rounded-full object-cover" />
-              <button type="button" class="absolute bottom-0 right-0 w-[30px] h-[30px] rounded-full bg-[#C98A3B] text-white flex items-center justify-center">
-                <i class="fa-solid fa-camera text-[12px]"></i>
-              </button>
-            </div>
-          </div>
+  <div class="flex justify-center">
+    <div class="relative">
+      <img
+        id="settingsProfilePhotoPreview"
+        src="" alt="picture"
+        class="w-[86px] h-[86px] rounded-full object-cover"
+      />
 
-          <div class="mt-[24px] grid grid-cols-2 gap-[14px]">
-            <div>
-              <label class="text-[#7C8AA0] text-[13px] font-medium">First Name</label>
-              <input id="settingsFirstName" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="Wade" />
-            </div>
+      <input
+        id="settingsProfilePhotoInput"
+        type="file"
+        accept="image/*"
+        class="hidden"
+      />
 
-            <div>
-              <label class="text-[#7C8AA0] text-[13px] font-medium">Last Name</label>
-              <input id="settingsLastName" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="Warren" />
-            </div>
+      <button
+        id="settingsProfilePhotoBtn"
+        type="button"
+        class="absolute bottom-0 right-0 w-[30px] h-[30px] rounded-full bg-[#C98A3B] text-white flex items-center justify-center"
+      >
+        <i class="fa-solid fa-camera text-[12px]"></i>
+      </button>
+    </div>
+  </div>
 
-            <div>
-              <label class="text-[#7C8AA0] text-[13px] font-medium">Email</label>
-              <input id="settingsEmail" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="Wade@gmail.com" />
-            </div>
+  <div class="mt-[24px] grid grid-cols-2 gap-[14px]">
+    <div>
+      <label class="text-[#7C8AA0] text-[13px] font-medium">First Name</label>
+      <input
+        id="settingsFirstName"
+        class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]"
+        value="Wade" disabled
+      />
+    </div>
 
-            <div>
-              <label class="text-[#7C8AA0] text-[13px] font-medium">Phone Number</label>
-              <input id="settingsPhone" class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]" value="(207) 555-0119" />
-            </div>
-          </div>
+    <div>
+      <label class="text-[#7C8AA0] text-[13px] font-medium">Last Name</label>
+      <input
+        id="settingsLastName"
+        class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]"
+        value="Warren" disabled
+      />
+    </div>
 
-       
+    <div>
+      <label class="text-[#7C8AA0] text-[13px] font-medium">Email</label>
+      <input
+        id="settingsEmail"
+        class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]"
+        value="Wade@gmail.com" disabled
+      />
+    </div>
 
-          <div class="mt-[22px] flex justify-end">
-            <button id="settingsProfileUpdateBtn" type="button" class="h-[42px] px-[22px] rounded-[8px] bg-[#30BBC7] text-white text-[14px] font-medium">
-              Update
-            </button>
-          </div>
-        </div>
+    <div>
+      <label class="text-[#7C8AA0] text-[13px] font-medium">Phone Number</label>
+      <input
+        id="settingsPhone"
+        class="mt-[6px] w-full h-[44px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[#11313B] text-[14px]"
+        value="(207) 555-0119" disabled
+      />
+    </div>
+  </div>
+
+  <div class="mt-[22px] flex justify-end">
+    <button
+      id="settingsProfileUpdateBtn"
+      type="button"
+      class="h-[42px] px-[22px] rounded-[8px] bg-[#30BBC7] text-white text-[14px] font-medium"
+    >
+      Update
+    </button>
+  </div>
+</div>
+
+        <!-- password panel -->
 <div id="settingsPasswordPanel" class="settingsPanel hidden">
   <div>
     <h2 class="text-[#11313B] text-[18px] font-semibold">
@@ -3286,8 +3338,89 @@
     </p>
   </div>
 </div>
+
+<div
+  id="profilePhotoConfirmModal"
+  class="hidden fixed inset-0 z-[6000] flex items-center justify-center"
+  style="background: rgba(16,24,40,.7);"
+>
+  <div
+    class="bg-white rounded-[16px] w-[380px] p-[24px] text-center"
+  >
+    <img
+      id="profilePhotoModalPreview"
+      src=""
+      class="w-[90px] h-[90px] rounded-full object-cover mx-auto border border-[#D0D5DD]"
+    />
+
+    <p class="mt-[18px] text-[#11313B] text-[15px] font-medium">
+      Profile photo selected successfully
+    </p>
+
+    <div class="mt-[20px] flex justify-center gap-[12px]">
+      <button
+        id="cancelProfilePhotoBtn"
+        type="button"
+        class="h-[42px] px-[20px] rounded-[8px] border border-[#D0D5DD]"
+      >
+        Cancel
+      </button>
+
+      <button
+        id="confirmProfilePhotoBtn"
+        type="button"
+        class="h-[42px] px-[20px] rounded-[8px] bg-[#30BBC7] text-white"
+      >
+        Update
+      </button>
+    </div>
+  </div>
+</div>
   </div>
 </section>
+
+<!-- ================= LOGOUT SECTION ================= -->
+<section
+  id="logoutSection"
+  class="hidden absolute top-[100px] left-0 w-[1070px] h-[800px] p-[20px]  rounded-[6px]"
+>
+  <div class="w-full h-full flex items-center justify-center">
+    <div
+      class="w-[520px] rounded-[18px] bg-white border border-[#E5E7EB] px-[30px] py-[40px] text-center shadow-sm"
+    >
+      <div class="mx-auto w-[64px] h-[64px] rounded-full bg-[#FFF5F5] text-[#E5484D] flex items-center justify-center">
+        <i class="fa-solid fa-right-from-bracket text-[26px]"></i>
+      </div>
+
+      <h2 class="mt-[25px] text-[#11313B] text-[26px] font-bold">
+        Logout
+      </h2>
+
+      <p class="mt-[8px] text-[#7C8AA0] text-[14px]">
+        Are you sure you want to logout from your account?
+      </p>
+
+      <div class="mt-[28px] flex items-center justify-center gap-[30px]">
+        <button
+          id="cancelLogoutBtn"
+          type="button"
+          class="h-[40px] px-[22px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[14px] font-medium"
+        >
+          Cancel
+        </button>
+
+        <button
+          id="confirmLogoutBtn"
+          type="button"
+          class="h-[40px] px-[24px] rounded-[8px] bg-[#30BBC7] text-white text-[14px] font-medium"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
       </section>
     </section>
 
@@ -3468,6 +3601,8 @@
     </div>
   </div>
 </div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script>
 <script src="./assets/js/dashboard.js"></script>

@@ -27,7 +27,7 @@ function renderAdminProfile(user) {
 
   const fullName = getAdminFullName(user);
   const initials = getInitialsFromUser(user);
-  const image = user.profile_image_url || "";
+  const image = user.profile_photo_url || "";
 
   if (nameEl) nameEl.textContent = fullName;
 
@@ -52,9 +52,38 @@ function loadAdminHeaderFromSession() {
   renderAdminProfile(user);
 }
 
+async function loadAdminProfile() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/admin/profile`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${AUTH_TOKEN}`
+      }
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Failed to load profile");
+    }
+
+    const user = result.data;
+
+    sessionStorage.setItem("admin_user", JSON.stringify(user));
+
+    renderAdminProfile(user);
+    renderSettingsProfile(user);
+
+    return user;
+  } catch (error) {
+    console.error("Admin profile error:", error);
+  }
+}
 
 document.addEventListener("DOMContentLoaded", function () {
   loadAdminHeaderFromSession();
+  loadAdminProfile();
 });
 function showGlobalLoader() {
   const loader = document.getElementById("globalPageLoader");
@@ -127,7 +156,13 @@ const SIDEBAR_ITEMS = [
     iconId: "sidebarSettingsIcon",
     textId: "sidebarSettingsText",
     sectionId: "settingsSection"
-  }
+  },
+  {
+  linkId: "sidebarLogoutLink",
+  iconId: "sidebarLogoutIcon",
+  textId: "sidebarLogoutText",
+  sectionId: "logoutSection"
+}
 ];
 
 let payments = [];
@@ -148,7 +183,8 @@ const ROUTE_MAP = {
   paymentsSection: "#payout",
   supportRequestsSection: "#support-requests",
   settingsSection: "#settings",
-  notificationsSection: "#notifications"
+  notificationsSection: "#notifications",
+  logoutSection: "#logout"
 };
 
 const HASH_TO_SECTION = {
@@ -159,7 +195,8 @@ const HASH_TO_SECTION = {
   "#payout": "paymentsSection",
   "#support-requests": "supportRequestsSection",
   "#settings": "settingsSection",
-    "#notifications": "notificationsSection"
+    "#notifications": "notificationsSection",
+    "#logout": "logoutSection"
 };
 
 const ALL_MAIN_SECTION_IDS = [
@@ -275,16 +312,23 @@ function loadSectionFromHash() {
     return;
   }
 
-  if (hash.startsWith("#payout/details/")) {
-    const payoutId = hash.replace("#payout/details/", "");
+ if (hash === "#payout") {
+  switchSidebarTab(
+    "paymentsSection",
+    "sidebarPaymentsLink",
+    "sidebarPaymentsIcon",
+    "sidebarPaymentsText",
+    false
+  );
 
-    showDashboardSection("paymentsSection", false);
-    resetSidebarMenuStyles();
-    activateSidebarMenu("sidebarPaymentsLink", "sidebarPaymentsIcon", "sidebarPaymentsText");
+  document.getElementById("payoutDetailsView")?.classList.add("hidden");
+  document.getElementById("paymentsListView")?.classList.remove("hidden");
 
-    openPayoutDetailsPage(payoutId, false);
-    return;
-  }
+  loadPaymentStats();
+  loadPaymentsFromUrl();
+
+  return;
+}
 
   if (hash === "#drivers") {
     switchSidebarTab(
@@ -397,6 +441,18 @@ function loadSectionFromHash() {
   false
 );
 
+if (hash === "#logout") {
+  switchSidebarTab(
+    "logoutSection",
+    "sidebarLogoutLink",
+    "sidebarLogoutIcon",
+    "sidebarLogoutText",
+    false
+  );
+
+  return;
+}
+
 if (typeof loadDashboardStats === "function") {
   loadDashboardStats();
 }
@@ -461,20 +517,26 @@ function setupSidebarNavigation() {
     link.onclick = function (e) {
       e.preventDefault();
 
-      switchSidebarTab(
-        item.sectionId,
-        item.linkId,
-        item.iconId,
-        item.textId,
-        true
-      );
+      const route = ROUTE_MAP[item.sectionId];
 
-      refreshSidebarSection(item.sectionId);
+      if (route) {
+        window.location.hash = route;
+      } else {
+        switchSidebarTab(
+          item.sectionId,
+          item.linkId,
+          item.iconId,
+          item.textId,
+          false
+        );
+      }
     };
   });
 
   loadSectionFromHash();
 }
+
+
 
 function openNotificationsSection() {
   showDashboardSection("notificationsSection", true);
@@ -932,15 +994,15 @@ function getDriversApiUrl() {
   params.set("per_page", ROWS_PER_PAGE || 5);
 
   if (currentSearchTerm && currentSearchTerm.trim() !== "") {
-  params.set("search", currentSearchTerm.trim());
-}
-
-  if (currentStatusFilter === "pending") {
-    return `${API_BASE_URL}/admin/drivers/pending?${params.toString()}`;
+    params.set("search", currentSearchTerm.trim());
   }
 
-  if (currentStatusFilter === "approved") {
-    return `${API_BASE_URL}/admin/drivers/approved?${params.toString()}`;
+  if (currentStatusFilter === "active") {
+    params.set("approval_status", "approved");
+  }
+
+  if (currentStatusFilter === "pending") {
+    params.set("approval_status", "pending");
   }
 
   return `${API_BASE_URL}/admin/drivers?${params.toString()}`;
@@ -950,90 +1012,6 @@ async function loadDriversFromApi() {
   await fetchDrivers(getDriversApiUrl());
 }
 
-/* =========================
-   APPLY SEARCH AND STATUS FILTER
-========================= */
-function applyFiltersAndRender() {
-  filteredDrivers = allDrivers.filter((driver) => {
-    const searchValue = currentSearchTerm.toLowerCase().trim();
-
-    const name = (driver.name || "").toLowerCase();
-    const email = (driver.email || "").toLowerCase();
-    const phone = (driver.phone || "").toLowerCase();
-
-    const statusValue = currentStatusFilter || "all";
-    const status = normalizeDriverStatus(driver);
-
-    const matchesSearch =
-      !searchValue ||
-      name.includes(searchValue) ||
-      email.includes(searchValue) ||
-      phone.includes(searchValue);
-
-    const matchesStatus =
-      statusValue === "all" ||
-      (
-        statusValue === "pending" &&
-        (
-          status === "pending" ||
-          status === "awaiting_review"
-        )
-      ) ||
-      status === statusValue;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  renderDriverTable(filteredDrivers);
-}
-
-/* =========================
-   NORMALIZE DRIVER STATUS
-========================= */
-function normalizeDriverStatus(driver) {
-  const isApproved =
-    driver?.is_approved === true ||
-    driver?.user?.driver_profile?.is_approved === true;
-
-  const allStepsApproved =
-    driver?.kyc_review?.all_steps_approved === true ||
-    driver?.user?.driver_profile?.kyc_review?.all_steps_approved === true;
-
-  const approvalStatus = (
-    driver?.approval_status ||
-    driver?.user?.driver_profile?.approval_status ||
-    ""
-  ).toLowerCase();
-
-  const accountStatus = (
-    driver?.status ||
-    driver?.user?.driver_profile?.status ||
-    ""
-  ).toLowerCase();
-
-  if (isApproved || allStepsApproved || approvalStatus === "approved") {
-    return "active";
-  }
-
-  if (approvalStatus === "rejected") {
-    return "inactive";
-  }
-
-  if (accountStatus === "active") {
-    return "active";
-  }
-
-  if (
-    accountStatus === "inactive" ||
-    accountStatus === "disabled" ||
-    accountStatus === "deactivated" ||
-    accountStatus === "rejected"
-  ) {
-    return "inactive";
-  }
-
-  return "pending";
-}
 
 /* =========================
    SETUP SEARCH INPUT
@@ -1065,17 +1043,11 @@ function setupStatusFilter() {
   const filterText = document.getElementById("driverStatusFilterText");
   const dropdownMenu = document.getElementById("driverStatusDropdownMenu");
 
-  if (!filterBtn || !filterText || !dropdownMenu) {
-    console.log("Status filter elements missing");
-    return;
-  }
+  if (!filterBtn || !filterText || !dropdownMenu) return;
 
   filterBtn.onclick = function (e) {
     e.preventDefault();
     e.stopPropagation();
-
-    console.log("STATUS FILTER CLICKED");
-
     dropdownMenu.classList.toggle("hidden");
   };
 
@@ -1090,7 +1062,7 @@ function setupStatusFilter() {
       filterText.textContent = this.textContent.trim();
       dropdownMenu.classList.add("hidden");
 
-      await fetchDrivers(getDriversApiUrl());
+      await fetchDrivers();
     };
   });
 
@@ -4130,7 +4102,7 @@ function syncDriverStatusEverywhere(newApprovalStatus, newStatus, reason = null)
   renderDriverTopStatus(selectedDriverProfile);
   updateDriverStatusActionButtons();
 
-  applyFiltersAndRender();
+  // applyFiltersAndRender();
   renderDriverStats(allDrivers);
 }
 
@@ -4313,7 +4285,6 @@ function normalizeSenderImage(url) {
   return `${baseUrl}/storage/${url}`;
 }
 
-
 function getUserImage(user) {
   return normalizeSenderImage(
     user.profile_photo_url ||
@@ -4323,11 +4294,66 @@ function getUserImage(user) {
 }
 
 async function loadSendersFromAPI(page = 1) {
-   
-  await loadSendersFromURL(
-    `${API_BASE_URL}/admin/users?page=${page}&per_page=5&role=customer`
-  );
-   
+  showGlobalLoader();
+
+  try {
+    const searchValue =
+      document.getElementById("senderSearchInput")?.value.trim() || "";
+
+    const params = new URLSearchParams();
+
+    params.set("page", page);
+    params.set("per_page", 5);
+
+    if (searchValue) {
+      params.set("search", searchValue);
+    }
+
+    const result = await fetchJSON(
+      `${API_BASE_URL}/admin/users?${params.toString()}`
+    );
+
+    if (!result.success || !Array.isArray(result.data)) {
+      throw new Error(result.message || "Failed to load users");
+    }
+
+    senders = result.data.map(mapApiUserToSender);
+
+    currentSenderPagination = result.pagination || null;
+    currentSenderPage = currentSenderPagination?.current_page || page;
+
+    renderSenders(senders);
+    renderSenderPagination(currentSenderPagination);
+  } catch (error) {
+    console.error("Users error:", error);
+    showActionPopupMessage(error.message || "Unable to load users.", "error");
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+
+function setupSenderSearch() {
+  const input = document.getElementById("senderSearchInput");
+  if (!input) return;
+
+  input.addEventListener("input", function () {
+    const value = this.value.toLowerCase().trim();
+
+    if (!value) {
+      renderSenders(senders);
+      renderSenderPagination(currentSenderPagination);
+      return;
+    }
+
+    const filtered = senders.filter((sender) =>
+      sender.name.toLowerCase().includes(value) ||
+      sender.email.toLowerCase().includes(value) ||
+      sender.phone.toLowerCase().includes(value)
+    );
+
+    renderSenders(filtered);
+  });
 }
 
 
@@ -4632,28 +4658,7 @@ function renderSenderStats(stats) {
   if (newThisMonth) newThisMonth.textContent = stats.newThisMonth || 0;
 }
 
-function setupSenderSearch() {
-  const input = document.getElementById("senderSearchInput");
-  if (!input) return;
 
-  input.addEventListener("input", function () {
-    const value = this.value.toLowerCase().trim();
-
-    if (!value) {
-      renderSenders(senders);
-      renderSenderPagination(currentSenderPagination);
-      return;
-    }
-
-    const filtered = senders.filter((sender) =>
-      sender.name.toLowerCase().includes(value) ||
-      sender.email.toLowerCase().includes(value) ||
-      sender.phone.toLowerCase().includes(value)
-    );
-
-    renderSenders(filtered);
-  });
-}
 
 function attachSenderViewEvents() {
   document.querySelectorAll(".viewSenderBtn").forEach((btn) => {
@@ -4844,7 +4849,8 @@ let currentDeliveryPage = 1;
 const deliveryRowsPerPage = 20;
 
 async function renderDeliveries(page = 1, updateUrl = true) {
-    showGlobalLoader();
+  showGlobalLoader();
+
   const body = document.getElementById("deliveryTableBody");
   if (!body) return;
 
@@ -4855,8 +4861,18 @@ async function renderDeliveries(page = 1, updateUrl = true) {
   body.innerHTML = `<p class="p-4 text-sm text-[#7C8AA0]">Loading tags...</p>`;
 
   try {
+    const params = new URLSearchParams();
+    const statusFilter = document.getElementById("statusFilter")?.value || "all";
+
+    params.set("page", page);
+    params.set("per_page", 5);
+
+    if (statusFilter !== "all") {
+      params.set("status_group", statusFilter);
+    }
+
     const result = await fetchJSON(
-      `${API_BASE_URL}/admin/tags?page=${page}&per_page=5`
+      `${API_BASE_URL}/admin/tags?${params.toString()}`
     );
 
     if (!result.success || !Array.isArray(result.data)) {
@@ -4874,8 +4890,9 @@ async function renderDeliveries(page = 1, updateUrl = true) {
   } catch (error) {
     console.log("Tags error:", error);
     body.innerHTML = `<p class="p-4 text-red-500">Error loading tags</p>`;
-  }
+  } finally {
     hideGlobalLoader();
+  }
 }
 
 function renderDeliveryPage() {
@@ -5188,7 +5205,9 @@ function setupDeliveriesSection() {
   renderDeliveries(pageFromUrl, false);
 
   document.getElementById("deliverySearch")?.addEventListener("input", applyDeliveryFilters);
-  document.getElementById("statusFilter")?.addEventListener("change", applyDeliveryFilters);
+  document.getElementById("statusFilter")?.addEventListener("change", function () {
+  renderDeliveries(1, true);
+});
   document.getElementById("sortFilter")?.addEventListener("change", applyDeliveryFilters);
 }
 
@@ -5756,6 +5775,9 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
         payout.reviewed_at || payout.completed_at
       );
 
+  document.getElementById("payoutDetailsTransactionId").textContent =
+  payout.stripe_transfer_id || "N/A";
+
     document.getElementById("payoutDetailsBankName").textContent =
       payout.bank_account?.bank_name || "N/A";
 
@@ -5766,7 +5788,7 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
       payout.bank_account?.account_type || "N/A";
 
     document.getElementById("payoutDetailsMaskedAccount").textContent =
-      payout.bank_account?.masked_account_number || "N/A";
+      payout.bank_account?.account_number || "N/A";
 
     document.getElementById("payoutDetailsAdminNotes").textContent =
       payout.admin_notes || "No admin notes";
@@ -7496,6 +7518,29 @@ document.addEventListener("DOMContentLoaded", setupSupportRequestsSection);
 //=============================SETTINGS SECTION==================================================
 
 
+let selectedProfilePhoto = null;
+
+function renderSettingsProfile(user) {
+  if (!user) return;
+
+  const photoPreview = document.getElementById("settingsProfilePhotoPreview");
+  const firstName = document.getElementById("settingsFirstName");
+  const lastName = document.getElementById("settingsLastName");
+  const email = document.getElementById("settingsEmail");
+  const phone = document.getElementById("settingsPhone");
+
+  if (photoPreview) {
+    photoPreview.src =
+      user.profile_photo_url ||
+      user.profile_image_url ||
+      "assets/images/profile icon.png";
+  }
+
+  if (firstName) firstName.value = user.first_name || "";
+  if (lastName) lastName.value = user.last_name || "";
+  if (email) email.value = user.email || "";
+  if (phone) phone.value = user.phone || "";
+}
 
 /* ================= SETTINGS TABS  ================= */
 
@@ -7522,28 +7567,128 @@ function setupSettingsTabs() {
     });
   });
 }
-
 /* ================= PROFILE UPDATE ================= */
 
 function setupSettingsProfileUpdate() {
+  const photoBtn = document.getElementById("settingsProfilePhotoBtn");
+  const photoInput = document.getElementById("settingsProfilePhotoInput");
+  const photoPreview = document.getElementById("settingsProfilePhotoPreview");
   const updateBtn = document.getElementById("settingsProfileUpdateBtn");
-  if (!updateBtn) return;
 
-  updateBtn.addEventListener("click", function () {
-    const profileData = {
-      firstName: document.getElementById("settingsFirstName")?.value || "",
-      lastName: document.getElementById("settingsLastName")?.value || "",
-      email: document.getElementById("settingsEmail")?.value || "",
-      phone: document.getElementById("settingsPhone")?.value || ""
-    };
+  const confirmBtn = document.getElementById("confirmProfilePhotoBtn");
+  const cancelBtn = document.getElementById("cancelProfilePhotoBtn");
+  const modal = document.getElementById("profilePhotoConfirmModal");
+  const modalPreview = document.getElementById("profilePhotoModalPreview");
 
-    localStorage.setItem("settingsProfileData", JSON.stringify(profileData));
+  if (
+    !photoBtn ||
+    !photoInput ||
+    !photoPreview ||
+    !updateBtn ||
+    !confirmBtn ||
+    !cancelBtn ||
+    !modal ||
+    !modalPreview
+  ) {
+    return;
+  }
 
-    if (typeof showActionPopupMessage === "function") {
-      showActionPopupMessage("Profile Picture updated successfully!");
+  // Open file picker
+  photoBtn.addEventListener("click", function () {
+    photoInput.click();
+  });
+
+  // Select image and show popup preview
+  photoInput.addEventListener("change", function () {
+    const file = this.files[0];
+
+    if (!file) return;
+
+    selectedProfilePhoto = file;
+
+    modalPreview.src = URL.createObjectURL(file);
+
+    modal.classList.remove("hidden");
+  });
+
+  // Cancel upload
+  cancelBtn.addEventListener("click", function () {
+    selectedProfilePhoto = null;
+
+    photoInput.value = "";
+
+    modal.classList.add("hidden");
+  });
+
+  // Upload image
+  confirmBtn.addEventListener("click", async function () {
+    try {
+      if (!selectedProfilePhoto) {
+        showActionPopupMessage(
+          "Please select a profile photo first.",
+          "error"
+        );
+        return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Updating...";
+
+      const formData = new FormData();
+      formData.append("photo", selectedProfilePhoto);
+
+      const response = await fetch(
+        `${API_BASE_URL}/admin/profile/photo`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${AUTH_TOKEN}`
+          },
+          body: formData
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || result.success === false) {
+        throw new Error(
+          result.message || "Failed to upload profile photo"
+        );
+      }
+
+     
+
+const updatedUser = result.data;
+
+sessionStorage.setItem("admin_user", JSON.stringify(updatedUser));
+
+photoPreview.src = updatedUser.profile_photo_url || "assets/images/profile icon.png";
+
+renderAdminProfile(updatedUser);
+renderSettingsProfile(updatedUser);
+
+selectedProfilePhoto = null;
+photoInput.value = "";
+
+modal.classList.add("hidden");
+
+showActionPopupMessage(
+  "Profile photo updated successfully!"
+);
+
+    } catch (error) {
+      showActionPopupMessage(
+        error.message || "Unable to update profile photo.",
+        "error"
+      );
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.textContent = "Update";
     }
   });
 }
+
 
 
 function setupSettingsPasswordToggle() {
@@ -7747,3 +7892,46 @@ document.addEventListener("DOMContentLoaded", function () {
     setupSettingsSecuritySave();
     setupSettingsSystemSave();
 });
+
+
+
+/* ================= END OF SETTINGS SECTION ================= */
+
+
+/* ================= LOGOUT SECTION ================= */
+function setupLogoutSection() {
+  const cancelBtn = document.getElementById("cancelLogoutBtn");
+  const confirmBtn = document.getElementById("confirmLogoutBtn");
+
+  cancelBtn?.addEventListener("click", function () {
+    window.location.hash = "#logout";
+  });
+
+  confirmBtn?.addEventListener("click", async function () {
+    try {
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Logging out...";
+
+      await fetch(`${API_BASE_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      });
+    } catch (error) {
+      console.log("Logout error:", error);
+    }
+
+    sessionStorage.clear();
+    localStorage.clear();
+
+    window.location.href = "signin.html";
+  });
+}
+
+document.addEventListener("DOMContentLoaded",function () {
+  setupLogoutSection();
+});
+
+/* ================= END OF LOGOUT SECTION ================= */
