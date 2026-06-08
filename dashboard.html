@@ -13,7 +13,7 @@
   <!-- FULL PAGE -->
 <main
   id="dashboardPage"
-  class="w-screen h-screen flex items-center  justify-center gap-[20px] overflow-auto"
+  class="w-screen h-screen flex items-stretch  justify-start gap-[20px] overflow-auto"
 >
   <!-- FIXED DASHBOARD CANVAS -->
   <section
@@ -807,25 +807,39 @@
               class="mt-[16px] w-full flex items-center justify-between"
             >
               <!-- search feature -->
-              <div
-                id="driverSearchWrap"
-                class="w-[409px] h-[38px] rounded-[5px] bg-[#F1F5F8] px-[8px] py-[11px] flex items-center gap-[10px]"
-              >
-                <span
-                  id="driverSearchIcon"
-                  class="text-[#7C8AA0] text-[14px] leading-none"
-                >
-                  🔍
-                </span>
+              <div class="flex items-center gap-[10px]">
 
-                <input
-                  id="driverSearchInput"
-                  type="text"
-                  placeholder="Search by name, or email "
-                  class="w-full bg-transparent outline-none text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium placeholder:text-[#7C8AA0]"
-                  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-                />
-              </div>
+  <!-- SEARCH INPUT -->
+  <div
+    id="driverSearchWrap"
+    class="w-[409px] h-[38px] rounded-[5px] bg-[#F1F5F8] px-[8px] py-[11px] flex items-center gap-[10px]"
+  >
+    <span
+      id="driverSearchIcon"
+      class="text-[#7C8AA0] text-[14px] leading-none"
+    >
+      🔍
+    </span>
+
+    <input
+      id="driverSearchInput"
+      type="text"
+      placeholder="Search by name, email, or phone"
+      class="w-full bg-transparent outline-none text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium placeholder:text-[#7C8AA0]"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    />
+  </div>
+
+  <!-- SEARCH BUTTON -->
+  <button
+    id="driverSearchBtn"
+    type="button"
+    class="h-[38px] px-[18px] rounded-[5px] bg-[#30BBC7] text-white text-[13px] font-medium cursor-pointer"
+  >
+    Search
+  </button>
+
+</div>
 
               <div id="driverStatusFilterWrap" class="relative w-[143px]">
                 <button
@@ -1043,7 +1057,7 @@
       >
         <img
           id="driverInformationAvatar"
-          src="assets/images/profile icon.png"
+          src=""
           alt="Driver Avatar"
           class="w-full h-full object-cover"
         />
@@ -1741,17 +1755,28 @@
       <h2 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
         Customers
       </h2>
+<div class="mt-[18px] flex items-center gap-[10px]">
 
-      <div class="mt-[18px] w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
-        <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
+  <div class="w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+    <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
 
-        <input
-          id="senderSearchInput"
-          type="text"
-          placeholder="Search by name or phone"
-          class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
-        />
-      </div>
+    <input
+      id="senderSearchInput"
+      type="text"
+      placeholder="Search by name or phone"
+      class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
+    />
+  </div>
+
+  <button
+    id="senderSearchBtn"
+    type="button"
+    class="h-[40px] px-[18px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-medium cursor-pointer"
+  >
+    Search
+  </button>
+
+</div>
     </div>
 
     <!-- TABLE -->
@@ -1842,7 +1867,7 @@
   </div>
 </section>
 
- <!-- ================= DELIVERIES SECTION ================= -->
+ <!-- ================= DELIVERIES/TAGS SECTION ================= -->
 
 <section
   id="deliveriesSection"
@@ -1933,34 +1958,47 @@
           </h2>
 
           <div class="mt-[12px] flex items-center justify-between gap-[10px]">
-            <!-- SEARCH -->
-            <div class="w-[360px] h-[38px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
-              <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[12px]"></i>
-              <input
-                id="deliverySearch"
-                type="text"
-                placeholder="Search by tag ID, user, location"
-                class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[12px]"
-              />
-            </div>
 
-            <!-- FILTERS -->
-            <div class="flex items-center gap-[8px]">
-              <!-- STATUS FILTER -->
-              <select
-                id="statusFilter"
-                class="h-[38px] w-[130px] cursor-pointer rounded-[8px] bg-[#F1F5F8] px-[10px] text-[12px] text-[#7C8AA0] outline-none"
-              >
-                <option value="">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="in_progress">In progress</option>
-                <option value="delivered">Delivered</option>
-               
-              </select>
+  <!-- SEARCH + BUTTON -->
+  <div class="flex items-center gap-[8px]">
 
-              
-            </div>
-          </div>
+    <div class="w-[360px] h-[38px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+      <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[12px]"></i>
+
+      <input
+        id="deliverySearch"
+        type="text"
+        placeholder="Search by tag ID, user, location"
+        class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[12px]"
+      />
+    </div>
+
+    <button
+      id="deliverySearchBtn"
+      type="button"
+      class="h-[38px] px-[18px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-medium cursor-pointer"
+    >
+      Search
+    </button>
+
+  </div>
+
+  <!-- FILTERS -->
+  <div class="flex items-center gap-[8px]">
+
+    <select
+      id="statusFilter"
+      class="h-[38px] w-[130px] cursor-pointer rounded-[8px] bg-[#F1F5F8] px-[10px] text-[12px] text-[#7C8AA0] outline-none"
+    >
+      <option value="">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="in_progress">In Progress</option>
+      <option value="delivered">Delivered</option>
+    </select>
+
+  </div>
+
+</div>
 
           <div class="mt-[12px] w-full">
             <div class="h-[38px] bg-[#F1F5F8] flex items-center text-[#667085] text-[11px] font-semibold w-full rounded-[6px]">
@@ -2260,31 +2298,49 @@
       </div>
 
       <div class="mt-[14px] flex items-center justify-between gap-[12px] shrink-0">
-        <div class="w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
-          <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
-          <input
-            id="paymentSearchInput"
-            type="text"
-            placeholder="Search by Transaction ID, or  Driver"
-            class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
-          />
-        </div>
 
-        <div class="flex items-center gap-[10px]">
-          <select
-            id="paymentStatusFilter"
-            class="h-[40px] w-[118px] rounded-[8px] bg-[#F1F5F8] px-[10px] text-[13px] text-[#7C8AA0] outline-none"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="approved">Approved</option>
-            <option value="completed">Completed</option>
-            <option value="rejected">Rejected</option>
-          </select>
+  <!-- SEARCH + BUTTON -->
+  <div class="flex items-center gap-[10px]">
 
-        </div>
-      </div>
+    <div class="w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+      <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
+
+      <input
+        id="paymentSearchInput"
+        type="text"
+        placeholder="Search by Transaction ID or Driver"
+        class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
+      />
+    </div>
+
+    <button
+      id="paymentSearchBtn"
+      type="button"
+      class="h-[40px] px-[18px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-medium cursor-pointer"
+    >
+      Search
+    </button>
+
+  </div>
+
+  <!-- FILTER -->
+  <div class="flex items-center gap-[10px]">
+
+    <select
+      id="paymentStatusFilter"
+      class="h-[40px] w-[118px] rounded-[8px] bg-[#F1F5F8] px-[10px] text-[13px] text-[#7C8AA0] outline-none"
+    >
+      <option value="all">All Status</option>
+      <option value="pending">Pending</option>
+      <option value="processing">Processing</option>
+      <option value="approved">Approved</option>
+      <option value="completed">Completed</option>
+      <option value="rejected">Rejected</option>
+    </select>
+
+  </div>
+
+</div>
 <div class="mt-[16px] w-full shrink-0">
   <div class="w-full h-[42px] bg-[#F1F5F8] flex items-center text-[#667085] text-[12px] leading-[16px] font-semibold">
     <div class="w-[160px] px-[10px]">Transaction ID</div>

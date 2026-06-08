@@ -410,6 +410,7 @@ function loadSectionFromHash() {
   }
 
  if (hash === "#settings") {
+  console.log("Loading settings section from hash route");
   switchSidebarTab(
     "settingsSection",
     "sidebarSettingsLink",
@@ -418,12 +419,7 @@ function loadSectionFromHash() {
     false
   );
 
-  if (typeof loadAdminProfile === "function") {
-    loadAdminProfile();
-  }
-
-  setupSettingsTabs();
-  setupSettingsPasswordToggle();
+  loadSettingsSection();
 
   return;
 }
@@ -494,11 +490,16 @@ function refreshSidebarSection(sectionId) {
 
   if (sectionId === "settingsSection") {
   if (typeof loadAdminProfile === "function") {
-    loadAdminProfile();
+    loadSettingsSection();
   }
 
-  setupSettingsTabs();
-  setupSettingsPasswordToggle();
+  const profileTab = document.querySelector(
+    '[data-target="settingsProfilePanel"]'
+  );
+
+  if (profileTab) {
+    profileTab.click();
+  }
 
   return;
 }
@@ -530,22 +531,31 @@ function setupSidebarNavigation() {
     if (!link) return;
 
     link.onclick = function (e) {
-      e.preventDefault();
+  e.preventDefault();
 
-      const route = ROUTE_MAP[item.sectionId];
+  const route = ROUTE_MAP[item.sectionId];
 
-      if (route) {
-        window.location.hash = route;
-      } else {
-        switchSidebarTab(
-          item.sectionId,
-          item.linkId,
-          item.iconId,
-          item.textId,
-          false
-        );
-      }
-    };
+  if (route) {
+    const currentHash = window.location.hash.split("?")[0];
+
+    if (currentHash === route) {
+      refreshSidebarSection(item.sectionId);
+      return;
+    }
+
+    window.location.hash = route;
+  } else {
+    switchSidebarTab(
+      item.sectionId,
+      item.linkId,
+      item.iconId,
+      item.textId,
+      false
+    );
+
+    refreshSidebarSection(item.sectionId);
+  }
+};
   });
 
   const logoutLink = document.getElementById("sidebarLogoutLink");
@@ -553,7 +563,12 @@ function setupSidebarNavigation() {
   if (logoutLink) {
     logoutLink.onclick = function (e) {
       e.preventDefault();
-      window.location.hash = "#logout";
+
+      if (window.location.hash === "#logout") {
+        loadSectionFromHash();
+      } else {
+        window.location.hash = "#logout";
+      }
     };
   }
 
@@ -1041,27 +1056,30 @@ async function loadDriversFromApi() {
 ========================= */
 function setupSearch() {
   const searchInput = document.getElementById("driverSearchInput");
-  if (!searchInput) return;
+  const searchBtn = document.getElementById("driverSearchBtn");
 
-  let searchTimer = null;
+  if (!searchInput || !searchBtn) return;
+
+  searchBtn.addEventListener("click", function () {
+    currentSearchTerm = searchInput.value.trim();
+    currentPage = 1;
+    loadDriversFromApi();
+  });
+
+  searchInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      currentSearchTerm = searchInput.value.trim();
+      currentPage = 1;
+      loadDriversFromApi();
+    }
+  });
 
   searchInput.addEventListener("input", function () {
-    currentSearchTerm = this.value.trim();
-    currentPage = 1;
-
-    clearTimeout(searchTimer);
-
-    // Don't search until at least 4 characters
-    if (
-      currentSearchTerm.length > 0 &&
-      currentSearchTerm.length < 4
-    ) {
-      return;
-    }
-
-    searchTimer = setTimeout(() => {
+    if (this.value.trim() === "") {
+      currentSearchTerm = "";
+      currentPage = 1;
       loadDriversFromApi();
-    }, 500);
+    }
   });
 }
 
@@ -4366,28 +4384,24 @@ async function loadSendersFromAPI(page = 1) {
 
 function setupSenderSearch() {
   const input = document.getElementById("senderSearchInput");
-  if (!input) return;
+  const searchBtn = document.getElementById("senderSearchBtn");
 
-  let senderSearchTimer = null;
+  if (!input || !searchBtn) return;
+
+  searchBtn.addEventListener("click", function () {
+    loadSendersFromAPI(1);
+  });
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      loadSendersFromAPI(1);
+    }
+  });
 
   input.addEventListener("input", function () {
-    const value = this.value.trim();
-
-    clearTimeout(senderSearchTimer);
-
-    if (!value) {
+    if (this.value.trim() === "") {
       loadSendersFromAPI(1);
-      return;
     }
-
-    // Wait until user types at least 4 characters
-    if (value.length < 4) {
-      return;
-    }
-
-    senderSearchTimer = setTimeout(() => {
-      loadSendersFromAPI(1);
-    }, 500);
   });
 }
 
@@ -6175,12 +6189,12 @@ function normalizePayoutStatus(status) {
 
 function setupPaymentSearchAndFilter() {
   const searchInput = document.getElementById("paymentSearchInput");
+  const searchBtn = document.getElementById("paymentSearchBtn");
   const statusFilter = document.getElementById("paymentStatusFilter");
 
-  let paymentSearchTimer = null;
-
   async function applyPaymentFilters() {
-    currentPaymentFilters.search = String(searchInput?.value || "").trim();
+    currentPaymentFilters.search =
+      String(searchInput?.value || "").trim();
 
     currentPaymentFilters.status = normalizePayoutStatus(
       statusFilter?.value || "all"
@@ -6191,29 +6205,36 @@ function setupPaymentSearchAndFilter() {
     await loadPayments();
   }
 
+  if (searchBtn) {
+    searchBtn.addEventListener("click", function () {
+      applyPaymentFilters();
+    });
+  }
+
   if (searchInput) {
-    searchInput.addEventListener("input", function () {
-      const searchValue = this.value.trim();
-
-      clearTimeout(paymentSearchTimer);
-
-      if (searchValue.length > 0 && searchValue.length < 4) {
-        return;
-      }
-
-      paymentSearchTimer = setTimeout(() => {
+    searchInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
         applyPaymentFilters();
-      }, 500);
+      }
+    });
+
+    searchInput.addEventListener("input", function () {
+      if (this.value.trim() === "") {
+        currentPaymentFilters.search = "";
+        updatePaymentPageUrl(1);
+        loadPayments();
+      }
     });
   }
 
   if (statusFilter) {
     statusFilter.addEventListener("change", function () {
-      clearTimeout(paymentSearchTimer);
       applyPaymentFilters();
     });
   }
 }
+
+
 document.addEventListener("DOMContentLoaded", () => {
     loadPaymentStats();
   loadPayments();
@@ -7614,12 +7635,24 @@ function renderSettingsProfile(user) {
 
 /* ================= SETTINGS TABS  ================= */
 
+async function loadSettingsSection() {
+  showGlobalLoader();
+
+  try {
+    await loadAdminProfile();
+
+    document.querySelector('[data-target="settingsProfilePanel"]')?.click();
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
 function setupSettingsTabs() {
   const tabs = document.querySelectorAll(".settingsTabBtn");
   const panels = document.querySelectorAll(".settingsPanel");
 
   tabs.forEach((tab) => {
-    tab.addEventListener("click", function () {
+    tab.onclick = function () {
       const targetId = this.dataset.target;
 
       tabs.forEach((item) => {
@@ -7634,7 +7667,7 @@ function setupSettingsTabs() {
 
       const panel = document.getElementById(targetId);
       if (panel) panel.classList.remove("hidden");
-    });
+    };
   });
 }
 /* ================= PROFILE UPDATE ================= */
