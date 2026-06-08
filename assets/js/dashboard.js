@@ -103,8 +103,11 @@ function hideGlobalLoader() {
 
 // ** =========================DRIVER MANANEGENT DASHBOARD JS========================= **
 const API_BASE_URL = "https://apialongcom-2arld62n.on-forge.com/api";
-const AUTH_TOKEN = "183|lbISX1Zr5qxKxuAPwrPVES1I05nmKAJRzr4NhZ9wc8433835";
+const AUTH_TOKEN = sessionStorage.getItem("auth_token");
 
+if (!AUTH_TOKEN) {
+  window.location.href = "signin.html";
+}
 let allDrivers = [];
 let filteredDrivers = [];
 let currentSearchTerm = "";
@@ -213,6 +216,7 @@ const ALL_MAIN_SECTION_IDS = [
   "supportRequestsSection",
   "settingsSection",
   "notificationsSection",
+  "logoutSection"
   
 ];
 
@@ -418,9 +422,11 @@ function loadSectionFromHash() {
     loadAdminProfile();
   }
 
+  setupSettingsTabs();
+  setupSettingsPasswordToggle();
+
   return;
 }
-
   if (hash === "#notifications") {
     switchSidebarTab(
       "notificationsSection",
@@ -436,16 +442,7 @@ function loadSectionFromHash() {
 
     return;
   }
-
- switchSidebarTab(
-  "dashboardHomeSection",
-  "sidebarDashboardLink",
-  "sidebarDashboardIcon",
-  "sidebarDashboardText",
-  false
-);
-
-if (hash === "#logout") {
+  if (hash === "#logout") {
   switchSidebarTab(
     "logoutSection",
     "sidebarLogoutLink",
@@ -456,6 +453,16 @@ if (hash === "#logout") {
 
   return;
 }
+
+ switchSidebarTab(
+  "dashboardHomeSection",
+  "sidebarDashboardLink",
+  "sidebarDashboardIcon",
+  "sidebarDashboardText",
+  false
+);
+
+
 
 if (typeof loadDashboardStats === "function") {
   loadDashboardStats();
@@ -486,11 +493,15 @@ function refreshSidebarSection(sectionId) {
   }
 
   if (sectionId === "settingsSection") {
-    setupSettingsTabs();
-    setupSettingsPasswordToggle();
-    return;
+  if (typeof loadAdminProfile === "function") {
+    loadAdminProfile();
   }
 
+  setupSettingsTabs();
+  setupSettingsPasswordToggle();
+
+  return;
+}
   if (sectionId === "paymentsSection") {
     loadPaymentStats();
     loadPaymentsFromUrl();
@@ -537,9 +548,17 @@ function setupSidebarNavigation() {
     };
   });
 
+  const logoutLink = document.getElementById("sidebarLogoutLink");
+
+  if (logoutLink) {
+    logoutLink.onclick = function (e) {
+      e.preventDefault();
+      window.location.hash = "#logout";
+    };
+  }
+
   loadSectionFromHash();
 }
-
 
 
 function openNotificationsSection() {
@@ -1032,9 +1051,17 @@ function setupSearch() {
 
     clearTimeout(searchTimer);
 
+    // Don't search until at least 4 characters
+    if (
+      currentSearchTerm.length > 0 &&
+      currentSearchTerm.length < 4
+    ) {
+      return;
+    }
+
     searchTimer = setTimeout(() => {
       loadDriversFromApi();
-    }, 400);
+    }, 500);
   });
 }
 
@@ -4341,22 +4368,26 @@ function setupSenderSearch() {
   const input = document.getElementById("senderSearchInput");
   if (!input) return;
 
+  let senderSearchTimer = null;
+
   input.addEventListener("input", function () {
-    const value = this.value.toLowerCase().trim();
+    const value = this.value.trim();
+
+    clearTimeout(senderSearchTimer);
 
     if (!value) {
-      renderSenders(senders);
-      renderSenderPagination(currentSenderPagination);
+      loadSendersFromAPI(1);
       return;
     }
 
-    const filtered = senders.filter((sender) =>
-      sender.name.toLowerCase().includes(value) ||
-      sender.email.toLowerCase().includes(value) ||
-      sender.phone.toLowerCase().includes(value)
-    );
+    // Wait until user types at least 4 characters
+    if (value.length < 4) {
+      return;
+    }
 
-    renderSenders(filtered);
+    senderSearchTimer = setTimeout(() => {
+      loadSendersFromAPI(1);
+    }, 500);
   });
 }
 
@@ -5363,6 +5394,11 @@ async function loadPayments(customUrl = null) {
 
   try {
     const result = await fetchPayouts(customUrl);
+    console.log("Selected Filter:", currentPaymentFilters.status);
+console.log("API Result:", result);
+console.log("Payout Statuses:",
+  (result.data || []).map(item => item.status)
+);
 
     payments = result.data || [];
     currentPaymentPagination = result.pagination || null;
@@ -6141,6 +6177,8 @@ function setupPaymentSearchAndFilter() {
   const searchInput = document.getElementById("paymentSearchInput");
   const statusFilter = document.getElementById("paymentStatusFilter");
 
+  let paymentSearchTimer = null;
+
   async function applyPaymentFilters() {
     currentPaymentFilters.search = String(searchInput?.value || "").trim();
 
@@ -6154,11 +6192,26 @@ function setupPaymentSearchAndFilter() {
   }
 
   if (searchInput) {
-    searchInput.oninput = applyPaymentFilters;
+    searchInput.addEventListener("input", function () {
+      const searchValue = this.value.trim();
+
+      clearTimeout(paymentSearchTimer);
+
+      if (searchValue.length > 0 && searchValue.length < 4) {
+        return;
+      }
+
+      paymentSearchTimer = setTimeout(() => {
+        applyPaymentFilters();
+      }, 500);
+    });
   }
 
   if (statusFilter) {
-    statusFilter.onchange = applyPaymentFilters;
+    statusFilter.addEventListener("change", function () {
+      clearTimeout(paymentSearchTimer);
+      applyPaymentFilters();
+    });
   }
 }
 document.addEventListener("DOMContentLoaded", () => {
@@ -6704,13 +6757,26 @@ function setupSupportSearch() {
   let searchTimer = null;
 
   input.addEventListener("input", function () {
-    currentSupportFilters.search = this.value.trim();
+    const value = this.value.trim();
 
     clearTimeout(searchTimer);
 
+    currentSupportFilters.search = value;
+
+    // Reset search
+    if (!value) {
+      loadSupportTicketsWithFilters(1);
+      return;
+    }
+
+    // Wait until at least 4 characters
+    if (value.length < 4) {
+      return;
+    }
+
     searchTimer = setTimeout(() => {
       loadSupportTicketsWithFilters(1);
-    }, 400);
+    }, 500);
   });
 }
 
