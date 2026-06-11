@@ -657,127 +657,88 @@
       <!-- ================= STATS CARDS ================= -->
 <section
   id="driverStatsSection"
-  class="w-full h-[92px] flex items-start gap-[16px]"
+  class="w-full  flex items-start gap-[16px] mb-[30px]"
 >
 
-  <!-- TOTAL DRIVERS -->
-  <div
-    id="totalDriversCard"
-    class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
+ <!-- DRIVER STATS -->
+<div class="w-full flex flex-col gap-[12px]">
 
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#EEF4FF] flex items-center justify-center">
-        <i class="fa-solid fa-users text-[#2F80ED] text-[12px]"></i>
+  <!-- FIRST ROW -->
+  <div class="grid grid-cols-3 gap-[12px]">
+
+    <!-- Total Drivers -->
+    <div class="h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#EEF4FF] flex items-center justify-center">
+          <i class="fa-solid fa-users text-[#2F80ED] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[14px] font-medium">Total Drivers</p>
       </div>
-
-      <p
-        id="totalDriversLabel"
-        class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
-        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-      >
-        Total Drivers
-      </p>
+      <p id="totalDriversValue" class="mt-[10px] text-[#11313B] text-[16px] font-semibold">--</p>
     </div>
 
-    <p
-      id="totalDriversValue"
-      class="mt-[10px] text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
-      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-    >
-      --
-    </p>
-  </div>
-
-  <!-- ACTIVE DRIVERS -->
-  <div
-    id="activeDriversCard"
-    class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
-
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#F3EEFF] flex items-center justify-center">
-        <i class="fa-solid fa-car-side text-[#7B61FF] text-[12px]"></i>
+    <!-- Pending Drivers -->
+    <div class="h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
+          <i class="fa-solid fa-clock text-[#C76A3A] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[14px] font-medium">Pending Drivers</p>
       </div>
-
-      <p
-        id="activeDriversLabel"
-        class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
-        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-      >
-        Active Drivers
-      </p>
+      <p id="pendingDriversValue" class="mt-[10px] text-[#C76A3A] text-[16px] font-semibold">--</p>
     </div>
 
-    <p
-      id="activeDriversValue"
-      class="mt-[10px] text-[#7B61FF] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
-      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-    >
-      --
-    </p>
-  </div>
-
-  <!-- AVG RATING -->
-  <div
-    id="avgRatingCard"
-    class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
-
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#FFF4EE] flex items-center justify-center">
-        <i class="fa-solid fa-star text-[#B26B5E] text-[12px]"></i>
+    <!-- Approved Drivers -->
+    <div class="h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+          <i class="fa-solid fa-circle-check text-[#3BB273] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[14px] font-medium">Approved Drivers</p>
       </div>
-
-      <p
-        id="avgRatingLabel"
-        class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
-        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-      >
-        Avg Rating
-      </p>
+      <p id="approvedDriversValue" class="mt-[10px] text-[#3BB273] text-[16px] font-semibold">--</p>
     </div>
 
-    <p
-      id="avgRatingValue"
-      class="mt-[10px] text-[#B26B5E] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
-      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-    >
-      --
-    </p>
   </div>
 
-  <!-- NOT APPROVED -->
-<div
-  id="notApprovedDriversCard"
-  class="flex-1 h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
-  style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
->
+  <!-- SECOND ROW -->
+  <div class="grid grid-cols-3 gap-[12px]">
 
-  <div class="flex items-center gap-[8px]">
-    <div class="w-[28px] h-[28px] rounded-full bg-[#FDECEF] flex items-center justify-center">
-      <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+    <!-- Suspended Drivers -->
+    <div class="h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#F3F4F6] flex items-center justify-center">
+          <i class="fa-solid fa-ban text-[#7C8AA0] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[14px] font-medium">Suspended Drivers</p>
+      </div>
+      <p id="suspendedDriversValue" class="mt-[10px] text-[#7C8AA0] text-[16px] font-semibold">--</p>
     </div>
 
-    <p
-      id="notApprovedDriversLabel"
-      class="text-[#7C8AA0] text-[14px] leading-[20px] tracking-[0.25px] font-medium"
-      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-    >
-      Not Approved
-    </p>
+    <!-- Rejected Drivers -->
+    <div class="h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#FDECEF] flex items-center justify-center">
+          <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[14px] font-medium">Rejected Drivers</p>
+      </div>
+      <p id="rejectedDriversValue" class="mt-[10px] text-[#E57373] text-[16px] font-semibold">--</p>
+    </div>
+
+    <!-- Average Rating -->
+    <div class="h-[100px] rounded-[16px] bg-white px-[16px] py-[16px] flex flex-col justify-center" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+      <div class="flex items-center gap-[8px]">
+        <div class="w-[28px] h-[28px] rounded-full bg-[#FFF4EE] flex items-center justify-center">
+          <i class="fa-solid fa-star text-[#B26B5E] text-[12px]"></i>
+        </div>
+        <p class="text-[#7C8AA0] text-[14px] font-medium">Avg Rating</p>
+      </div>
+      <p id="avgRatingValue" class="mt-[10px] text-[#B26B5E] text-[16px] font-semibold">--</p>
+    </div>
+
   </div>
 
-  <p
-    id="notApprovedDriversValue"
-    class="mt-[10px] text-[#E57373] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
-    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-  >
-    --
-  </p>
 </div>
 
 </section>
@@ -875,9 +836,33 @@
                   <button
                     type="button"
                     data-status="pending"
+                    class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] transition-all duration-200 hover:bg-[#EAF8F1] hover:text-[#3BB273]"
+                  >
+                    Pending 
+                  </button>
+
+                  <button
+                    type="button"
+                    data-status="pending"
                     class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] transition-all duration-200 hover:bg-[#FFF8EE] hover:text-[#F2B66D]"
                   >
                     Not Approved 
+                  </button>
+
+                  <button
+                    type="button"
+                    data-status="rejected"
+                    class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] transition-all duration-200 hover:bg-[#FFF8EE] hover:text-[#F2B66D]"
+                  >
+                    Rejected 
+                  </button>
+
+                   <button
+                    type="button"
+                    data-status="suspended"
+                    class="driverStatusOption h-[32px] text-left px-[8px] cursor-pointer rounded-[4px] text-[#7C8AA0] text-[12px] transition-all duration-200 hover:bg-[#FFF8EE] hover:text-[#F2B66D]"
+                  >
+                    Suspended
                   </button>
 
                 </div>
@@ -1960,29 +1945,28 @@
           <div class="mt-[12px] flex items-center justify-between gap-[10px]">
 
   <!-- SEARCH + BUTTON -->
-  <div class="flex items-center gap-[8px]">
+ <div class="flex items-center gap-[8px]">
 
-    <div class="w-[360px] h-[38px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
-      <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[12px]"></i>
+  <div class="w-[360px] h-[38px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+    <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[12px]"></i>
 
-      <input
-        id="deliverySearch"
-        type="text"
-        placeholder="Search by tag ID, user, location"
-        class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[12px]"
-      />
-    </div>
-
-    <button
-      id="deliverySearchBtn"
-      type="button"
-      class="h-[38px] px-[18px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-medium cursor-pointer"
-    >
-      Search
-    </button>
-
+    <input
+      id="deliverySearch"
+      type="text"
+      placeholder="Search by Order Number ."
+      class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[12px]"
+    />
   </div>
 
+  <button
+    id="deliverySearchBtn"
+    type="button"
+    class="h-[38px] px-[18px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-medium cursor-pointer"
+  >
+    Search
+  </button>
+
+</div>
   <!-- FILTERS -->
   <div class="flex items-center gap-[8px]">
 
@@ -2171,123 +2155,94 @@
 
       <div class="mt-[18px] px-[4px]">
 
-  <!-- TOP ROW -->
-  <div class="grid grid-cols-4 gap-[12px]">
+  <!-- PAYOUT STATS -->
+<div class="grid grid-cols-4 gap-[12px]">
 
-    <!-- All Payments -->
-    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#E8F5FB] flex items-center justify-center">
-          <i class="fa-solid fa-wallet text-[#49D6F2] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">All Payments</p>
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#E8F5FB] flex items-center justify-center">
+        <i class="fa-solid fa-wallet text-[#49D6F2] text-[12px]"></i>
       </div>
-
-      <h3
-        id="paymentTotalStats"
-        class="mt-[10px] text-[#11313B] text-[20px] font-semibold"
-      ></h3>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">All Payments</p>
     </div>
-
-    <!-- Completed Payments -->
-    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
-          <i class="fa-solid fa-circle-check text-[#3BB273] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Payments</p>
-      </div>
-
-      <h3
-        id="paymentCompletedStats"
-        class="mt-[10px] text-[#3BB273] text-[20px] font-semibold"
-      ></h3>
-    </div>
-
-    <!-- Pending Payments -->
-    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
-          <i class="fa-solid fa-clock text-[#C76A3A] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Payments</p>
-      </div>
-
-      <h3
-        id="paymentPendingStats"
-        class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold"
-      ></h3>
-    </div>
-
-       <!-- Failed Payments -->
-    <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
-          <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">Failed Payments</p>
-      </div>
-
-      <h3
-        id="paymentFailedStats"
-        class="mt-[10px] text-[#E57373] text-[20px] font-semibold"
-      ></h3>
-    </div>
-
+    <h3 id="paymentTotalStats" class="mt-[10px] text-[#11313B] text-[20px] font-semibold">0</h3>
   </div>
 
-  <!-- GAP BETWEEN ROWS -->
-  <div class="mt-[24px]"></div>
-
-  <!-- BOTTOM ROW -->
-  <div class="grid grid-cols-3 gap-[12px]">
-
-    <!-- Failed Payments -->
-    <!-- <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
-          <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">Failed Payments</p>
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
+        <i class="fa-solid fa-clock text-[#C76A3A] text-[12px]"></i>
       </div>
-
-      <h3
-        id="paymentFailedStats"
-        class="mt-[10px] text-[#E57373] text-[20px] font-semibold"
-      ></h3>
-    </div> -->
-
-    <!-- Total Earnings -->
-    <!-- <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
-          <i class="fa-solid fa-sack-dollar text-[#3BB273] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">Total Earnings</p>
-      </div>
-
-      <h3
-        id="paymentTotalEarningsStats"
-        class="mt-[10px] text-[#3BB273] text-[20px] font-semibold"
-      ></h3>
-    </div> -->
-
-    <!-- Earnings This Month -->
-    <!-- <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-      <div class="flex items-center gap-[8px]">
-        <div class="w-[28px] h-[28px] rounded-full bg-[#EEF4FF] flex items-center justify-center">
-          <i class="fa-solid fa-calendar-days text-[#2F80ED] text-[12px]"></i>
-        </div>
-        <p class="text-[#7C8AA0] text-[13px] font-medium">Earnings This Month</p>
-      </div>
-
-      <h3
-        id="paymentMonthlyEarningsStats"
-        class="mt-[10px] text-[#2F80ED] text-[20px] font-semibold"
-      ></h3>
-    </div> -->
-
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Payments</p>
+    </div>
+    <h3 id="paymentPendingStats" class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold">0</h3>
   </div>
+
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#EAFBFD] flex items-center justify-center">
+        <i class="fa-solid fa-circle-check text-[#30BBC7] text-[12px]"></i>
+      </div>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Approved Payments</p>
+    </div>
+    <h3 id="paymentApprovedStats" class="mt-[10px] text-[#30BBC7] text-[20px] font-semibold">0</h3>
+  </div>
+
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+        <i class="fa-solid fa-circle-check text-[#3BB273] text-[12px]"></i>
+      </div>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Payments</p>
+    </div>
+    <h3 id="paymentCompletedStats" class="mt-[10px] text-[#3BB273] text-[20px] font-semibold">0</h3>
+  </div>
+
+</div>
+
+<div class="mt-[24px] grid grid-cols-4 gap-[12px]">
+
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
+        <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+      </div>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Rejected Payments</p>
+    </div>
+    <h3 id="paymentFailedStats" class="mt-[10px] text-[#E57373] text-[20px] font-semibold">0</h3>
+  </div>
+
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
+        <i class="fa-solid fa-money-bill-wave text-[#C76A3A] text-[12px]"></i>
+      </div>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Amount</p>
+    </div>
+    <h3 id="paymentPendingAmountStats" class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold">0</h3>
+  </div>
+
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+        <i class="fa-solid fa-sack-dollar text-[#3BB273] text-[12px]"></i>
+      </div>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Amount</p>
+    </div>
+    <h3 id="paymentCompletedAmountStats" class="mt-[10px] text-[#3BB273] text-[20px] font-semibold">0</h3>
+  </div>
+
+  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+    <div class="flex items-center gap-[8px]">
+      <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
+        <i class="fa-solid fa-money-bill-transfer text-[#E57373] text-[12px]"></i>
+      </div>
+      <p class="text-[#7C8AA0] text-[13px] font-medium">Rejected Amount</p>
+    </div>
+    <h3 id="paymentRejectedAmountStats" class="mt-[10px] text-[#E57373] text-[20px] font-semibold">0</h3>
+  </div>
+
+</div>
 
 </div>
 
@@ -2332,7 +2287,6 @@
     >
       <option value="all">All Status</option>
       <option value="pending">Pending</option>
-      <option value="processing">Processing</option>
       <option value="approved">Approved</option>
       <option value="completed">Completed</option>
       <option value="rejected">Rejected</option>
@@ -3655,6 +3609,72 @@
         <i class="fa-solid fa-chevron-right"></i>
       </button> -->
     </div>
+  </div>
+</div>
+
+
+<!-- Tag Preview Image Modal -->
+<div
+  id="imagePreviewOverlay"
+  class="hidden fixed inset-0 z-[7000] bg-black/60 backdrop-blur-sm flex items-center justify-center px-[20px]"
+>
+  <div
+    class="relative w-full max-w-[760px] bg-white rounded-[20px] shadow-[0_20px_60px_rgba(0,0,0,0.25)] overflow-hidden"
+  >
+    <div class="h-[64px] px-[22px] flex items-center justify-between border-b border-[#E5E7EB]">
+      <div>
+        <h3 class="text-[#11313B] text-[17px] font-semibold">
+          Package Image
+        </h3>
+
+        <p
+          id="imagePreviewCounter"
+          class="text-[#7C8AA0] text-[12px] mt-[2px]"
+        >
+          1 of 1
+        </p>
+      </div>
+
+      <button
+        id="closeImagePreviewBtn"
+        type="button"
+        class="w-[36px] h-[36px] rounded-full bg-[#F1F5F8] text-[#11313B] flex items-center justify-center cursor-pointer"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+   <div class="bg-[#F8FAFC] h-[500px]">
+  <div class="h-full flex items-center justify-between px-[20px]">
+
+    <!-- Previous -->
+    <button
+      id="prevImagePreviewBtn"
+      type="button"
+      class="w-[40px] h-[40px] flex-shrink-0 rounded-full bg-white shadow text-[#11313B] flex items-center justify-center cursor-pointer"
+    >
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+
+    <!-- Image -->
+    <img
+      id="imagePreviewMain"
+      src=""
+      alt="Preview"
+      class="max-w-[360px] max-h-[420px] object-contain rounded-[12px]"
+    />
+
+    <!-- Next -->
+    <button
+      id="nextImagePreviewBtn"
+      type="button"
+      class="w-[40px] h-[40px] flex-shrink-0 rounded-full bg-white shadow text-[#11313B] flex items-center justify-center cursor-pointer"
+    >
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+
+  </div>
+</div>
   </div>
 </div>
 

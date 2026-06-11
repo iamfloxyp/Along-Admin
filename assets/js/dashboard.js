@@ -1042,6 +1042,12 @@ function getDriversApiUrl() {
   if (currentStatusFilter === "pending") {
     params.set("approval_status", "pending");
   }
+  if (currentStatusFilter === "rejected") {
+    params.set("approval_status", "rejected");
+  }
+  if (currentStatusFilter === "suspended") {
+    params.set("approval_status", "suspended");
+  }
 
   return `${API_BASE_URL}/admin/drivers?${params.toString()}`;
 }
@@ -1303,25 +1309,18 @@ async function fetchDriverStats() {
 
 function renderDriverStats(stats = {}) {
   const totalEl = document.getElementById("totalDriversValue");
-  const activeEl = document.getElementById("activeDriversValue");
-  const notApprovedEl = document.getElementById("notApprovedDriversValue");
+  const pendingEl = document.getElementById("pendingDriversValue");
+  const approvedEl = document.getElementById("approvedDriversValue");
+  const suspendedEl = document.getElementById("suspendedDriversValue");
+  const rejectedEl = document.getElementById("rejectedDriversValue");
   const ratingEl = document.getElementById("avgRatingValue");
 
-  if (totalEl) {
-    totalEl.textContent = Number(stats.total_drivers || 0).toLocaleString();
-  }
-
-  if (activeEl) {
-    activeEl.textContent = Number(stats.approved_drivers || 0).toLocaleString();
-  }
-
-  if (notApprovedEl) {
-    notApprovedEl.textContent = Number(stats.not_approved || 0).toLocaleString();
-  }
-
-  if (ratingEl) {
-    ratingEl.textContent = Number(stats.average_rating || 0).toFixed(1);
-  }
+  if (totalEl) totalEl.textContent = Number(stats.total_drivers || 0).toLocaleString();
+  if (pendingEl) pendingEl.textContent = Number(stats.awaiting_approval || 0).toLocaleString();
+  if (approvedEl) approvedEl.textContent = Number(stats.approved_drivers || 0).toLocaleString();
+  if (suspendedEl) suspendedEl.textContent = Number(stats.suspended || 0).toLocaleString();
+  if (rejectedEl) rejectedEl.textContent = Number(stats.rejected || 0).toLocaleString();
+  if (ratingEl) ratingEl.textContent = Number(stats.average_ratings || 0).toFixed(1);
 }
 
 async function loadDriverStats() {
@@ -4896,12 +4895,18 @@ let allDeliveries = [];
 let filteredDeliveries = [];
 let currentDeliveryPage = 1;
 const deliveryRowsPerPage = 20;
+let currentTagFilters = {
+  orderNumber: ""
+};
 
 async function renderDeliveries(page = 1, updateUrl = true) {
   showGlobalLoader();
 
   const body = document.getElementById("deliveryTableBody");
-  if (!body) return;
+  if (!body) {
+    hideGlobalLoader();
+    return;
+  }
 
   if (updateUrl) {
     window.history.pushState(null, "", `#tags?page=${page}`);
@@ -4916,8 +4921,12 @@ async function renderDeliveries(page = 1, updateUrl = true) {
     params.set("page", page);
     params.set("per_page", 5);
 
-    if (statusFilter !== "all") {
+    if (statusFilter !== "all" && statusFilter !== "") {
       params.set("status_group", statusFilter);
+    }
+
+    if (currentTagFilters.orderNumber) {
+      params.set("order_number", currentTagFilters.orderNumber);
     }
 
     const result = await fetchJSON(
@@ -5185,19 +5194,29 @@ if (imagesWrap) {
       </p>
     `;
   } else {
-    images.forEach((img) => {
-      if (!img.url) return;
+    const imageUrls = images
+  .map((img) => img.url)
+  .filter(Boolean);
 
-      imagesWrap.innerHTML += `
-        <a href="${img.url}" target="_blank" rel="noopener noreferrer" class="block">
-          <img
-            src="${img.url}"
-            alt="${img.file_name || "Package image"}"
-            class="w-[120px] h-[120px] rounded-[12px] object-cover border border-[#E5E7EB]"
-          />
-        </a>
-      `;
-    });
+imagesWrap.innerHTML = imageUrls
+  .map((url, index) => `
+    <img
+      src="${url}"
+      alt="Package image"
+      class="w-[120px] h-[120px] rounded-[12px] object-cover border border-[#E5E7EB] cursor-pointer tagPreviewImage"
+      data-index="${index}"
+    />
+  `)
+  .join("");
+
+imagesWrap.querySelectorAll(".tagPreviewImage").forEach((img) => {
+  img.addEventListener("click", function () {
+    openImagePreview(
+      imageUrls,
+      Number(this.dataset.index)
+    );
+  });
+});
   }
 }
 
@@ -5247,16 +5266,43 @@ function applyDeliveryFilters() {
   renderDeliveryPage();
 }
 
+function setupTagSearch() {
+  const searchInput = document.getElementById("deliverySearch");
+  const searchBtn = document.getElementById("deliverySearchBtn");
+
+  function applyTagSearch() {
+    currentTagFilters.orderNumber = searchInput?.value.trim() || "";
+    renderDeliveries(1, true);
+  }
+
+  searchBtn?.addEventListener("click", applyTagSearch);
+
+  searchInput?.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      applyTagSearch();
+    }
+  });
+
+  searchInput?.addEventListener("input", function () {
+    if (this.value.trim() === "") {
+      currentTagFilters.orderNumber = "";
+      renderDeliveries(1, true);
+    }
+  });
+}
+
 function setupDeliveriesSection() {
   loadDeliveryStats();
 
   const pageFromUrl = getTagPageFromUrl();
   renderDeliveries(pageFromUrl, false);
 
-  document.getElementById("deliverySearch")?.addEventListener("input", applyDeliveryFilters);
+  setupTagSearch();
+
   document.getElementById("statusFilter")?.addEventListener("change", function () {
-  renderDeliveries(1, true);
-});
+    renderDeliveries(1, true);
+  });
+
   document.getElementById("sortFilter")?.addEventListener("change", applyDeliveryFilters);
 }
 
@@ -5285,6 +5331,84 @@ document.addEventListener("DOMContentLoaded", setupDeliveriesSection);
 
 /* ================= PAYMENT SECTION =========================================== */
 
+let previewImages = [];
+let currentPreviewIndex = 0;
+
+function openImagePreview(images, startIndex = 0) {
+  previewImages = images.filter(Boolean);
+  currentPreviewIndex = startIndex;
+
+  if (!previewImages.length) return;
+
+  document.getElementById("imagePreviewOverlay")?.classList.remove("hidden");
+
+  renderImagePreview();
+}
+
+function renderImagePreview() {
+  const img = document.getElementById("imagePreviewMain");
+  const counter = document.getElementById("imagePreviewCounter");
+  const prevBtn = document.getElementById("prevImagePreviewBtn");
+  const nextBtn = document.getElementById("nextImagePreviewBtn");
+
+  if (!img) return;
+
+  img.src = previewImages[currentPreviewIndex];
+
+  if (counter) {
+    counter.textContent = `${currentPreviewIndex + 1} of ${previewImages.length}`;
+  }
+
+  if (prevBtn) {
+    prevBtn.disabled = currentPreviewIndex === 0;
+  }
+
+  if (nextBtn) {
+    nextBtn.disabled = currentPreviewIndex === previewImages.length - 1;
+  }
+}
+
+function setupImagePreviewModal() {
+  document.getElementById("closeImagePreviewBtn")?.addEventListener("click", function () {
+    document.getElementById("imagePreviewOverlay")?.classList.add("hidden");
+  });
+
+  document.getElementById("prevImagePreviewBtn")?.addEventListener("click", function () {
+    if (currentPreviewIndex > 0) {
+      currentPreviewIndex--;
+      renderImagePreview();
+    }
+  });
+
+  document.getElementById("nextImagePreviewBtn")?.addEventListener("click", function () {
+    if (currentPreviewIndex < previewImages.length - 1) {
+      currentPreviewIndex++;
+      renderImagePreview();
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", setupImagePreviewModal);
+
+
+function renderClickableImages(imageUrls = []) {
+  if (!imageUrls.length) return "";
+
+  return `
+    <div class="mt-[14px] flex flex-wrap gap-[10px]">
+      ${imageUrls
+        .map((url, index) => `
+          <img
+            src="${url}"
+            class="w-[120px] h-[120px] object-cover rounded-[10px] border border-[#E5E7EB] cursor-pointer hover:opacity-80 payoutPreviewImage"
+            data-index="${index}"
+          />
+        `)
+        .join("")}
+    </div>
+  `;
+}
+
 async function fetchPaymentStats() {
   const response = await fetch(`${API_BASE_URL}/admin/payouts/stats`, {
     method: "GET",
@@ -5304,23 +5428,31 @@ async function fetchPaymentStats() {
 }
 
 function renderPaymentStats(stats) {
-  const totalEl = document.getElementById("paymentTotalStats");
-  const completedEl = document.getElementById("paymentCompletedStats");
-  const pendingEl = document.getElementById("paymentPendingStats");
-  const failedEl = document.getElementById("paymentFailedStats");
+  document.getElementById("paymentTotalStats").textContent =
+    stats.total || 0;
 
-  if (totalEl) totalEl.textContent = stats.total || 0;
+  document.getElementById("paymentPendingStats").textContent =
+    stats.pending || 0;
 
-  if (completedEl) {
-    completedEl.textContent = formatPaymentAmount(
-      stats.total_amount_completed || 0
-    );
-  }
+  document.getElementById("paymentApprovedStats").textContent =
+    stats.approved || 0;
 
-  if (pendingEl) pendingEl.textContent = stats.pending || 0;
+  document.getElementById("paymentFailedStats").textContent =
+    stats.rejected || 0;
 
-  if (failedEl) failedEl.textContent = stats.rejected || 0;
+    document.getElementById("paymentCompletedStats").textContent =
+    stats.completed || 0;
+
+  document.getElementById("paymentPendingAmountStats").textContent =
+    formatPaymentAmount(stats.total_amount_pending || 0);
+
+  document.getElementById("paymentCompletedAmountStats").textContent =
+    formatPaymentAmount(stats.total_amount_completed || 0);
+
+  document.getElementById("paymentRejectedAmountStats").textContent =
+    formatPaymentAmount(stats.total_amount_rejected || 0);
 }
+
 async function loadPaymentStats() {
     showGlobalLoader();
   try {
@@ -5359,13 +5491,7 @@ function formatPaymentAmount(amount) {
   })}`;
 }
 
-// let payments = [];
-// let currentPaymentPagination = null;
-// let selectedPayoutToComplete = null;
-// let currentPaymentFilters = {
-//   search: "",
-//   status: "all"
-// };
+
 
 async function fetchPayouts(customUrl = null) {
   let url = customUrl;
@@ -5402,6 +5528,8 @@ async function fetchPayouts(customUrl = null) {
 
   return result;
 }
+
+
 
 async function loadPayments(customUrl = null) {
   showGlobalLoader();
@@ -6281,6 +6409,28 @@ function initSupportPusher() {
   return supportPusher;
 }
 
+function subscribeToSupportTicketList() {
+  const pusher = initSupportPusher();
+
+  const channelName = "support-ticket";
+
+  console.log("Subscribing to ticket list:", channelName);
+
+  const channel = pusher.subscribe(channelName);
+
+  channel.bind("pusher:subscription_succeeded", function () {
+    console.log("Successfully subscribed to ticket list:", channelName);
+  });
+
+  channel.bind("ticket.created", function (data) {
+    console.log("New support ticket received:", data);
+
+    loadSupportTickets(null, false);
+  });
+
+  return channel;
+}
+
 function subscribeToSupportTicket(ticketId) {
   if (!ticketId) return;
 
@@ -6630,11 +6780,25 @@ function renderSupportTicketList(list = filteredSupportTickets) {
   });
 }
 
-async function loadSupportTickets(customUrl = null) {
-    showGlobalLoader();
+async function loadSupportTicketsSilently() {
+  const result = await fetchSupportTickets();
+
+  allSupportTickets = sortTicketsByLatestMessage(result.data || []);
+  supportTickets = [...allSupportTickets];
+  filteredSupportTickets = [...supportTickets];
+
+  currentSupportPagination = result.pagination || null;
+
+  renderSupportTicketList(filteredSupportTickets);
+  renderSupportPagination(currentSupportPagination);
+}
+
+async function loadSupportTickets(customUrl = null, showLoader = true) {
+  if (showLoader) showGlobalLoader();
+
   const container = document.getElementById("supportTicketList");
 
-  if (container) {
+  if (container && showLoader) {
     container.innerHTML = `
       <div class="p-[20px] text-[#98A2B3] text-[13px]">
         Loading tickets...
@@ -6651,11 +6815,11 @@ async function loadSupportTickets(customUrl = null) {
 
     currentSupportPagination = result.pagination || null;
 
-   const stats = await fetchSupportStats();
-renderSupportStats(stats);
+    const stats = await fetchSupportStats();
+    renderSupportStats(stats);
+
     renderSupportTicketList(filteredSupportTickets);
     renderSupportPagination(currentSupportPagination);
-
   } catch (error) {
     console.error("Support tickets error:", error);
 
@@ -6666,8 +6830,9 @@ renderSupportStats(stats);
         </div>
       `;
     }
+  } finally {
+    if (showLoader) hideGlobalLoader();
   }
-        hideGlobalLoader();
 }
 
 function renderSupportPagination(pagination) {
@@ -7445,6 +7610,43 @@ const replyToRender = {
 
 renderOneSupportReply(replyToRender, true);
 
+const newStatus =
+  newReply.ticket?.status ||
+  result.data?.ticket?.status ||
+  result.ticket?.status ||
+  "in_progress";
+
+const newStatusLabel =
+  newReply.ticket?.status_label ||
+  result.data?.ticket?.status_label ||
+  result.ticket?.status_label ||
+  "In Progress";
+
+selectedSupportTicket = {
+  ...selectedSupportTicket,
+  status: newStatus,
+  status_label: newStatusLabel,
+  last_reply_at: newReply.created_at || new Date().toISOString(),
+  last_message_at: newReply.created_at || new Date().toISOString(),
+  replies: [
+    ...(Array.isArray(selectedSupportTicket.replies)
+      ? selectedSupportTicket.replies
+      : []),
+    replyToRender
+  ]
+};
+
+const statusEl = document.getElementById("supportChatStatus");
+
+if (statusEl) {
+  statusEl.className =
+    `inline-flex h-[28px] px-[10px] rounded-full text-[12px] font-medium items-center justify-center whitespace-nowrap ${getSupportStatusBadge(newStatus)}`;
+
+  statusEl.textContent = newStatusLabel;
+}
+
+updateTicketInList(selectedSupportTicket);
+
 input.value = "";
 if (attachmentInput) attachmentInput.value = "";
 if (preview) preview.innerHTML = "";
@@ -7458,7 +7660,6 @@ if (supportAttachmentModal) {
   supportAttachmentModal.classList.add("hidden");
 }
 
-moveTicketToTop(selectedSupportTicket.id);
 return;
   } catch (error) {
     console.error("Reply error:", error);
@@ -7541,7 +7742,8 @@ function renderSupportAttachmentPreview() {
       selectedSupportFiles.splice(index, 1);
 
       if (!selectedSupportFiles.length) {
-        supportAttachmentModal.classList.add("hidden");
+        clearSupportAttachmentSelection();
+        return;
       }
 
       renderSupportAttachmentPreview();
@@ -7549,9 +7751,27 @@ function renderSupportAttachmentPreview() {
   });
 }
 
+function clearSupportAttachmentSelection() {
+  selectedSupportFiles = [];
+
+  const attachmentInput = document.getElementById("supportAttachmentInput");
+  const preview = document.getElementById("supportAttachmentPreview");
+
+  if (attachmentInput) attachmentInput.value = "";
+  if (preview) preview.innerHTML = "";
+
+  if (supportAttachmentMessageInput) {
+    supportAttachmentMessageInput.value = "";
+  }
+
+  if (supportAttachmentModal) {
+    supportAttachmentModal.classList.add("hidden");
+  }
+}
+
 if (closeSupportAttachmentPreview) {
   closeSupportAttachmentPreview.addEventListener("click", function () {
-    supportAttachmentModal.classList.add("hidden");
+    clearSupportAttachmentSelection();
   });
 }
 
@@ -7575,6 +7795,7 @@ function getSupportTicketIdFromUrl() {
 }
 function setupSupportRequestsSection() {
     setSupportReplyBoxVisible(false);
+    subscribeToSupportTicketList();
   loadSupportTickets().then(() => {
     const ticketIdFromUrl = getSupportTicketIdFromUrl();
 
