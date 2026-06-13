@@ -6074,7 +6074,7 @@ function closePayoutDetailsPage() {
   window.history.pushState(null, "", "#payout");
 }
 
-async function completePayout(payoutId, transactionId) {
+async function completePayout(payoutId, stripeTransferId) {
   const response = await fetch(`${API_BASE_URL}/admin/payouts/${payoutId}/complete`, {
     method: "POST",
     headers: {
@@ -6131,10 +6131,10 @@ function setupCompletePayoutModal() {
   });
 
   submitBtn?.addEventListener("click", async function () {
-    const transactionId = input?.value.trim();
+    const stripeTransferId = input?.value.trim();
 
-    if (!transactionId) {
-      showActionPopupMessage("Transaction ID is required.", "error");
+    if (!stripeTransferId) {
+      showActionPopupMessage("Stripe Transfer ID is required.", "error");
       return;
     }
 
@@ -6147,7 +6147,7 @@ function setupCompletePayoutModal() {
       submitBtn.disabled = true;
       submitBtn.textContent = "Completing...";
 
-      await completePayout(selectedPayoutToComplete, transactionId);
+      await completePayout(selectedPayoutToComplete, stripeTransferId);
 
 updatePayoutLocally(
   selectedPayoutToComplete,
