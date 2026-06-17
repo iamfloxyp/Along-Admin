@@ -70,7 +70,7 @@ $(document).ready(function () {
       });
 
       const data = await response.json();
-      console.log("LOGIN RESPONSE:", data);
+      
 
       if (!response.ok || !data.success) {
         showMessage(data.message || "Login failed", "error");

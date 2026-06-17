@@ -270,6 +270,26 @@ function loadSectionFromHash() {
   const fullHash = window.location.hash || "#dashboard";
   const hash = fullHash.split("?")[0];
 
+  if (hash === "#dashboard") {
+  switchSidebarTab(
+    "dashboardHomeSection",
+    "sidebarDashboardLink",
+    "sidebarDashboardIcon",
+    "sidebarDashboardText",
+    false
+  );
+
+  if (typeof loadDashboardStats === "function") {
+    loadDashboardStats();
+  }
+
+  if (typeof loadDashboardData === "function") {
+    loadDashboardData();
+  }
+
+  return;
+}
+
   if (hash.startsWith("#drivers/details/")) {
     const driverId = hash.replace("#drivers/details/", "");
 
@@ -320,6 +340,23 @@ function loadSectionFromHash() {
     return;
   }
 
+  if (hash.startsWith("#payout/details/")) {
+  const payoutId = hash.replace("#payout/details/", "");
+
+  showDashboardSection("paymentsSection", false);
+
+  resetSidebarMenuStyles();
+
+  activateSidebarMenu(
+    "sidebarPaymentsLink",
+    "sidebarPaymentsIcon",
+    "sidebarPaymentsText"
+  );
+
+  openPayoutDetailsPage(payoutId, false);
+
+  return;
+}
  if (hash === "#payout") {
   switchSidebarTab(
     "paymentsSection",
@@ -366,22 +403,21 @@ function loadSectionFromHash() {
     loadSendersFromAPI(1);
     return;
   }
+if (hash === "#tags") {
+  switchSidebarTab(
+    "deliveriesSection",
+    "sidebarDeliveriesLink",
+    "sidebarDeliveriesIcon",
+    "sidebarDeliveriesText",
+    false
+  );
 
-  if (hash === "#tags") {
-    switchSidebarTab(
-      "deliveriesSection",
-      "sidebarDeliveriesLink",
-      "sidebarDeliveriesIcon",
-      "sidebarDeliveriesText",
-      false
-    );
-
-    if (typeof loadTagsFromAPI === "function") {
-      loadTagsFromAPI(1);
-    }
-
-    return;
+  if (typeof loadTagsFromAPI === "function") {
+    loadTagsFromAPI(1);
   }
+
+  return;
+}
 
   if (hash === "#payout") {
     switchSidebarTab(
@@ -410,7 +446,6 @@ function loadSectionFromHash() {
   }
 
  if (hash === "#settings") {
-  console.log("Loading settings section from hash route");
   switchSidebarTab(
     "settingsSection",
     "sidebarSettingsLink",
@@ -473,41 +508,74 @@ window.addEventListener("hashchange", loadSectionFromHash);
 document.addEventListener("DOMContentLoaded", loadSectionFromHash);
 
 
+async function reloadDashboardSection() {
+  showGlobalLoader();
+
+  try {
+    if (typeof loadDashboardStats === "function") {
+      await loadDashboardStats();
+    }
+
+    if (typeof loadDashboardData === "function") {
+      await loadDashboardData();
+    }
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+async function reloadPayoutSection() {
+  showGlobalLoader();
+
+  try {
+    document.getElementById("payoutDetailsView")?.classList.add("hidden");
+    document.getElementById("paymentsListView")?.classList.remove("hidden");
+
+    if (typeof loadPaymentStats === "function") {
+      await loadPaymentStats();
+    }
+
+    if (typeof loadPayments === "function") {
+      await loadPayments(`${API_BASE_URL}/admin/payouts?per_page=5`);
+    }
+  } finally {
+    hideGlobalLoader();
+  }
+}
 
 function refreshSidebarSection(sectionId) {
   if (sectionId === "dashboardHomeSection") {
-    fetchDashboardAnalytics();
+  showGlobalLoader();
+
+  Promise.allSettled([
+    typeof fetchDashboardAnalytics === "function" ? fetchDashboardAnalytics() : null,
+    typeof loadDashboardStats === "function" ? loadDashboardStats() : null,
+    typeof loadDashboardData === "function" ? loadDashboardData() : null
+  ]).finally(() => {
+    hideGlobalLoader();
+  });
+
+  return;
+}
+
+  if (sectionId === "paymentsSection") {
+    reloadPayoutSection();
     return;
   }
 
   if (sectionId === "deliveriesSection") {
-    loadDeliveryStats();
+  showGlobalLoader();
 
-    const pageFromUrl = getTagPageFromUrl();
-    renderDeliveries(pageFromUrl, false);
-    return;
-  }
-
-  if (sectionId === "settingsSection") {
-  if (typeof loadAdminProfile === "function") {
-    loadSettingsSection();
-  }
-
-  const profileTab = document.querySelector(
-    '[data-target="settingsProfilePanel"]'
-  );
-
-  if (profileTab) {
-    profileTab.click();
-  }
+  Promise.allSettled([
+    typeof loadDeliveryStats === "function" ? loadDeliveryStats() : null,
+    typeof renderDeliveries === "function" ? renderDeliveries(1, false) : null,
+    typeof loadTagsFromAPI === "function" ? loadTagsFromAPI(1) : null
+  ]).finally(() => {
+    hideGlobalLoader();
+  });
 
   return;
 }
-  if (sectionId === "paymentsSection") {
-    loadPaymentStats();
-    loadPaymentsFromUrl();
-    return;
-  }
 
   if (sectionId === "supportRequestsSection") {
     loadSupportTickets();
@@ -523,7 +591,14 @@ function refreshSidebarSection(sectionId) {
     loadDriversFromApi();
     return;
   }
+
+  if (sectionId === "settingsSection") {
+    loadSettingsSection();
+    return;
+  }
 }
+
+
 
 function setupSidebarNavigation() {
   SIDEBAR_ITEMS.forEach((item) => {
@@ -536,15 +611,20 @@ function setupSidebarNavigation() {
   const route = ROUTE_MAP[item.sectionId];
 
   if (route) {
-    const currentHash = window.location.hash.split("?")[0];
+  const currentHash = window.location.hash.split("?")[0];
 
-    if (currentHash === route) {
-      refreshSidebarSection(item.sectionId);
-      return;
-    }
+  if (currentHash === route) {
+    console.log("Refreshing section:", item.sectionId);
+    refreshSidebarSection(item.sectionId);
+    return;
+  }
 
-    window.location.hash = route;
-  } else {
+  window.location.hash = route;
+
+  setTimeout(() => {
+    refreshSidebarSection(item.sectionId);
+  }, 100);
+} else {
     switchSidebarTab(
       item.sectionId,
       item.linkId,
@@ -576,24 +656,334 @@ function setupSidebarNavigation() {
 }
 
 
-function openNotificationsSection() {
-  showDashboardSection("notificationsSection", true);
-  resetSidebarMenuStyles();
+
+/* ========================= NOTIFICATIONS ================================ */
+
+let adminNotifications = [];
+let previousSectionBeforeNotifications = "#dashboard";
+let supportPusher = null;
+let currentSupportChannel = null;
+let notificationPusherChannel = null;
+
+function notificationAuthHeaders() {
+  return {
+    Accept: "application/json",
+    Authorization: `Bearer ${AUTH_TOKEN}`
+  };
 }
 
-document.getElementById("adminNotificationBtn")?.addEventListener("click", function () {
-  openNotificationsSection();
-});
+function showLiveNotificationToast(data = {}) {
+  const wrap = document.getElementById("liveNotificationToastWrap");
+  if (!wrap) return;
 
+  const toast = document.createElement("div");
+
+  toast.className =
+    "w-[360px] rounded-[14px] border border-[#FACC15] shadow-[0_12px_32px_rgba(0,0,0,0.14)] p-[16px] flex items-start gap-[12px]";
+
+  toast.style.backgroundColor = "#FEF08A";
+
+  toast.innerHTML = `
+    <div class="w-[38px] h-[38px] rounded-full bg-white text-[#30BBC7] flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-bell text-[14px]"></i>
+    </div>
+
+    <div class="min-w-0 flex-1">
+      <div class="flex items-start justify-between gap-[10px]">
+        <h3 class="text-[#11313B] text-[14px] font-semibold leading-[20px]">
+          ${data.title || "New Notification"}
+        </h3>
+
+        <button
+          type="button"
+          class="closeLiveNotificationToast w-[24px] h-[24px] rounded-full bg-white text-[#7C8AA0] flex items-center justify-center shrink-0 cursor-pointer"
+        >
+          <i class="fa-solid fa-xmark text-[11px]"></i>
+        </button>
+      </div>
+
+      <p class="mt-[6px] text-[#344054] text-[13px] leading-[19px]">
+        ${data.message || "You have a new update."}
+      </p>
+
+      <p class="mt-[8px] text-[#667085] text-[11px]">
+        Just now
+      </p>
+    </div>
+  `;
+
+  wrap.prepend(toast);
+
+  toast.querySelector(".closeLiveNotificationToast")?.addEventListener("click", function () {
+    toast.remove();
+  });
+
+  setTimeout(() => {
+    toast.remove();
+  }, 30000);
+}
+
+function subscribeToAdminNotifications() {
+  const pusher = initSupportPusher();
+
+  if (notificationPusherChannel) return;
+
+  notificationPusherChannel = pusher.subscribe("notifications");
+
+  notificationPusherChannel.bind("pusher:subscription_succeeded", function () {
+    
+  });
+
+  notificationPusherChannel.bind("notifications.created", async function (data) {
+  console.log("New notification received:", data);
+
+  showLiveNotificationToast({
+    title: data.title,
+    message: data.message
+  });
+
+  await updateNotificationBadge();
+
+  if (!document.getElementById("notificationsSection")?.classList.contains("hidden")) {
+    await loadNotifications(false);
+  }
+});
+}
+
+function openNotificationsSection() {
+  previousSectionBeforeNotifications = window.location.hash || "#dashboard";
+
+  showDashboardSection("notificationsSection", true);
+  resetSidebarMenuStyles();
+
+  window.location.hash = "#notifications";
+}
+
+async function fetchAllNotifications() {
+  const response = await fetch(`${API_BASE_URL}/admin/notifications`, {
+    method: "GET",
+    headers: notificationAuthHeaders()
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || result.success === false) {
+    throw new Error(result.message || "Failed to load notifications");
+  }
+
+  return Array.isArray(result.data) ? result.data : [];
+}
+
+async function fetchUnreadNotificationCount() {
+  const response = await fetch(`${API_BASE_URL}/admin/notifications/unread`, {
+    method: "GET",
+    headers: notificationAuthHeaders()
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || result.success === false) {
+    throw new Error(result.message || "Failed to load unread count");
+  }
+
+  return Number(result.data?.unread_count || 0);
+}
+
+async function markNotificationAsRead(notificationId) {
+  const response = await fetch(
+    `${API_BASE_URL}/admin/notifications/${notificationId}/read`,
+    {
+      method: "PUT",
+      headers: notificationAuthHeaders()
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok || result.success === false) {
+    throw new Error(result.message || "Failed to mark notification as read");
+  }
+
+  return result;
+}
+
+function formatNotificationTime(dateString) {
+  if (!dateString) return "N/A";
+
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) return "N/A";
+
+  return date.toLocaleString([], {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+async function updateNotificationBadge() {
+  const badge = document.getElementById("adminNotificationBadge");
+  if (!badge) return;
+
+  try {
+    const unreadCount = await fetchUnreadNotificationCount();
+
+    badge.textContent = unreadCount;
+    badge.classList.toggle("hidden", unreadCount === 0);
+  } catch (error) {
+    console.error("Unread badge error:", error);
+  }
+}
+
+function renderNotifications() {
+  const list = document.getElementById("notificationsList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  if (!adminNotifications.length) {
+    list.innerHTML = `
+      <div class="rounded-[14px] bg-white p-[18px] border border-[#E5E7EB]">
+        <p class="text-[#11313B] text-[14px] font-semibold">
+          No notifications found.
+        </p>
+        <p class="mt-[4px] text-[#7C8AA0] text-[13px]">
+          New alerts will appear here.
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  adminNotifications.forEach((item) => {
+    list.innerHTML += `
+     
+
+          <div
+  class="notificationItem w-full rounded-[12px] p-[12px] border bg-white border-[#E5E7EB] shadow-[0px_1px_4px_rgba(178,163,163,0.45)]"
+  data-id="${item.id}"
+>
+  <div class="flex items-start justify-between gap-[10px]">
+    <div class="flex items-start gap-[10px] min-w-0">
+      <div class="w-[32px] h-[32px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0">
+        <i class="fa-solid fa-bell text-[12px]"></i>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <h3 class="text-[#11313B] text-[13px] font-semibold">
+          ${item.title || "Notification"}
+        </h3>
+
+        <p class="mt-[2px] text-[#7C8AA0] text-[12px] leading-[16px]">
+          ${item.message || ""}
+        </p>
+
+        <p class="mt-[4px] text-[#98A2B3] text-[11px]">
+          ${formatNotificationTime(item.created_at)}
+        </p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="markNotificationReadBtn w-[24px] h-[24px] rounded-full bg-[#FDECEF] text-[#E57373] flex items-center justify-center shrink-0 cursor-pointer hover:bg-[#FAD8DE]"
+      data-id="${item.id}"
+    >
+      <i class="fa-solid fa-xmark text-[10px]"></i>
+    </button>
+  </div>
+</div>
+    `;
+  });
+
+  attachNotificationReadEvents();
+}
+
+function attachNotificationReadEvents() {
+  document.querySelectorAll(".markNotificationReadBtn").forEach((btn) => {
+    btn.addEventListener("click", async function (event) {
+      event.stopPropagation();
+
+      const id = this.dataset.id;
+      if (!id) return;
+
+      try {
+  this.disabled = true;
+  this.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-[12px]"></i>`;
+
+  await markNotificationAsRead(id);
+
+  await loadNotifications(true);
+
+  showActionPopupMessage(
+    "Notification removed successfully.",
+    "success"
+  );
+}
+catch (error) {
+        console.error("Mark notification read error:", error);
+
+        showActionPopupMessage(
+          error.message || "Unable to clear notification.",
+          "error"
+        );
+
+        this.disabled = false;
+        this.innerHTML = `<i class="fa-solid fa-xmark text-[12px]"></i>`;
+      }
+    });
+  });
+}
+
+async function loadNotifications(showLoader = true) {
+  if (showLoader) showGlobalLoader();
+
+  try {
+    adminNotifications = await fetchAllNotifications();
+
+    renderNotifications();
+    await updateNotificationBadge();
+  } catch (error) {
+    console.error("Notifications error:", error);
+
+    const list = document.getElementById("notificationsList");
+
+    if (list) {
+      list.innerHTML = `
+        <div class="rounded-[14px] bg-white p-[18px] border border-[#FDECEF] text-[#E57373] text-[13px]">
+          ${error.message || "Unable to load notifications."}
+        </div>
+      `;
+    }
+  } finally {
+    if (showLoader) hideGlobalLoader();
+  }
+}
+
+document.getElementById("adminNotificationBtn")?.addEventListener("click", async function () {
+  openNotificationsSection();
+  await loadNotifications(true);
+});
 
 document.getElementById("backFromNotificationsBtn")?.addEventListener("click", function () {
-  window.location.hash = "#dashboard";
+  window.location.hash = previousSectionBeforeNotifications || "#dashboard";
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  updateNotificationBadge();
+  subscribeToAdminNotifications
+});
+
+/* ========================= END OF NOTIFICATIONS ================================ */
+
 window.addEventListener("hashchange", loadSectionFromHash);
 
 function initializeDashboardSections() {
   setupSidebarNavigation();
+  subscribeToAdminNotifications();
 }
+
 /*============================= DASHBOARD SECTION =============================*/
 
 
@@ -2212,7 +2602,7 @@ function attachDocumentViewEvents() {
         });
       }
 
-      console.log("Preview images:", images);
+
 
       if (!images.length) {
         showActionPopupMessage("No file URL available yet for this document.", "error");
@@ -4860,7 +5250,7 @@ async function fetchJSON(url) {
   try {
     return JSON.parse(text);
   } catch {
-    console.log("Not JSON:", text);
+    
     throw new Error("Invalid API response. Check endpoint or backend error.");
   }
 }
@@ -4887,7 +5277,7 @@ async function loadDeliveryStats() {
     document.getElementById("failedRequests").textContent =
       summary.failed_requests ?? 0;
   } catch (error) {
-    console.log("Stats error:", error);
+    
   }
 }
 
@@ -4946,7 +5336,7 @@ async function renderDeliveries(page = 1, updateUrl = true) {
 
     renderDeliveryPage();
   } catch (error) {
-    console.log("Tags error:", error);
+    
     body.innerHTML = `<p class="p-4 text-red-500">Error loading tags</p>`;
   } finally {
     hideGlobalLoader();
@@ -5221,7 +5611,7 @@ imagesWrap.querySelectorAll(".tagPreviewImage").forEach((img) => {
 }
 
   } catch (error) {
-    console.log("Tag details error:", error);
+    
     alert("Error loading tag");
   } finally {
     hideGlobalLoader();
@@ -5536,11 +5926,6 @@ async function loadPayments(customUrl = null) {
 
   try {
     const result = await fetchPayouts(customUrl);
-    console.log("Selected Filter:", currentPaymentFilters.status);
-console.log("API Result:", result);
-console.log("Payout Statuses:",
-  (result.data || []).map(item => item.status)
-);
 
     payments = result.data || [];
     currentPaymentPagination = result.pagination || null;
@@ -5855,7 +6240,7 @@ function attachPayoutStatusEvents() {
   document.querySelectorAll(".approvePayoutBtn").forEach((btn) => {
     btn.onclick = function (event) {
       event.stopPropagation();
-      approvePayout(this.dataset.id);
+      approvePayout(this.dataset.id, this);
     };
   });
 
@@ -6000,7 +6385,7 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
           <button
             type="button"
             id="detailsRejectPayoutBtn"
-            class="h-[42px] px-[18px] rounded-[10px] bg-[#FDECEF] text-[#E57373] text-[13px] font-semibold"
+            class="h-[42px] px-[18px] rounded-[10px] bg-[#FDECEF] text-[#E57373] text-[13px] font-semibold cursor-pointer mr-[10px]"
           >
             Reject Payout
           </button>
@@ -6008,7 +6393,7 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
           <button
             type="button"
             id="detailsApprovePayoutBtn"
-            class="h-[42px] px-[18px] rounded-[10px] bg-[#30BBC7] text-white text-[13px] font-semibold"
+            class="h-[42px] px-[18px] rounded-[10px] bg-[#30BBC7] text-white text-[13px] font-semibold cursor-pointer"
           >
             Approve Payout
           </button>
@@ -6018,7 +6403,7 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
           .getElementById("detailsApprovePayoutBtn")
           ?.addEventListener("click", async function () {
 
-            await approvePayout(payout.id);
+            await approvePayout(payout.id, this);
 
             await openPayoutDetailsPage(
               payout.id,
@@ -6039,7 +6424,7 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
           <button
             type="button"
             id="detailsCompletePayoutBtn"
-            class="h-[42px] px-[18px] rounded-[10px] bg-[#3BB273] text-white text-[13px] font-semibold"
+            class="h-[42px] px-[18px] rounded-[10px] bg-[#3BB273] text-white text-[13px] font-semibold cursor-pointer"
           >
             Mark as Completed
           </button>
@@ -6226,13 +6611,43 @@ function updatePayoutLocally(payoutId, newStatus, reason = null) {
   loadPaymentStats();
 }
 
-async function approvePayout(payoutId) {
+function startPayoutButtonLoading(btn, loadingText) {
+  if (!btn) return;
+
+  btn.disabled = true;
+  btn.dataset.originalHtml = btn.innerHTML;
+
+  btn.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin mr-[6px]"></i>
+    ${loadingText}
+  `;
+
+  btn.classList.add("opacity-70", "cursor-not-allowed");
+}
+
+function stopPayoutButtonLoading(btn) {
+  if (!btn) return;
+
+  btn.disabled = false;
+
+  if (btn.dataset.originalHtml) {
+    btn.innerHTML = btn.dataset.originalHtml;
+  }
+
+  btn.classList.remove("opacity-70", "cursor-not-allowed");
+}
+
+async function approvePayout(payoutId, btn = null) {
   try {
+
+    startPayoutButtonLoading(btn, "Approving...");
     await reviewPayoutStatus(payoutId, "approve", null, "Approved by admin");
     updatePayoutLocally(payoutId, "approved");
     showActionPopupMessage("Payout approved successfully.", "success");
   } catch (error) {
     showActionPopupMessage(error.message || "Failed to approve payout.", "error");
+  } finally {
+    stopPayoutButtonLoading(btn); 
   }
 }
 
@@ -6259,6 +6674,7 @@ function closeRejectPayoutModal() {
 async function submitRejectPayout() {
   const input = document.getElementById("rejectPayoutReasonInput");
   const reason = input?.value.trim();
+  const submitBtn = document.getElementById("submitRejectPayoutBtn");
 
   if (!selectedRejectPayoutId) {
     showActionPopupMessage("Payout ID is missing.", "error");
@@ -6271,6 +6687,7 @@ async function submitRejectPayout() {
   }
 
   try {
+    startPayoutButtonLoading(submitBtn, "Rejecting...")
     await reviewPayoutStatus(selectedRejectPayoutId, "reject", reason, reason);
    updatePayoutLocally(
   selectedRejectPayoutId,
@@ -6291,6 +6708,9 @@ showActionPopupMessage(
   } catch (error) {
     showActionPopupMessage(error.message || "Failed to reject payout.", "error");
   }
+    finally {
+      stopPayoutButtonLoading(submitBtn);
+    }
 }
 
 function normalizePayoutStatus(status) {
@@ -6380,8 +6800,6 @@ let allSupportTickets = [];
 let supportTickets = [];
 let filteredSupportTickets = [];
 let selectedSupportTicket = null;
-let supportPusher = null;
-let currentSupportChannel = null;
 let currentSupportPagination = null;
 let readSupportTicketIds = new Set();
 let renderedSupportReplyIds = new Set();
@@ -6414,16 +6832,15 @@ function subscribeToSupportTicketList() {
 
   const channelName = "support-ticket";
 
-  console.log("Subscribing to ticket list:", channelName);
 
   const channel = pusher.subscribe(channelName);
 
   channel.bind("pusher:subscription_succeeded", function () {
-    console.log("Successfully subscribed to ticket list:", channelName);
+    
   });
 
   channel.bind("ticket.created", function (data) {
-    console.log("New support ticket received:", data);
+   
 
     loadSupportTickets(null, false);
   });
@@ -6442,16 +6859,16 @@ function subscribeToSupportTicket(ticketId) {
   }
 
   const channelName = `support-ticket.${ticketId}`;
-  console.log("Subscribing to:", channelName);
+  
 
   currentSupportChannel = pusher.subscribe(channelName);
 
   currentSupportChannel.bind("pusher:subscription_succeeded", function () {
-    console.log("Successfully subscribed:", channelName);
+    
   });
 
   currentSupportChannel.bind("ticket.replied", function (data) {
-    console.log("Realtime support reply received:", data);
+    
 
     const reply = data.reply || data.data?.reply || data.data || data;
     const sender = data.sender || data.data?.sender || reply.sender || reply.user || {};
@@ -7107,7 +7524,7 @@ function setSupportReplyBoxVisible(isVisible) {
 
 async function openSupportTicketFromAPI(ticketId) {
 
-  console.log("REFRESHING CHAT")
+
    
   updateSupportChatUrl(ticketId);
 
@@ -8244,7 +8661,7 @@ function setupLogoutSection() {
         }
       });
     } catch (error) {
-      console.log("Logout error:", error);
+      
     }
 
     sessionStorage.clear();

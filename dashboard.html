@@ -41,7 +41,7 @@
           >
             <img
               id="adminHeaderLogo"
-              src="./assets/images/along-logo.png"
+              src="./assets/images/Asset 26along copy 2.png"
               alt="Along Logo"
               class="w-full h-full object-contain"
             />
@@ -61,22 +61,22 @@
         >
           <!-- NOTIFICATION -->
           <button
-            id="adminNotificationBtn"
-            type="button"
-            class="relative w-[41px] h-[41px] rounded-[4.56px] bg-[#EAEFF7] flex items-center justify-center shrink-0"
-          >
-            <span
-              id="adminNotificationIcon"
-              class="text-[18px] leading-none text-[#11313B]"
-            >
-              🔔
-            </span>
+  id="adminNotificationBtn"
+  type="button"
+  class="relative w-[42px] h-[42px] rounded-[10px] bg-[#F5F7FA] border border-[#7C8AA0] flex items-center justify-center transition-all duration-200 hover:bg-[#EAFBFD] hover:border-[#30BBC7]"
+>
+  <i
+    class="fa-regular fa-bell text-[18px] text-red"
+    id="adminNotificationIcon"
+  ></i>
 
-            <span
-              id="adminNotificationBadge"
-              class="absolute top-[6px] right-[6px] w-[8px] h-[8px] rounded-full bg-[#FF4D4F]"
-            ></span>
-          </button>
+  <span
+    id="adminNotificationBadge"
+    class="absolute -top-[4px] -right-[6px] min-w-[18px] h-[18px] px-[4px] rounded-full bg-[#FF4D4F] text-white text-[10px] font-semibold flex items-center justify-center"
+  >
+    5
+  </span>
+</button>
 
           <!-- PROFILE BLOCK -->
           <div
@@ -380,17 +380,20 @@
         class="absolute top-0 left-[230px] w-[1080px] h-[752px] bg-white rounded-[6px]"
       >
 
+     
       <!-- ================= NOTIFICATION BELL ICON SECTION ================= -->
-       <section
+<section
   id="notificationsSection"
   class="hidden absolute top-0 left-0 w-[1070px] h-[668px] p-[20px] bg-white"
 >
-  <div class="w-full h-full rounded-[16px] bg-white p-[20px]">
+  <div class="w-full h-full rounded-[16px] bg-white p-[20px] overflow-y-auto">
+
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-[#11313B] text-[28px] leading-[34px] font-semibold">
           Notifications
         </h1>
+
         <p class="mt-[4px] text-[#7C8AA0] text-[14px]">
           View recent platform updates and alerts
         </p>
@@ -399,24 +402,34 @@
       <button
         id="backFromNotificationsBtn"
         type="button"
-        class="h-[38px] px-[14px] rounded-[8px] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold"
+        class="h-[38px] px-[14px] rounded-[8px] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold cursor-pointer"
       >
         Back
       </button>
     </div>
 
-    <div id="notificationsList" class="mt-[20px] flex flex-col gap-[12px]">
+    <div
+      id="notificationsList"
+      class="mt-[20px] flex flex-col gap-[12px]"
+    >
       <div class="rounded-[12px] bg-white p-[16px] shadow-[0px_1px_4px_rgba(178,163,163,0.65)]">
         <p class="text-[#11313B] text-[14px] font-semibold">
           No notifications yet
         </p>
+
         <p class="mt-[4px] text-[#7C8AA0] text-[13px]">
           New alerts will appear here.
         </p>
       </div>
     </div>
+
   </div>
 </section>
+<!-- notification pop up -->
+<div
+  id="liveNotificationToastWrap"
+  class="fixed top-[24px] right-[24px] z-[9000] flex flex-col gap-[12px]"
+></div>
         <!-- ================= DASHBOARD HOME SECTION ================= -->
   
 <section
@@ -491,7 +504,7 @@
     style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
   >
     <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Sender</h3>
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Customer</h3>
     </div>
 
     <div class="mt-[12px] h-[120px]">
@@ -542,7 +555,7 @@
     style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
   >
     <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Deliveries</h3>
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Tags</h3>
     </div>
 
     <div class="mt-[12px] h-[120px]">
@@ -590,7 +603,7 @@
     style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
   >
     <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Payments</h3>
+      <h3 class="text-[#11313B] text-[16px] font-semibold">PayOUT</h3>
     </div>
 
     <div class="mt-[12px] h-[120px]">
@@ -1489,20 +1502,64 @@
           <!-- DRIVER FINAL ACTIONS -->
 <section
   id="driverFinalActionsSection"
-  class="w-full h-[56px] rounded-[16px]  px-[20px] flex items-center justify-end"
+  class="w-full h-[56px] px-[20px] flex items-center justify-end"
 >
-  <button
-    id="driverDetailsUpdateStatusBtn"
-    type="button" 
-    class="h-[40px] rounded-[8px] cursor-pointer border border-[#30BBC7] px-[18px] text-[#30BBC7] text-[14px] leading-[20px] font-medium bg-white"
-    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-  >
-    Update Driver status
-  </button>
+  <div class="relative">
 
-  
+    <button
+      id="driverDetailsUpdateStatusBtn"
+      type="button"
+      class="h-[40px] rounded-[8px] cursor-pointer border border-[#30BBC7] px-[18px] text-[#30BBC7] text-[14px] leading-[20px] font-medium bg-white"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      Update Driver Status
+    </button>
+
+    <!-- UPDATE STATUS MODAL -->
+    <div
+      id="updateDriverStatusOverlay"
+      class="hidden absolute top-[50px] right-0 z-[3000]"
+    >
+      <div
+        id="updateDriverStatusModal"
+        class="w-[320px] rounded-[12px] bg-white border border-[#E5E7EB] shadow-[0_12px_32px_rgba(0,0,0,0.12)] p-[16px]"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-[#11313B] text-[16px] leading-[24px] font-semibold">
+            Update Driver Status
+          </h3>
+
+          <button
+            id="closeUpdateDriverStatusModalBtn"
+            type="button"
+            class="w-[24px] h-[24px] flex items-center justify-center text-[#7C8AA0]"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="mt-[16px] flex flex-col gap-[10px]">
+          <button
+            id="approveDriverStatusBtn"
+            type="button"
+            class="w-full h-[42px] rounded-[8px] bg-[#EAF8F1] text-[#3BB273] text-[14px] font-medium"
+          >
+            Approve
+          </button>
+
+          <button
+            id="rejectDriverStatusBtn"
+            type="button"
+            class="w-full h-[42px] rounded-[8px] bg-[#FDECEF] text-[#E57373] text-[14px] font-medium"
+          >
+            Reject
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </section>
-
           <!-- RECENT ACTIVITY -->
           <section
             id="driverRecentActivitySection"
@@ -2374,7 +2431,7 @@
         class="mt-[22px] flex items-center justify-end gap-[12px]"
       ></div>
     </div>
-
+<!-- reject payout modal -->
     <div
       id="rejectPayoutOverlay"
       class="hidden fixed inset-0 bg-[#101828]/60 z-[5000] flex items-center justify-center"
@@ -2406,14 +2463,14 @@
           <button
             type="button"
             onclick="submitRejectPayout()"
-            class="h-[38px] px-[14px] rounded-[8px] bg-[#E57373] text-white text-[13px] font-medium"
+            class="h-[38px] px-[14px] rounded-[8px] bg-[#E57373] text-white text-[13px] font-medium cursor-pointer"
           >
             Reject Payout
           </button>
         </div>
       </div>
     </div>
-
+<!-- complete payout modal -->
     <div
       id="completePayoutModal"
       class="hidden fixed inset-0 bg-[#101828]/60 z-[5000] flex items-center justify-center"
@@ -2427,7 +2484,7 @@
           <button
             id="closeCompletePayoutModal"
             type="button"
-            class="w-[28px] h-[28px] rounded-full border border-[#D0D5DD] text-[#7C8AA0] flex items-center justify-center"
+            class="w-[28px] h-[28px] rounded-full border border-[#D0D5DD] text-[#7C8AA0] flex items-center justify-center cursor-pointer text-[14px]"
           >
             ×
           </button>
@@ -2448,7 +2505,8 @@
           <button
             id="cancelCompletePayoutBtn"
             type="button"
-            class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[13px] font-semibold"
+            class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[13px] font-semibold cursor-pointer "
+            
           >
             Cancel
           </button>
@@ -2456,7 +2514,7 @@
           <button
             id="submitCompletePayoutBtn"
             type="button"
-            class="h-[40px] px-[16px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-semibold"
+            class="h-[40px] px-[16px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font- semibold cursor-pointer"
           >
             Mark Completed
           </button>
@@ -3473,48 +3531,6 @@
 </main>
 
 
-          <!-- UPDATE STATUS OVERLAY -->
-          <div
-  id="updateDriverStatusOverlay"
-  class="hidden fixed  bottom-[120px]  right-[110px] z-[3000] flex items-center justify-center"
->
-  <div
-    id="updateDriverStatusModal"
-    class="w-[320px] rounded-[12px] bg-white border border-[#E5E7EB] shadow-[0_12px_32px_rgba(0,0,0,0.12)] p-[16px]"
-  >
-    <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] leading-[24px] font-semibold">
-        Update Driver Status
-      </h3>
-
-      <button
-        id="closeUpdateDriverStatusModalBtn"
-        type="button"
-        class="w-[24px] h-[24px] flex items-center justify-center text-[#7C8AA0]"
-      >
-        ✕
-      </button>
-    </div>
-
-    <div class="mt-[16px] flex flex-col gap-[10px]">
-      <button
-        id="approveDriverStatusBtn"
-        type="button"
-        class="w-full h-[42px] rounded-[8px] bg-[#EAF8F1] text-[#3BB273] text-[14px] font-medium"
-      >
-        Approve
-      </button>
-
-      <button
-        id="rejectDriverStatusBtn"
-        type="button"
-        class="w-full h-[42px] rounded-[8px] bg-[#FDECEF] text-[#E57373] text-[14px] font-medium"
-      >
-        Reject
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- Attachment preview -->
  <div

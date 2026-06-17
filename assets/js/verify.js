@@ -121,8 +121,6 @@ $(document).ready(function () {
 
       const data = await response.json();
 
-      console.log("VERIFY RESPONSE:", data);
-
       // ❌ ERROR
       if (!response.ok || !data.success) {
         showMessage(data.message || "Invalid OTP", "error");
