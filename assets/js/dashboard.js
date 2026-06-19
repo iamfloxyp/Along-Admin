@@ -7024,13 +7024,15 @@ function formatSupportListDate(dateString) {
 
   const date = new Date(String(dateString).replace(" ", "T"));
 
-  return date.toLocaleDateString([], {
-    month: "short",
-    day: "numeric"
-  }) + " • " +
-  date.toLocaleTimeString([], {
+  if (Number.isNaN(date.getTime())) return "N/A";
+
+  return date.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit"
+  }) + " • " +
+  date.toLocaleDateString([], {
+    month: "short",
+    day: "numeric"
   });
 }
 
