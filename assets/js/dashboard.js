@@ -260,6 +260,16 @@ function showDashboardSection(sectionId, updateUrl = true) {
   }
 }
 
+function activateLogoutMenu() {
+  const link = document.getElementById("sidebarLogoutLink");
+  const icon = document.getElementById("sidebarLogoutIcon");
+  const text = document.getElementById("sidebarLogoutText");
+
+  if (link) link.style.backgroundColor = "#FFF5F5";
+  if (icon) icon.style.color = "#E5484D";
+  if (text) text.style.color = "#E5484D";
+}
+
 function switchSidebarTab(sectionId, linkId, iconId, textId, updateUrl = true) {
   showDashboardSection(sectionId, updateUrl);
   resetSidebarMenuStyles();
@@ -473,15 +483,10 @@ if (hash === "#tags") {
 
     return;
   }
-  if (hash === "#logout") {
-  switchSidebarTab(
-    "logoutSection",
-    "sidebarLogoutLink",
-    "sidebarLogoutIcon",
-    "sidebarLogoutText",
-    false
-  );
-
+ if (hash === "#logout") {
+  showDashboardSection("logoutSection", false);
+  resetSidebarMenuStyles();
+  activateLogoutMenu();
   return;
 }
 
@@ -1032,10 +1037,10 @@ function renderDashboardAnalytics(data) {
   setDashboardNumber("dashboardPendingDrivers", drivers.pending_approval);
   setDashboardNumber("dashboardRejectedDrivers", drivers.rejected_drivers);
 
-  setDashboardNumber("dashboardActiveSenders", users.active_users);
-  setDashboardNumber("dashboardNewUsersToday", users.new_users_today);
-  setDashboardNumber("dashboardSenders", users.total_users);
-  setDashboardNumber("dashboardVerifiedUsers", users.verified_users);
+  setDashboardNumber("dashboardTotalCustomers", users.total_customers);
+  setDashboardNumber("dashboardActiveCustomers", users.active_customers);
+  setDashboardNumber("dashboardNewCustomersThisWeek", users.new_customers_this_week);
+  setDashboardNumber("dashboardNewCustomersThisMonth", users.new_customers_this_month);
 
   setDashboardNumber("dashboardTotalDeliveries", tags.total_tags);
   setDashboardNumber("dashboardInProgressDeliveries", tags.in_progress);
@@ -1067,16 +1072,17 @@ function renderDashboardCharts(data) {
   );
 
   sendersChartInstance = renderBarChart(
-    "sendersChart",
-    sendersChartInstance,
-    ["Active", "Verified", "Today"],
-    [
-      users.active_users || 0,
-      users.verified_users || 0,
-      users.new_users_today || 0
-    ],
-    ["#3BB273", "#30BBC7", "#9B51E0"]
-  );
+  "sendersChart",
+  sendersChartInstance,
+  ["Total", "Active", "This Week", "This Month"],
+  [
+    users.total_customers || 0,
+    users.active_customers || 0,
+    users.new_customers_this_week || 0,
+    users.new_customers_this_month || 0
+  ],
+  ["#30BBC7", "#3BB273", "#F2B66D", "#9B51E0"]
+);
 
   deliveriesChartInstance = renderDoughnutChart(
     "deliveriesChart",
@@ -1753,8 +1759,24 @@ function renderBackendDriverPagination(pagination) {
 
   const activePage = pagination.current_page || 1;
   const lastPage = pagination.last_page || 1;
+  const maxVisiblePages = 10;
+
+  const currentGroup = Math.ceil(activePage / maxVisiblePages);
+  const startPage = (currentGroup - 1) * maxVisiblePages + 1;
+  const endPage = Math.min(startPage + maxVisiblePages - 1, lastPage);
+
+  const arrowClass =
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
+
+  const activePageClass =
+    "w-[28px] h-[28px] rounded-[6px] cursor-pointer border border-[#30BBC7] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold";
+
+  const normalPageClass =
+    "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#11313B] text-[13px] font-medium";
 
   if (prevBtn) {
+    prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left text-[11px]"></i>`;
+    prevBtn.className = arrowClass;
     prevBtn.disabled = activePage <= 1;
 
     prevBtn.onclick = function () {
@@ -1766,15 +1788,11 @@ function renderBackendDriverPagination(pagination) {
     };
   }
 
-  for (let page = 1; page <= lastPage; page++) {
+  for (let page = startPage; page <= endPage; page++) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = page;
-
-    btn.className =
-      page === activePage
-        ? "w-[24px] h-[24px] rounded-[4px] cursor-pointer border border-[#30BBC7] text-[#30BBC7] text-[12px]"
-        : "w-[24px] h-[24px] rounded-[4px] cursor-pointer border border-[#D0D5DD] text-[#11313B] text-[12px]";
+    btn.className = page === activePage ? activePageClass : normalPageClass;
 
     btn.onclick = function () {
       currentPage = page;
@@ -1786,6 +1804,8 @@ function renderBackendDriverPagination(pagination) {
   }
 
   if (nextBtn) {
+    nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right text-[11px]"></i>`;
+    nextBtn.className = arrowClass;
     nextBtn.disabled = activePage >= lastPage;
 
     nextBtn.onclick = function () {
@@ -5034,28 +5054,42 @@ function renderSenderPagination(pagination) {
 
   paginationWrap.innerHTML = "";
 
+  const activePage = pagination.current_page || 1;
+  const lastPage = pagination.last_page || 1;
+  const maxVisiblePages = 10;
+
+  const currentGroup = Math.ceil(activePage / maxVisiblePages);
+  const startPage = (currentGroup - 1) * maxVisiblePages + 1;
+  const endPage = Math.min(startPage + maxVisiblePages - 1, lastPage);
+
   const prevBtn = document.createElement("button");
-  prevBtn.textContent = "‹";
-  prevBtn.disabled = pagination.current_page === 1;
-  prevBtn.className =
-    "w-[28px] h-[28px] rounded-[6px] text-[#98A2B3] cursor-pointer text-[16px] disabled:opacity-40";
+
+prevBtn.innerHTML = `
+  <i class="fa-solid fa-chevron-left text-[11px]"></i>
+`;
+
+prevBtn.disabled = activePage <= 1;
+
+prevBtn.className =
+  "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
 
   prevBtn.addEventListener("click", function () {
-    if (pagination.current_page > 1) {
-      const page = pagination.current_page - 1;
-      updateSenderPageUrl(page);
-      loadSendersFromAPI(page);
-    }
+    if (activePage <= 1) return;
+
+    const page = activePage - 1;
+    updateSenderPageUrl(page);
+    loadSendersFromAPI(page);
   });
 
   paginationWrap.appendChild(prevBtn);
 
-  for (let page = 1; page <= pagination.last_page; page++) {
+  for (let page = startPage; page <= endPage; page++) {
     const pageBtn = document.createElement("button");
+    pageBtn.type = "button";
     pageBtn.textContent = page;
 
     pageBtn.className =
-      page === pagination.current_page
+      page === activePage
         ? "w-[28px] h-[28px] rounded-[6px] cursor-pointer border border-[#30BBC7] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold"
         : "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#11313B] text-[13px] font-medium";
 
@@ -5068,17 +5102,22 @@ function renderSenderPagination(pagination) {
   }
 
   const nextBtn = document.createElement("button");
-  nextBtn.textContent = "›";
-  nextBtn.disabled = pagination.current_page === pagination.last_page;
-  nextBtn.className =
-    "w-[28px] h-[28px] rounded-[6px] text-[#98A2B3] cursor-pointer text-[16px] disabled:opacity-40";
+
+nextBtn.innerHTML = `
+  <i class="fa-solid fa-chevron-right text-[11px]"></i>
+`;
+
+nextBtn.disabled = activePage >= lastPage;
+
+nextBtn.className =
+  "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
 
   nextBtn.addEventListener("click", function () {
-    if (pagination.current_page < pagination.last_page) {
-      const page = pagination.current_page + 1;
-      updateSenderPageUrl(page);
-      loadSendersFromAPI(page);
-    }
+    if (activePage >= lastPage) return;
+
+    const page = activePage + 1;
+    updateSenderPageUrl(page);
+    loadSendersFromAPI(page);
   });
 
   paginationWrap.appendChild(nextBtn);
@@ -5443,23 +5482,30 @@ function renderDeliveryPagination() {
 
   const currentPage = currentDeliveryPagination.current_page || 1;
   const lastPage = currentDeliveryPagination.last_page || 1;
+  const maxVisiblePages = 10;
+
+  const currentGroup = Math.ceil(currentPage / maxVisiblePages);
+  const startPage = (currentGroup - 1) * maxVisiblePages + 1;
+  const endPage = Math.min(startPage + maxVisiblePages - 1, lastPage);
 
   const prevBtn = document.createElement("button");
-  prevBtn.textContent = "‹";
-  prevBtn.disabled = currentPage === 1;
+  prevBtn.type = "button";
+  prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left text-[11px]"></i>`;
+  prevBtn.disabled = currentPage <= 1;
   prevBtn.className =
-    "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#98A2B3] disabled:opacity-40";
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   prevBtn.onclick = function () {
-    if (currentPage > 1) {
-      renderDeliveries(currentPage - 1, true);
-    }
+    if (currentPage <= 1) return;
+
+    renderDeliveries(currentPage - 1, true);
   };
 
   pagination.appendChild(prevBtn);
 
-  for (let page = 1; page <= lastPage; page++) {
+  for (let page = startPage; page <= endPage; page++) {
     const pageBtn = document.createElement("button");
+    pageBtn.type = "button";
     pageBtn.textContent = page;
 
     pageBtn.className =
@@ -5475,15 +5521,16 @@ function renderDeliveryPagination() {
   }
 
   const nextBtn = document.createElement("button");
-  nextBtn.textContent = "›";
-  nextBtn.disabled = currentPage === lastPage;
+  nextBtn.type = "button";
+  nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right text-[11px]"></i>`;
+  nextBtn.disabled = currentPage >= lastPage;
   nextBtn.className =
-    "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#98A2B3] disabled:opacity-40";
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   nextBtn.onclick = function () {
-    if (currentPage < lastPage) {
-      renderDeliveries(currentPage + 1, true);
-    }
+    if (currentPage >= lastPage) return;
+
+    renderDeliveries(currentPage + 1, true);
   };
 
   pagination.appendChild(nextBtn);
@@ -5980,49 +6027,48 @@ function renderPaymentPagination(pagination) {
 
   wrap.innerHTML = "";
 
+  const activePage = pagination.current_page || 1;
+  const lastPage = pagination.last_page || 1;
+  const maxVisiblePages = 10;
+
+  const currentGroup = Math.ceil(activePage / maxVisiblePages);
+  const startPage = (currentGroup - 1) * maxVisiblePages + 1;
+  const endPage = Math.min(startPage + maxVisiblePages - 1, lastPage);
+
   const prevBtn = document.createElement("button");
   prevBtn.type = "button";
-  prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left"></i>`;
-  prevBtn.disabled = !pagination.prev_page_url;
+  prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left text-[11px]"></i>`;
+  prevBtn.disabled = activePage <= 1;
   prevBtn.className =
-    "w-[30px] h-[30px] rounded-[6px] cursor-pointer border border-[#D0D5DD] text-[13px] disabled:opacity-40";
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   prevBtn.onclick = function () {
-    if (!pagination.prev_page_url) return;
+    if (activePage <= 1) return;
 
-    const page = pagination.current_page - 1;
+    const page = activePage - 1;
     updatePaymentPageUrl(page);
-    loadPayments(pagination.prev_page_url);
+
+    const query = buildPaymentPaginationQuery(page);
+    loadPayments(`${API_BASE_URL}/admin/payouts?${query.toString()}`);
   };
 
   wrap.appendChild(prevBtn);
 
-  for (let page = 1; page <= pagination.last_page; page++) {
+  for (let page = startPage; page <= endPage; page++) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = page;
 
     btn.className =
-      page === pagination.current_page
+      page === activePage
         ? "w-[30px] h-[30px] rounded-[6px] cursor-pointer border border-[#30BBC7] bg-[#EAFBFD] text-[#30BBC7] text-[14px] font-semibold"
         : "w-[30px] h-[30px] rounded-[6px] cursor-pointer text-[#11313B] text-[14px] font-medium";
 
     btn.onclick = function () {
       updatePaymentPageUrl(page);
-      const query = new URLSearchParams();
 
-query.append("page", page);
-query.append("per_page", 5);
-
-if (currentPaymentFilters.search) {
-  query.append("search", currentPaymentFilters.search);
-}
-
-if (currentPaymentFilters.status !== "all") {
-  query.append("status", currentPaymentFilters.status);
-}
-
-loadPayments(`${API_BASE_URL}/admin/payouts?${query.toString()}`);
+      const query = buildPaymentPaginationQuery(page);
+      loadPayments(`${API_BASE_URL}/admin/payouts?${query.toString()}`);
     };
 
     wrap.appendChild(btn);
@@ -6030,20 +6076,39 @@ loadPayments(`${API_BASE_URL}/admin/payouts?${query.toString()}`);
 
   const nextBtn = document.createElement("button");
   nextBtn.type = "button";
-  nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
-  nextBtn.disabled = !pagination.next_page_url;
+  nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right text-[11px]"></i>`;
+  nextBtn.disabled = activePage >= lastPage;
   nextBtn.className =
-    "w-[30px] h-[30px] rounded-[6px] cursor-pointer border border-[#D0D5DD] text-[13px] disabled:opacity-40";
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   nextBtn.onclick = function () {
-    if (!pagination.next_page_url) return;
+    if (activePage >= lastPage) return;
 
-    const page = pagination.current_page + 1;
+    const page = activePage + 1;
     updatePaymentPageUrl(page);
-    loadPayments(pagination.next_page_url);
+
+    const query = buildPaymentPaginationQuery(page);
+    loadPayments(`${API_BASE_URL}/admin/payouts?${query.toString()}`);
   };
 
   wrap.appendChild(nextBtn);
+}
+
+function buildPaymentPaginationQuery(page) {
+  const query = new URLSearchParams();
+
+  query.append("page", page);
+  query.append("per_page", 5);
+
+  if (currentPaymentFilters.search) {
+    query.append("search", currentPaymentFilters.search);
+  }
+
+  if (currentPaymentFilters.status && currentPaymentFilters.status !== "all") {
+    query.append("status", currentPaymentFilters.status);
+  }
+
+  return query;
 }
 
 function getPaymentStatusBadge(status) {
@@ -6954,6 +7019,21 @@ function formatSupportTime(dateString) {
   });
 }
 
+function formatSupportListDate(dateString) {
+  if (!dateString) return "N/A";
+
+  const date = new Date(String(dateString).replace(" ", "T"));
+
+  return date.toLocaleDateString([], {
+    month: "short",
+    day: "numeric"
+  }) + " • " +
+  date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
 function getSupportStatusBadge(status) {
   const value = String(status || "").toLowerCase();
 
@@ -7150,7 +7230,7 @@ function renderSupportTicketList(list = filteredSupportTickets) {
 
           <div class="shrink-0 flex flex-col items-end gap-[4px]">
             <span class="text-[#7C8AA0] text-[11px]">
-              ${formatSupportTime(getTicketLastTime(ticket))}
+              ${formatSupportListDate(getTicketLastTime(ticket))}
             </span>
 
             ${
@@ -7266,30 +7346,38 @@ function renderSupportPagination(pagination) {
     );
   }
 
+  const activePage = pagination.current_page || 1;
+  const lastPage = pagination.last_page || 1;
+  const maxVisiblePages = 10;
+
+  const currentGroup = Math.ceil(activePage / maxVisiblePages);
+  const startPage = (currentGroup - 1) * maxVisiblePages + 1;
+  const endPage = Math.min(startPage + maxVisiblePages - 1, lastPage);
+
   const prevBtn = document.createElement("button");
   prevBtn.type = "button";
-  prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left"></i>`;
-  prevBtn.disabled = !pagination.prev_page_url;
+  prevBtn.innerHTML = `<i class="fa-solid fa-chevron-left text-[11px]"></i>`;
+  prevBtn.disabled = activePage <= 1;
   prevBtn.className =
-    "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#98A2B3] text-[16px] disabled:opacity-40";
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   prevBtn.addEventListener("click", function () {
-    if (pagination.prev_page_url) {
-      const prevPage = pagination.current_page - 1;
-      updateSupportPageUrl(prevPage);
-      loadSupportTicketsWithFilters(prevPage);
-    }
+    if (activePage <= 1) return;
+
+    const prevPage = activePage - 1;
+    updateSupportPageUrl(prevPage);
+    loadSupportTicketsWithFilters(prevPage);
   });
 
   paginationWrap.appendChild(prevBtn);
 
-  for (let page = 1; page <= pagination.last_page; page++) {
+  for (let page = startPage; page <= endPage; page++) {
     const pageBtn = document.createElement("button");
     pageBtn.type = "button";
     pageBtn.textContent = page;
 
     pageBtn.className =
-      page === pagination.current_page
+      page === activePage
         ? "w-[28px] h-[28px] rounded-[6px] cursor-pointer border border-[#30BBC7] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold"
         : "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#11313B] text-[13px] font-medium";
 
@@ -7303,17 +7391,17 @@ function renderSupportPagination(pagination) {
 
   const nextBtn = document.createElement("button");
   nextBtn.type = "button";
-  nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right"></i>`;
-  nextBtn.disabled = !pagination.next_page_url;
+  nextBtn.innerHTML = `<i class="fa-solid fa-chevron-right text-[11px]"></i>`;
+  nextBtn.disabled = activePage >= lastPage;
   nextBtn.className =
-    "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#98A2B3] text-[16px] disabled:opacity-40";
+    "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   nextBtn.addEventListener("click", function () {
-    if (pagination.next_page_url) {
-      const nextPage = pagination.current_page + 1;
-      updateSupportPageUrl(nextPage);
-      loadSupportTicketsWithFilters(nextPage);
-    }
+    if (activePage >= lastPage) return;
+
+    const nextPage = activePage + 1;
+    updateSupportPageUrl(nextPage);
+    loadSupportTicketsWithFilters(nextPage);
   });
 
   paginationWrap.appendChild(nextBtn);
