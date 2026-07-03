@@ -295,6 +295,8 @@
               </span>
             </a>
 
+         
+
             <!-- SETTINGS -->
             <a
               id="sidebarSettingsLink"
@@ -317,6 +319,30 @@
                 style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
               >
                 Settings
+              </span>
+            </a>
+
+               <!-- ADMIN USERS -->
+            <a
+              id="sidebarAdminUsersLink"
+              href="#"
+              class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+            >
+              <span
+                id="sidebarAdminUsersIcon"
+                class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-[20px] h-[20px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+              </span>
+
+              <span
+                id="sidebarAdminUsersText"
+                class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+                style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+              >
+                Admin Users
               </span>
             </a>
           </div>
@@ -2776,7 +2802,7 @@
 </section>
 
 
-     <!-- ================= SETTINGS SECTION ================= -->
+<!-- ================= SETTINGS SECTION ================= -->
 <section
   id="settingsSection"
   class="hidden absolute top-0 left-0 w-[1070px] h-[800px] p-[20px] bg-white rounded-[6px]"
@@ -3430,6 +3456,576 @@
 </div>
   </div>
 </section>
+
+
+<!-- ================= ADMIN USERS SECTION ================= -->
+<section
+  id="adminUsersSection"
+  class="hidden absolute top-0 left-0 w-[1070px] h-[668px] p-[20px] bg-white rounded-"
+>
+  <div class="w-full min-h-full rounded-[16px] bg-white p-[20px] ">
+
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-[#11313B] text-[28px] leading-[34px] font-semibold">
+          Admin Users
+        </h1>
+        <p class="mt-[4px] text-[#7C8AA0] text-[14px]">
+          Manage all admin users in the system.
+        </p>
+      </div>
+
+      <button
+        id="openCreateAdminFormBtn"
+        type="button"
+        class="h-[42px] px-[18px] rounded-[10px] bg-[#30BBC7] text-white text-[13px] font-semibold flex items-center gap-[8px] cursor-pointer"
+      >
+        <i class="fa-solid fa-plus text-[12px]"></i>
+        Create New Admin User
+      </button>
+    </div>
+
+    <div class="mt-[22px] grid grid-cols-4 gap-[16px]">
+      <div class="rounded-[14px] bg-white border border-[#E5E7EB] p-[18px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]">
+        <p class="text-[#7C8AA0] text-[13px]">Total Admins</p>
+        <h2 id="totalAdminsValue" class="mt-[8px] text-[#11313B] text-[26px] font-bold">0</h2>
+      </div>
+
+      <div class="rounded-[14px] bg-white border border-[#E5E7EB] p-[18px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]">
+        <p class="text-[#7C8AA0] text-[13px]">Active Admins</p>
+        <h2 id="activeAdminsValue" class="mt-[8px] text-[#11313B] text-[26px] font-bold">0</h2>
+      </div>
+
+      <div class="rounded-[14px] bg-white border border-[#E5E7EB] p-[18px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]">
+        <p class="text-[#7C8AA0] text-[13px]">Inactive Admins</p>
+        <h2 id="inactiveAdminsValue" class="mt-[8px] text-[#11313B] text-[26px] font-bold">0</h2>
+      </div>
+
+      <div class="rounded-[14px] bg-white border border-[#E5E7EB] p-[18px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]">
+        <p class="text-[#7C8AA0] text-[13px]">Super Admins</p>
+        <h2 id="adminRolesValue" class="mt-[8px] text-[#11313B] text-[26px] font-bold">0</h2>
+      </div>
+    </div>
+
+   <!-- ================= ADMIN USERS DIRECTORY ================= -->
+<section
+  id="adminUsersDirectorySection"
+  class="w-full rounded-[16px] p-[16px] flex flex-col"
+>
+  <!-- DIRECTORY TITLE -->
+  <div class="w-full">
+    <h2
+      class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      Admin Users Directory
+    </h2>
+  </div>
+
+  
+
+  <!-- TABLE -->
+  <div
+    id="adminUsersTableWrap"
+    class="mt-[16px] w-full flex flex-col"
+  >
+    <!-- TABLE HEADER -->
+    <div
+      id="adminUsersTableHeader"
+      class="w-full h-[36px] bg-[#F1F5F8] rounded-[5px] flex items-center"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      <div class="w-[50px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">#</div>
+      <div class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">First Name</div>
+      <div class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Last Name</div>
+      <div class="w-[200px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Email</div>
+      <div class="w-[160px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Phone</div>
+      <div class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Role</div>
+      <div class="w-[110px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Status</div>
+      <div class="w-[110px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Actions</div>
+    </div>
+
+    <!-- TABLE BODY -->
+    <div
+      id="adminUsersTableBody"
+      class="w-full flex flex-col"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      
+    </div>
+  </div>
+
+  <!-- FOOT ROW -->
+  <!-- <div
+    id="adminUsersFooterRow"
+    class="mt-auto w-full flex items-center justify-between"
+  >
+    <p
+      id="adminUsersCountText"
+      class="text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium"
+      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    >
+      1 of 1 row(s) selected
+    </p>
+
+    <div
+      id="adminUsersPagination"
+      class="flex items-center gap-[8px]"
+    >
+      <button
+        id="adminUsersPaginationPrev"
+        type="button"
+        class="w-[24px] h-[24px] rounded-[4px] border border-[#D0D5DD] text-[#98A2B3] text-[12px] disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        ‹
+      </button>
+
+      <div id="adminUsersPaginationNumbers" class="flex items-center gap-[8px]"></div>
+
+      <button
+        id="adminUsersPaginationNext"
+        type="button"
+        class="w-[24px] h-[24px] rounded-[4px] border border-[#D0D5DD] text-[#667085] text-[12px] disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        ›
+      </button>
+    </div>
+  </div> -->
+</section>
+
+
+
+     
+
+    </div>
+    
+<!-- ================= UPDATE ADMIN USER MODAL ================= -->
+<div
+  id="updateAdminUserModal"
+  class="hidden fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-[16px]"
+>
+  <div
+    class="w-[640px] max-h-[92vh] rounded-[16px] bg-white shadow-[0px_12px_40px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col"
+  >
+    <!-- HEADER -->
+    <div class="px-[20px] py-[14px] border-b border-[#E5E7EB] flex items-center justify-between shrink-0">
+      <div>
+        <h2 class="text-[#11313B] text-[19px] font-semibold">
+          Update Admin User
+        </h2>
+
+        <p class="mt-[2px] text-[#7C8AA0] text-[12px]">
+          Modify administrator permissions.
+        </p>
+      </div>
+
+      <button
+        id="closeUpdateAdminModalBtn"
+        type="button"
+        class="w-[30px] h-[30px] rounded-full bg-[#F5F7FA] hover:bg-[#EAFBFD] text-[#7C8AA0]"
+      >
+        <i class="fa-solid fa-xmark text-[12px]"></i>
+      </button>
+    </div>
+
+    <!-- BODY -->
+    <form
+      id="updateAdminUserForm"
+      class="px-[20px] py-[14px] space-y-[14px] overflow-y-auto"
+    >
+      <!-- BASIC INFORMATION -->
+      <div>
+        <h3 class="text-[#11313B] text-[14px] font-semibold">
+          Basic Information
+        </h3>
+
+        <div class="mt-[12px] grid grid-cols-2 gap-[12px]">
+          <div>
+            <label class="text-[12px] font-medium text-[#344054]">First Name</label>
+            <input
+              id="updateAdminFirstName"
+              type="text"
+              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#30BBC7]"
+            >
+          </div>
+
+          <div>
+            <label class="text-[12px] font-medium text-[#344054]">Last Name</label>
+            <input
+              id="updateAdminLastName"
+              type="text"
+              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#30BBC7]"
+            >
+          </div>
+
+          <div>
+            <label class="text-[12px] font-medium text-[#344054]">Email</label>
+            <input
+              id="updateAdminEmail"
+              type="email"
+              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#30BBC7]"
+            >
+          </div>
+
+          <div>
+            <label class="text-[12px] font-medium text-[#344054]">Phone Number</label>
+
+            <div class="mt-[5px] flex rounded-[8px] overflow-hidden border border-[#D0D5DD]">
+              <select
+                id="updatePhoneCode"
+                class="w-[82px] h-[36px] border-r border-[#D0D5DD] px-[8px] text-[12px] outline-none bg-white"
+              >
+                <option>+234</option>
+                <option>+1</option>
+              </select>
+
+              <input
+                id="updateAdminPhone"
+                type="text"
+                class="flex-1 h-[36px] px-[10px] text-[13px] outline-none"
+              >
+            </div>
+          </div>
+
+          <div class="col-span-2">
+            <label class="text-[12px] font-medium text-[#344054]">Role</label>
+
+            <select
+              id="updateAdminRole"
+              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white"
+            >
+              <option value="admin">Admin</option>
+              <option value="super_admin">Super Admin</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    <!-- PERMISSIONS -->
+<div class="mt-[20px]">
+  <h3 class="text-[#11313B] text-[15px] font-semibold mb-[12px]">
+    Rights & Permissions
+  </h3>
+
+  <div class="space-y-[10px]">
+
+    <!-- Manage Drivers -->
+    <div class="flex items-center justify-between rounded-[10px] border border-[#E5E7EB] bg-[#F8FAFC] px-[16px] py-[12px]">
+      <span class="text-[13px] font-medium text-[#11313B]">
+        Manage Drivers
+      </span>
+
+      <div class="flex items-center gap-[22px]">
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="drivers" value="yes" class="accent-[#30BBC7]">
+          <span>Yes</span>
+        </label>
+
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="drivers" value="no" checked class="accent-[#30BBC7]">
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Support Tickets -->
+    <div class="flex items-center justify-between rounded-[10px] border border-[#E5E7EB] bg-[#F8FAFC] px-[16px] py-[12px]">
+      <span class="text-[13px] font-medium text-[#11313B]">
+        Manage Support Tickets
+      </span>
+
+      <div class="flex items-center gap-[22px]">
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="support" value="yes" class="accent-[#30BBC7]">
+          <span>Yes</span>
+        </label>
+
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="support" value="no" checked class="accent-[#30BBC7]">
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Manage Payouts -->
+    <div class="flex items-center justify-between rounded-[10px] border border-[#E5E7EB] bg-[#F8FAFC] px-[16px] py-[12px]">
+      <span class="text-[13px] font-medium text-[#11313B]">
+        Manage Payouts
+      </span>
+
+      <div class="flex items-center gap-[22px]">
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="payouts" value="yes" class="accent-[#30BBC7]">
+          <span>Yes</span>
+        </label>
+
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="payouts" value="no" checked class="accent-[#30BBC7]">
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Create Admin Users -->
+    <div class="flex items-center justify-between rounded-[10px] border border-[#E5E7EB] bg-[#F8FAFC] px-[16px] py-[12px]">
+      <span class="text-[13px] font-medium text-[#11313B]">
+        Create Admin Users
+      </span>
+
+      <div class="flex items-center gap-[22px]">
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="admins" value="yes" class="accent-[#30BBC7]">
+          <span>Yes</span>
+        </label>
+
+        <label class="flex items-center gap-[6px] text-[13px] cursor-pointer">
+          <input type="radio" name="admins" value="no" checked class="accent-[#30BBC7]">
+          <span>No</span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="mt-[20px] pt-[18px]  flex items-center justify-end gap-[12px]">
+
+  <button
+    id="cancelUpdateAdminBtn"
+    type="button"
+    class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-medium hover:bg-gray-50"
+  >
+    Cancel
+  </button>
+
+  <button
+    type="submit"
+    class="h-[40px] px-[24px] rounded-[8px] bg-[#30BBC7] hover:bg-[#27AAB5] text-white text-[13px] font-semibold"
+  >
+    Update User
+  </button>
+
+</div>
+    </form>
+  </div>
+</div>
+</section>
+
+
+<!-- ================= CREATE ADMIN USER SECTION ================= -->
+<section
+  id="createAdminUserSection"
+  class="hidden absolute top-0 left-0 w-[1070px] min-h-[668px] p-[20px] bg-white"
+>
+  <div class="w-full min-h-full rounded-[16px] bg-white p-[20px]">
+
+    <!-- HEADER -->
+    <div class="flex items-center justify-between">
+      <div>
+        <button
+          id="backToAdminUsersBtn"
+          type="button"
+          class="mb-[12px] inline-flex items-center gap-[8px] text-[#30BBC7] text-[13px] font-semibold"
+        >
+          <i class="fa-solid fa-arrow-left text-[12px]"></i>
+          Back to Admin Users
+        </button>
+
+        <h1 class="text-[#11313B] text-[28px] leading-[34px] font-semibold">
+          Create New Admin User
+        </h1>
+
+        <p class="mt-[4px] text-[#7C8AA0] text-[14px]">
+          Fill in the details below to create a new admin account.
+        </p>
+      </div>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="mt-[24px] w-full rounded-[16px] bg-white border border-[#E5E7EB] p-[22px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]">
+      <form id="createAdminUserForm" class="w-full">
+
+        <!-- NAME ROW -->
+        <div class="grid grid-cols-2 gap-[20px]">
+          <div>
+            <label class="text-[#11313B] text-[12px] font-semibold">
+              First Name
+            </label>
+            <input
+              id="adminFirstNameInput"
+              type="text"
+              placeholder="Enter first name"
+              class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none"
+            />
+          </div>
+
+          <div>
+            <label class="text-[#11313B] text-[12px] font-semibold">
+              Last Name
+            </label>
+            <input
+              id="adminLastNameInput"
+              type="text"
+              placeholder="Enter last name"
+              class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none"
+            />
+          </div>
+        </div>
+
+        <!-- CONTACT ROW -->
+        <div class="mt-[18px] grid grid-cols-2 gap-[20px]">
+          <div>
+            <label class="text-[#11313B] text-[12px] font-semibold">
+              Email Address
+            </label>
+            <input
+              id="adminEmailInput"
+              type="email"
+              placeholder="Enter email address"
+              class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none"
+            />
+          </div>
+
+          <div>
+            <label class="text-[#11313B] text-[12px] font-semibold">
+              Phone Number
+            </label>
+
+          <div class="mt-[6px] flex rounded-[8px] overflow-hidden border border-[#D0D5DD]">
+
+    <select
+        id="adminPhoneCodeInput"
+        class="w-[100px] h-[40px] border-r border-[#D0D5DD] bg-white px-[8px] outline-none"
+    >
+        <option>NG +234</option>
+        <option>US +1</option>
+    </select>
+
+    <input
+        id="adminPhoneInput"
+        type="text"
+        placeholder="Enter phone number"
+        class="flex-1 h-[40px] px-[12px] outline-none"
+    />
+
+</div>
+          </div>
+        </div>
+
+        <!-- ROLE ROW -->
+        <div class="mt-[18px] ">
+          <div>
+            <label class="text-[#11313B] text-[12px] font-semibold">
+              Role
+            </label>
+            <select
+              id="adminRoleInput"
+              class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none bg-white"
+            >
+              <option value="admin" selected>Admin</option>
+              <option value="super_admin">Super Admin</option>
+              <option value="support">Support</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- RIGHTS -->
+        <div class="mt-[24px]">
+          <h2 class="text-[#11313B] text-[16px] font-semibold">
+            Rights
+          </h2>
+
+          <p class="mt-[4px] text-[#7C8AA0] text-[13px]">
+            Choose what this admin user can access.
+          </p>
+
+          <div class="mt-[14px] rounded-[12px] border border-[#E5E7EB] overflow-hidden">
+
+            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
+              <span class="text-[#11313B] text-[13px] font-medium">Manage Drivers</span>
+              <div class="flex items-center gap-[18px]">
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canManageDrivers" class="accent-[#30BBC7]" value="true" />
+                  Yes
+                </label>
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canManageDrivers" class="accent-[#30BBC7]" value="false" checked />
+                  No
+                </label>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
+              <span class="text-[#11313B] text-[13px] font-medium">Manage Support Tickets</span>
+              <div class="flex items-center gap-[18px]">
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canManageSupportTicket" class="accent-[#30BBC7]" value="true" />
+                  Yes
+                </label>
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canManageSupportTicket" class="accent-[#30BBC7]" value="false" checked />
+                  No
+                </label>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
+              <span class="text-[#11313B] text-[13px] font-medium">Manage Payouts</span>
+              <div class="flex items-center gap-[18px]">
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canManagePayouts" class="accent-[#30BBC7]" value="true" />
+                  Yes
+                </label>
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canManagePayouts" class="accent-[#30BBC7]" value="false" checked />
+                  No
+                </label>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between px-[16px] py-[14px]">
+              <span class="text-[#11313B] text-[13px] font-medium">Create Admins</span>
+              <div class="flex items-center gap-[18px]">
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canCreateAdmins" value="true" />
+                  Yes
+                </label>
+                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+                  <input type="radio" name="canCreateAdmins" value="false" checked />
+                  No
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="mt-[26px] flex items-center justify-end gap-[12px]">
+          <button
+            id="cancelCreateAdminBtn"
+            type="button"
+            class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-semibold"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="h-[40px] px-[22px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-semibold"
+          >
+            Create User
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</section>
+
+
+     
 
 <!-- ================= LOGOUT SECTION ================= -->
 <section

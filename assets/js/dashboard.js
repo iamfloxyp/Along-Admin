@@ -155,6 +155,12 @@ const SIDEBAR_ITEMS = [
     sectionId: "supportRequestsSection"
   },
   {
+    linkId: "sidebarAdminUsersLink",
+    iconId: "sidebarAdminUsersIcon",
+    textId: "sidebarAdminUsersText",
+    sectionId: "adminUsersSection"
+  },
+  {
     linkId: "sidebarSettingsLink",
     iconId: "sidebarSettingsIcon",
     textId: "sidebarSettingsText",
@@ -189,6 +195,8 @@ const ROUTE_MAP = {
   deliveriesSection: "#tags",
   paymentsSection: "#payout",
   supportRequestsSection: "#support-requests",
+  adminUsersSection: "#admin-users",
+  createAdminUserSection: "#admin-users/create",
   settingsSection: "#settings",
   notificationsSection: "#notifications",
   logoutSection: "#logout"
@@ -201,6 +209,8 @@ const HASH_TO_SECTION = {
   "#tags": "deliveriesSection",
   "#payout": "paymentsSection",
   "#support-requests": "supportRequestsSection",
+  "#admin-users": "adminUsersSection",
+  "#admin-users/create": "createAdminUserSection",
   "#settings": "settingsSection",
     "#notifications": "notificationsSection",
     "#logout": "logoutSection"
@@ -214,6 +224,8 @@ const ALL_MAIN_SECTION_IDS = [
   "deliveriesSection",
   "paymentsSection",
   "supportRequestsSection",
+  "adminUsersSection",
+  "createAdminUserSection",
   "settingsSection",
   "notificationsSection",
   "logoutSection"
@@ -454,6 +466,53 @@ if (hash === "#tags") {
     loadSupportTickets();
     return;
   }
+  if (
+  hash.startsWith("#admin-users/") &&
+  hash !== "#admin-users/create"
+) {
+  const adminId = hash.replace("#admin-users/", "");
+
+  switchSidebarTab(
+    "adminUsersSection",
+    "sidebarAdminUsersLink",
+    "sidebarAdminUsersIcon",
+    "sidebarAdminUsersText",
+    false
+  );
+
+  loadAdminUsers();
+
+  if (adminId) {
+    openUpdateAdminModal(adminId);
+  }
+
+  return;
+}
+
+if (hash === "#admin-users") {
+  switchSidebarTab(
+    "adminUsersSection",
+    "sidebarAdminUsersLink",
+    "sidebarAdminUsersIcon",
+    "sidebarAdminUsersText",
+    false
+  );
+
+  loadAdminUsers();
+  return;
+}
+
+if (hash === "#admin-users/create") {
+  switchSidebarTab(
+    "createAdminUserSection",
+    "sidebarAdminUsersLink",
+    "sidebarAdminUsersIcon",
+    "sidebarAdminUsersText",
+    false
+  );
+
+  return;
+}
 
  if (hash === "#settings") {
   switchSidebarTab(
@@ -599,6 +658,9 @@ function refreshSidebarSection(sectionId) {
 
   if (sectionId === "settingsSection") {
     loadSettingsSection();
+    return;
+  }
+  if (sectionId === "adminUsersSection") { 
     return;
   }
 }
@@ -8766,3 +8828,382 @@ document.addEventListener("DOMContentLoaded",function () {
 });
 
 /* ================= END OF LOGOUT SECTION ================= */
+
+/* ================= ADMIN USERS================= */
+
+
+let adminUsers = [];
+
+let selectedAdminUserId = null;
+
+function adminUsersAuthHeaders() {
+  return {
+    Accept: "application/json",
+    Authorization: `Bearer ${AUTH_TOKEN}`
+  };
+}
+
+async function fetchAllAdminUsers() {
+  const response = await fetch(`${API_BASE_URL}/admin/admin-users/all`, {
+    method: "GET",
+    headers: adminUsersAuthHeaders()
+  });
+
+  const result = await response.json();
+
+  if (!response.ok || result.success === false) {
+    throw new Error(result.message || "Failed to load admin users");
+  }
+
+  return Array.isArray(result.data?.users) ? result.data.users : [];
+}
+
+async function loadAdminUsers() {
+  showGlobalLoader();
+
+  try {
+    adminUsers = await fetchAllAdminUsers();
+    renderAdminUsers(adminUsers);
+  } catch (error) {
+    console.error("Admin users error:", error);
+    showActionPopupMessage(error.message || "Unable to load admin users.", "error");
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+function getAdminStatusBadge(isActive) {
+  if (Number(isActive) === 1 || isActive === true) {
+    return `
+      <span class="inline-flex items-center h-[22px] px-[8px] rounded-[5px] bg-[#EAF8F1] text-[#3BB273] text-[11px] font-semibold">
+        Active
+      </span>
+    `;
+  }
+
+  return `
+    <span class="inline-flex items-center h-[22px] px-[8px] rounded-[5px] bg-[#FDECEF] text-[#E57373] text-[11px] font-semibold">
+      Inactive
+    </span>
+  `;
+}
+
+function getAdminRoleBadge(role) {
+  return `
+    <span class="inline-flex items-center h-[22px] px-[8px] rounded-[5px] bg-[#EAFBFD] text-[#30BBC7] text-[11px] font-semibold capitalize">
+      ${role || "admin"}
+    </span>
+  `;
+}
+
+function renderAdminUsers(users = []) {
+  const body = document.getElementById("adminUsersTableBody");
+  if (!body) return;
+
+  body.innerHTML = "";
+
+  if (!users.length) {
+    body.innerHTML = `
+      <div class="w-full h-[58px] flex items-center px-[8px] border-b border-[#E5E7EB] text-[#7C8AA0] text-[12px]">
+        No admin users found.
+      </div>
+    `;
+    return;
+  }
+
+  users.forEach((user, index) => {
+    body.innerHTML += `
+      <div class="w-full h-[58px] flex items-center border-b border-[#E5E7EB] text-[#11313B] text-[12px]">
+        <div class="w-[50px] px-[8px]">${index + 1}</div>
+
+        <div class="w-[115px] px-[8px] font-semibold truncate">
+          ${user.first_name || "N/A"}
+        </div>
+
+        <div class="w-[115px] px-[8px] truncate">
+          ${user.last_name || "N/A"}
+        </div>
+
+        <div class="w-[200px] px-[8px] truncate">
+          ${user.email || "N/A"}
+        </div>
+
+        <div class="w-[160px] px-[8px] truncate">
+          ${user.phone || "N/A"}
+        </div>
+
+        <div class="w-[115px] px-[8px]">
+          ${getAdminRoleBadge(user.role)}
+        </div>
+
+        <div class="w-[110px] px-[8px]">
+          ${getAdminStatusBadge(user.is_active)}
+        </div>
+
+        <div class="w-[110px] px-[8px]">
+          <button
+            type="button"
+            class="openUpdateAdminBtn inline-flex items-center gap-[5px] h-[26px] px-[10px] rounded-[6px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-medium cursor-pointer hover:bg-[#DDF7FA]"
+            data-admin-id="${user.id}"
+          >
+            <i class="fa-solid fa-pen text-[11px]"></i>
+            Update
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+
+
+const updateModal = document.getElementById("updateAdminUserModal");
+
+document.addEventListener("click", async function (event) {
+  const updateBtn = event.target.closest(".openUpdateAdminBtn");
+  if (!updateBtn) return;
+
+  const adminId = updateBtn.dataset.adminId;
+  if (!adminId) return;
+
+  window.location.hash = `#admin-users/${adminId}`;
+});
+
+async function openUpdateAdminModal(adminId) {
+  try {
+    showGlobalLoader();
+
+    const response = await fetch(`${API_BASE_URL}/admin/admin-users/${adminId}`, {
+      method: "GET",
+      headers: adminUsersAuthHeaders()
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Failed to load admin user.");
+    }
+
+    const user = result.data?.user;
+    if (!user) throw new Error("Admin user not found.");
+
+    fillUpdateAdminModal(user);
+
+    updateModal.classList.remove("hidden");
+    document.body.classList.add("overflow-hidden");
+  } catch (error) {
+    console.error("Open update admin modal error:", error);
+    showActionPopupMessage(error.message || "Unable to open admin user.", "error");
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+function closeUpdateModal() {
+  updateModal.classList.add("hidden");
+  document.body.classList.remove("overflow-hidden");
+
+  if (window.location.hash.startsWith("#admin-users/")) {
+    window.location.hash = "#admin-users";
+  }
+}
+
+document
+  .getElementById("closeUpdateAdminModalBtn")
+  ?.addEventListener("click", closeUpdateModal);
+
+document
+  .getElementById("cancelUpdateAdminBtn")
+  ?.addEventListener("click", closeUpdateModal);
+
+updateModal?.addEventListener("click", function (event) {
+  if (event.target === updateModal) {
+    closeUpdateModal();
+  }
+});
+
+function fillUpdateAdminModal(user) {
+  document.getElementById("updateAdminUserForm").dataset.adminId = user.id;
+
+  document.getElementById("updateAdminFirstName").value = user.first_name || "";
+  document.getElementById("updateAdminLastName").value = user.last_name || "";
+  document.getElementById("updateAdminEmail").value = user.email || "";
+  document.getElementById("updateAdminRole").value = user.role || "admin";
+
+  const phone = user.phone || "";
+  const phoneCode = phone.startsWith("+1") ? "+1" : "+234";
+  const phoneNumber = phone.replace(phoneCode, "");
+
+  document.getElementById("updatePhoneCode").value = phoneCode;
+  document.getElementById("updateAdminPhone").value = phoneNumber;
+}
+
+document
+  .getElementById("updateAdminUserForm")
+  ?.addEventListener("submit", updateAdminRights);
+
+async function updateAdminRights(event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const adminId = form.dataset.adminId;
+
+  if (!adminId) {
+    showActionPopupMessage("Admin ID not found.", "error");
+    return;
+  }
+
+  const rights = {
+    can_manage_drivers:
+      document.querySelector('input[name="drivers"]:checked')?.value === "yes",
+
+    can_manage_support_ticket:
+      document.querySelector('input[name="support"]:checked')?.value === "yes",
+
+    can_manage_payouts:
+      document.querySelector('input[name="payouts"]:checked')?.value === "yes",
+
+    can_create_admins:
+      document.querySelector('input[name="admins"]:checked')?.value === "yes"
+  };
+
+  try {
+    showGlobalLoader();
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/admin-users/${adminId}/rights`,
+      {
+        method: "POST",
+        headers: {
+          ...adminUsersAuthHeaders(),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ rights })
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(result.message || "Failed to update admin rights.");
+    }
+
+    showActionPopupMessage("Admin rights updated successfully.", "success");
+
+    closeUpdateModal();
+    loadAdminUsers();
+  } catch (error) {
+    console.error("Update admin rights error:", error);
+    showActionPopupMessage(error.message || "Unable to update admin rights.", "error");
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+document.getElementById("openCreateAdminFormBtn")?.addEventListener("click", function () {
+  window.location.hash = "#admin-users/create";
+});
+
+document.getElementById("backToAdminUsersBtn")?.addEventListener("click", function () {
+  window.location.hash = "#admin-users";
+});
+
+document.getElementById("cancelCreateAdminBtn")?.addEventListener("click", function () {
+  window.location.hash = "#admin-users";
+});
+
+
+// ================= CREATE ADMIN USER =================
+
+document
+  .getElementById("createAdminUserForm")
+  ?.addEventListener("submit", createAdminUser);
+
+// Generate random 8-digit password
+function generateRandomPassword() {
+  return Math.floor(10000000 + Math.random() * 90000000).toString();
+}
+
+async function createAdminUser(e) {
+  e.preventDefault();
+
+  const phoneCode = document
+    .getElementById("adminPhoneCodeInput")
+    .value.split(" ")[1];
+
+  const password = generateRandomPassword();
+
+  const payload = {
+  first_name: document.getElementById("adminFirstNameInput").value.trim(),
+  last_name: document.getElementById("adminLastNameInput").value.trim(),
+  email: document.getElementById("adminEmailInput").value.trim(),
+  phone: phoneCode + document.getElementById("adminPhoneInput").value.trim(),
+  role: document.getElementById("adminRoleInput").value,
+
+  password,
+  password_confirmation: password,
+
+  rights: JSON.stringify({
+    can_manage_drivers:
+      document.querySelector('input[name="canManageDrivers"]:checked')?.value === "true",
+
+    can_manage_support_ticket:
+      document.querySelector('input[name="canManageSupportTicket"]:checked')?.value === "true",
+
+    can_manage_payouts:
+      document.querySelector('input[name="canManagePayouts"]:checked')?.value === "true",
+
+    can_create_admins:
+      document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true"
+  })
+};
+
+  try {
+    showGlobalLoader();
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/admin-users/create`,
+      {
+        method: "POST",
+        headers: {
+          ...adminUsersAuthHeaders(),
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Unable to create admin user."
+      );
+    }
+
+    showActionPopupMessage(
+      "Admin user created successfully.",
+      "success"
+    );
+
+    // Reset the form
+    document.getElementById("createAdminUserForm").reset();
+
+    // Return to Admin Users page
+    window.location.hash = "#admin-users";
+
+    // Reload admin list
+    if (typeof loadAdminUsers === "function") {
+      loadAdminUsers();
+    }
+  } catch (error) {
+    console.error("Create Admin User Error:", error);
+
+    showActionPopupMessage(
+      error.message || "Something went wrong.",
+      "error"
+    );
+  } finally {
+    hideGlobalLoader();
+  }
+}
