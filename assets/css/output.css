@@ -1687,8 +1687,8 @@
   .bg-\[\#30BBC7\] {
     background-color: #30BBC7;
   }
-  .bg-\[\#49D6F2\] {
-    background-color: #49D6F2;
+  .bg-\[\#3BB273\] {
+    background-color: #3BB273;
   }
   .bg-\[\#79E1F6\] {
     background-color: #79E1F6;
@@ -1950,8 +1950,8 @@
     --tw-gradient-from: #6FE7F7;
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
-  .to-\[\#49D6F2\] {
-    --tw-gradient-to: #49D6F2;
+  .to-\[\#3BB273\] {
+    --tw-gradient-to: #3BB273;
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
   }
   .object-contain {
@@ -2351,8 +2351,8 @@
   .text-\[\#30BBC7\] {
     color: #30BBC7;
   }
-  .text-\[\#49D6F2\] {
-    color: #49D6F2;
+  .text-\[\#3BB273\] {
+    color: #3BB273;
   }
   .text-\[\#98A2B3\] {
     color: #98A2B3;

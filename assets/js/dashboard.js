@@ -43,6 +43,41 @@ function renderAdminProfile(user) {
   }
 }
 
+function applyAdminSidebarRights(user) {
+  const rights = user?.rights || {};
+
+  const isSuperAdmin =
+    rights.is_super_admin === true ||
+    rights.can_create_admins === true;
+
+  const canManageDrivers =
+    isSuperAdmin || rights.can_manage_drivers === true;
+
+  const canManageSupport =
+    isSuperAdmin || rights.can_manage_support_ticket === true;
+
+  const canManagePayouts =
+    isSuperAdmin || rights.can_manage_payouts === true;
+
+  const canManageAdmins = isSuperAdmin;
+
+  document
+    .getElementById("sidebarDriversLink")
+    ?.classList.toggle("hidden", !canManageDrivers);
+
+  document
+    .getElementById("sidebarSupportRequestsLink")
+    ?.classList.toggle("hidden", !canManageSupport);
+
+  document
+    .getElementById("sidebarPaymentsLink")
+    ?.classList.toggle("hidden", !canManagePayouts);
+
+  document
+    .getElementById("sidebarAdminUsersLink")
+    ?.classList.toggle("hidden", !canManageAdmins);
+}
+
 function loadAdminHeaderFromSession() {
   const savedUser = sessionStorage.getItem("admin_user");
 
@@ -50,6 +85,7 @@ function loadAdminHeaderFromSession() {
 
   const user = JSON.parse(savedUser);
   renderAdminProfile(user);
+  applyAdminSidebarRights(user);
 }
 
 async function loadAdminProfile() {
@@ -74,6 +110,7 @@ async function loadAdminProfile() {
 
     renderAdminProfile(user);
     renderSettingsProfile(user);
+    applyAdminSidebarRights(user);
 
     return user;
   } catch (error) {
@@ -256,7 +293,7 @@ function activateSidebarMenu(linkId, iconId, textId) {
   const icon = document.getElementById(iconId);
   const text = document.getElementById(textId);
 
-  if (link) link.style.backgroundColor = "#49D6F2";
+  if (link) link.style.backgroundColor = "#3BB273";
   if (icon) icon.style.color = "#FFFFFF";
   if (text) text.style.color = "#FFFFFF";
 }
@@ -288,9 +325,46 @@ function switchSidebarTab(sectionId, linkId, iconId, textId, updateUrl = true) {
   activateSidebarMenu(linkId, iconId, textId);
 }
 
+function canCurrentAdminAccessHash(hash) {
+  const savedUser = sessionStorage.getItem("admin_user");
+  const user = savedUser ? JSON.parse(savedUser) : {};
+  const rights = user.rights || {};
+
+  const isSuperAdmin =
+    rights.is_super_admin === true ||
+    rights.can_create_admins === true;
+
+  if (isSuperAdmin) return true;
+
+  if (hash.startsWith("#drivers")) {
+    return rights.can_manage_drivers === true;
+  }
+
+  if (hash.startsWith("#payout")) {
+    return rights.can_manage_payouts === true;
+  }
+
+  if (hash.startsWith("#support-requests")) {
+    return rights.can_manage_support_ticket === true;
+  }
+
+  if (hash.startsWith("#admin-users")) {
+    return false;
+  }
+
+  return true;
+}
+
 function loadSectionFromHash() {
   const fullHash = window.location.hash || "#dashboard";
   const hash = fullHash.split("?")[0];
+
+  if (!canCurrentAdminAccessHash(hash)) {
+  showActionPopupMessage("You do not have permission to access this page.", "error");
+
+  window.location.hash = "#dashboard";
+  return;
+}
 
   if (hash === "#dashboard") {
   switchSidebarTab(
@@ -791,30 +865,28 @@ function showLiveNotificationToast(data = {}) {
 }
 
 function subscribeToAdminNotifications() {
-  const pusher = initSupportPusher();
-
   if (notificationPusherChannel) return;
+
+  const pusher = initSupportPusher();
 
   notificationPusherChannel = pusher.subscribe("notifications");
 
-  notificationPusherChannel.bind("pusher:subscription_succeeded", function () {
-    
-  });
+  notificationPusherChannel.unbind("notifications.created");
 
   notificationPusherChannel.bind("notifications.created", async function (data) {
-  console.log("New notification received:", data);
+    console.log("New notification received:", data);
 
-  showLiveNotificationToast({
-    title: data.title,
-    message: data.message
+    showLiveNotificationToast({
+      title: data.title,
+      message: data.message
+    });
+
+    await updateNotificationBadge();
+
+    if (!document.getElementById("notificationsSection")?.classList.contains("hidden")) {
+      await loadNotifications(false);
+    }
   });
-
-  await updateNotificationBadge();
-
-  if (!document.getElementById("notificationsSection")?.classList.contains("hidden")) {
-    await loadNotifications(false);
-  }
-});
 }
 
 function openNotificationsSection() {
@@ -904,6 +976,9 @@ async function updateNotificationBadge() {
 }
 
 function renderNotifications() {
+  adminNotifications = [
+  ...new Map(adminNotifications.map(item => [item.id, item])).values()
+];
   const list = document.getElementById("notificationsList");
   if (!list) return;
 
@@ -1039,7 +1114,7 @@ document.getElementById("backFromNotificationsBtn")?.addEventListener("click", f
 
 document.addEventListener("DOMContentLoaded", function () {
   updateNotificationBadge();
-  subscribeToAdminNotifications
+  subscribeToAdminNotifications()
 });
 
 /* ========================= END OF NOTIFICATIONS ================================ */
@@ -1831,7 +1906,7 @@ function renderBackendDriverPagination(pagination) {
     "w-[32px] h-[32px] rounded-[6px] border border-[#D0D5DD] bg-white text-[#667085] flex items-center justify-center cursor-pointer hover:border-[#30BBC7] hover:text-[#30BBC7] disabled:opacity-40 disabled:cursor-not-allowed";
 
   const activePageClass =
-    "w-[28px] h-[28px] rounded-[6px] cursor-pointer border border-[#30BBC7] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold";
+    "w-[28px] h-[28px] rounded-[6px] cursor-pointer border border-[#] bg-[#EAFBFD] text-[#30BBC7] text-[13px] font-semibold";
 
   const normalPageClass =
     "w-[28px] h-[28px] rounded-[6px] cursor-pointer text-[#11313B] text-[13px] font-medium";
@@ -8410,12 +8485,25 @@ function renderSettingsProfile(user) {
   const email = document.getElementById("settingsEmail");
   const phone = document.getElementById("settingsPhone");
 
-  if (photoPreview) {
-    photoPreview.src =
-      user.profile_photo_url ||
-      user.profile_image_url ||
-      "assets/images/profile icon.png";
-  }
+  const profilePhoto = user.profile_photo_url || user.profile_image_url;
+
+const initialsBox = document.getElementById("settingsProfileInitials");
+
+if (profilePhoto) {
+  photoPreview.src = profilePhoto;
+  photoPreview.classList.remove("hidden");
+  initialsBox.classList.add("hidden");
+} else {
+  photoPreview.removeAttribute("src");
+  photoPreview.classList.add("hidden");
+
+  const initials =
+    `${(user.first_name || "").charAt(0)}${(user.last_name || "").charAt(0)}`
+      .toUpperCase();
+
+  initialsBox.textContent = initials;
+  initialsBox.classList.remove("hidden");
+}
 
   if (firstName) firstName.value = user.first_name || "";
   if (lastName) lastName.value = user.last_name || "";
@@ -9131,78 +9219,73 @@ async function createAdminUser(e) {
     .getElementById("adminPhoneCodeInput")
     .value.split(" ")[1];
 
+  const rawPhone = document
+    .getElementById("adminPhoneInput")
+    .value.trim()
+    .replace(/\D/g, "");
+
+  if (rawPhone.length !== 11) {
+    showActionPopupMessage("Phone number must be exactly 11 digits.", "error");
+    return;
+  }
+
+  const phoneWithoutFirstDigit = rawPhone.slice(1);
   const password = generateRandomPassword();
 
   const payload = {
-  first_name: document.getElementById("adminFirstNameInput").value.trim(),
-  last_name: document.getElementById("adminLastNameInput").value.trim(),
-  email: document.getElementById("adminEmailInput").value.trim(),
-  phone: phoneCode + document.getElementById("adminPhoneInput").value.trim(),
-  role: document.getElementById("adminRoleInput").value,
+    first_name: document.getElementById("adminFirstNameInput").value.trim(),
+    last_name: document.getElementById("adminLastNameInput").value.trim(),
+    email: document.getElementById("adminEmailInput").value.trim(),
+    phone: phoneCode + phoneWithoutFirstDigit,
+    role: document.getElementById("adminRoleInput").value,
 
-  password,
-  password_confirmation: password,
+    password,
+    password_confirmation: password,
 
-  rights: JSON.stringify({
-    can_manage_drivers:
-      document.querySelector('input[name="canManageDrivers"]:checked')?.value === "true",
+    rights: JSON.stringify({
+      can_manage_drivers:
+        document.querySelector('input[name="canManageDrivers"]:checked')?.value === "true",
 
-    can_manage_support_ticket:
-      document.querySelector('input[name="canManageSupportTicket"]:checked')?.value === "true",
+      can_manage_support_ticket:
+        document.querySelector('input[name="canManageSupportTicket"]:checked')?.value === "true",
 
-    can_manage_payouts:
-      document.querySelector('input[name="canManagePayouts"]:checked')?.value === "true",
+      can_manage_payouts:
+        document.querySelector('input[name="canManagePayouts"]:checked')?.value === "true",
 
-    can_create_admins:
-      document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true"
-  })
-};
+      can_create_admins:
+        document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true"
+    })
+  };
 
   try {
     showGlobalLoader();
 
-    const response = await fetch(
-      `${API_BASE_URL}/admin/admin-users/create`,
-      {
-        method: "POST",
-        headers: {
-          ...adminUsersAuthHeaders(),
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/admin/admin-users/create`, {
+      method: "POST",
+      headers: {
+        ...adminUsersAuthHeaders(),
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
 
     const result = await response.json();
 
     if (!response.ok || result.success === false) {
-      throw new Error(
-        result.message || "Unable to create admin user."
-      );
+      throw new Error(result.message || "Unable to create admin user.");
     }
 
-    showActionPopupMessage(
-      "Admin user created successfully.",
-      "success"
-    );
+    showActionPopupMessage("Admin user created successfully.", "success");
 
-    // Reset the form
     document.getElementById("createAdminUserForm").reset();
-
-    // Return to Admin Users page
     window.location.hash = "#admin-users";
 
-    // Reload admin list
     if (typeof loadAdminUsers === "function") {
       loadAdminUsers();
     }
   } catch (error) {
     console.error("Create Admin User Error:", error);
-
-    showActionPopupMessage(
-      error.message || "Something went wrong.",
-      "error"
-    );
+    showActionPopupMessage(error.message || "Something went wrong.", "error");
   } finally {
     hideGlobalLoader();
   }
