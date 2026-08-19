@@ -345,7 +345,45 @@
                 Admin Users
               </span>
             </a>
+
+              <!-- AUDIT LOGS -->
+<a
+  id="sidebarAuditLogsLink"
+  href="#audit-logs"
+  class="w-full h-[36px] rounded-[4px] pt-[8px] pr-[4px] pb-[8px] pl-[4px] flex items-center gap-[8px] bg-transparent"
+>
+  <span
+    id="sidebarAuditLogsIcon"
+    class="w-[20px] h-[20px] flex items-center justify-center text-[#7C8AA0] shrink-0"
+  >
+    <!-- Clipboard / activity log icon -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-[20px] h-[20px]"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      stroke-width="1.8"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a3 3 0 006 0M9 5a3 3 0 016 0M9 12h6M9 16h6"
+      />
+    </svg>
+  </span>
+
+  <span
+    id="sidebarAuditLogsText"
+    class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+     Logs
+  </span>
+</a>
           </div>
+
+        
 
           <!-- BOTTOM SECTION -->
        
@@ -1673,23 +1711,27 @@
                 ></textarea>
               </div>
 
-              <div class="mt-[20px] flex items-center justify-end gap-[10px]">
-                <button
-                  id="cancelRejectReasonBtn"
-                  type="button"
-                  class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#344054] text-[14px] font-medium bg-white cursor-pointer"
-                >
-                  Cancel
-                </button>
+              <!-- MODAL BUTTONS -->
+<div class="mt-[20px] flex items-center justify-end gap-[10px]">
 
-                <button
-                  id="submitRejectReasonBtn"
-                  type="button"
-                  class="h-[40px] px-[16px] rounded-[8px] bg-[#C75D5D] hover:bg-[#B64D4D] text-white text-[14px] font-medium cursor-pointer"
-                >
-                  Submit Rejection
-                </button>
-              </div>
+  <button
+    id="cancelRejectReasonBtn"
+    type="button"
+    class="h-[40px] px-[18px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[14px] font-medium cursor-pointer"
+  >
+    Cancel
+  </button>
+
+  <button
+    id="submitRejectReasonBtn"
+    type="button"
+    class="h-[40px] px-[18px] rounded-[8px] text-white text-[14px] font-medium cursor-pointer"
+    style="background-color: #C75D5D;"
+  >
+    Submit Rejection
+  </button>
+
+</div>
             </div>
           </div>
         </section>
@@ -3635,16 +3677,22 @@
 
     </div>
     
+
 <!-- ================= UPDATE ADMIN USER MODAL ================= -->
 <div
   id="updateAdminUserModal"
   class="hidden fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-[16px]"
 >
+  <!-- MODAL -->
   <div
-    class="w-[640px] max-h-[92vh] rounded-[16px] bg-white shadow-[0px_12px_40px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col"
+    class="w-[640px] max-w-full rounded-[16px] bg-white shadow-[0px_12px_40px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col"
+    style="height: min(760px, calc(100vh - 32px));"
   >
-    <!-- HEADER -->
-    <div class="px-[20px] py-[14px] border-b border-[#E5E7EB] flex items-center justify-between shrink-0">
+
+    <!-- ================= HEADER ================= -->
+    <div
+      class="shrink-0 px-[20px] py-[14px] border-b border-[#E5E7EB] flex items-center justify-between"
+    >
       <div>
         <h2 class="text-[#11313B] text-[19px] font-semibold">
           Update Admin User
@@ -3658,197 +3706,353 @@
       <button
         id="closeUpdateAdminModalBtn"
         type="button"
-        class="w-[30px] h-[30px] rounded-full bg-[#3BB273] hover:bg-[#EAFBFD] text-white"
+        class="w-[30px] h-[30px] rounded-full bg-[#3BB273] hover:bg-[#32A86A] text-white flex items-center justify-center cursor-pointer"
       >
         <i class="fa-solid fa-xmark text-[12px]"></i>
       </button>
     </div>
 
-    <!-- BODY -->
+
+    <!-- ================= FORM ================= -->
     <form
       id="updateAdminUserForm"
-      class="px-[20px] py-[14px] space-y-[14px] overflow-y-auto"
+      class="flex-1 min-h-0 flex flex-col"
     >
-      <!-- BASIC INFORMATION -->
-      <div>
-        <h3 class="text-[#11313B] text-[14px] font-semibold">
-          Basic Information
-        </h3>
 
-        <div class="mt-[12px] grid grid-cols-2 gap-[12px]">
-          <div>
-            <label class="text-[12px] font-medium text-[#344054]">First Name</label>
-            <input
-              id="updateAdminFirstName"
-              type="text"
-              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#30BBC7]"
-            >
-          </div>
+      <!-- ================= SCROLLABLE CONTENT ================= -->
+      <div
+        class="flex-1 min-h-0 overflow-y-auto px-[20px] py-[16px]"
+      >
 
-          <div>
-            <label class="text-[12px] font-medium text-[#344054]">Last Name</label>
-            <input
-              id="updateAdminLastName"
-              type="text"
-              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#30BBC7]"
-            >
-          </div>
+        <!-- ================= BASIC INFORMATION ================= -->
+        <div>
+          <h3 class="text-[#11313B] text-[14px] font-semibold">
+            Basic Information
+          </h3>
 
-          <div>
-            <label class="text-[12px] font-medium text-[#344054]">Email</label>
-            <input
-              id="updateAdminEmail"
-              type="email"
-              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#30BBC7]"
-            >
-          </div>
+          <div class="mt-[12px] grid grid-cols-2 gap-x-[12px] gap-y-[12px]">
 
-          <div>
-            <label class="text-[12px] font-medium text-[#344054]">Phone Number</label>
-
-            <div class="mt-[5px] flex rounded-[8px] overflow-hidden border border-[#D0D5DD]">
-              <select
-                id="updatePhoneCode"
-                class="w-[82px] h-[36px] border-r border-[#D0D5DD] px-[8px] text-[12px] outline-none bg-white"
-              >
-                <option>+234</option>
-                <option>+1</option>
-              </select>
+            <!-- FIRST NAME -->
+            <div>
+              <label class="text-[12px] font-medium text-[#344054]">
+                First Name
+              </label>
 
               <input
-                id="updateAdminPhone"
+                id="updateAdminFirstName"
                 type="text"
-                class="flex-1 h-[36px] px-[10px] text-[13px] outline-none"
+                class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
               >
             </div>
-          </div>
 
-          <div class="col-span-2">
-            <label class="text-[12px] font-medium text-[#344054]">Role</label>
+            <!-- LAST NAME -->
+            <div>
+              <label class="text-[12px] font-medium text-[#344054]">
+                Last Name
+              </label>
 
-            <select
-              id="updateAdminRole"
-              class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white"
-            >
-              <option value="admin">Admin</option>
-             
-            </select>
+              <input
+                id="updateAdminLastName"
+                type="text"
+                class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
+              >
+            </div>
+
+            <!-- EMAIL -->
+            <div>
+              <label class="text-[12px] font-medium text-[#344054]">
+                Email
+              </label>
+
+              <input
+                id="updateAdminEmail"
+                type="email"
+                class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
+              >
+            </div>
+
+            <!-- PHONE -->
+            <div>
+              <label class="text-[12px] font-medium text-[#344054]">
+                Phone Number
+              </label>
+
+              <div
+                class="mt-[5px] flex rounded-[8px] overflow-hidden border border-[#D0D5DD]"
+              >
+                <select
+                  id="updatePhoneCode"
+                  class="w-[82px] h-[36px] border-r border-[#D0D5DD] px-[8px] text-[12px] outline-none bg-white"
+                >
+                  <option>+234</option>
+                  <option>+1</option>
+                </select>
+
+                <input
+                  id="updateAdminPhone"
+                  type="text"
+                  class="flex-1 min-w-0 h-[36px] px-[10px] text-[13px] outline-none"
+                >
+              </div>
+            </div>
+
+            <!-- ROLE -->
+            <div class="col-span-2">
+              <label class="text-[12px] font-medium text-[#344054]">
+                Role
+              </label>
+
+              <select
+                id="updateAdminRole"
+                class="mt-[5px] w-full h-[36px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white focus:border-[#3BB273]"
+              >
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
           </div>
         </div>
+
+
+        <!-- ================= RIGHTS & PERMISSIONS ================= -->
+        <div class="mt-[20px]">
+
+          <h3 class="text-[#11313B] text-[15px] font-semibold">
+            Rights & Permissions
+          </h3>
+
+          <p class="mt-[3px] text-[#7C8AA0] text-[12px]">
+            Choose what this admin user can access.
+          </p>
+
+          <div
+            class="mt-[12px] rounded-[12px] border border-[#E5E7EB] overflow-hidden"
+          >
+
+            <!-- IS SUPER ADMIN -->
+            <div
+              class="flex items-center justify-between px-[16px] py-[11px] border-b border-[#E5E7EB] bg-white"
+            >
+              <span class="text-[#11313B] text-[13px] font-medium">
+                Is Super Admin?
+              </span>
+
+              <div class="flex items-center gap-[18px]">
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="isSuperAdmin"
+                    value="yes"
+                    class="accent-[#3BB273]"
+                  >
+                  Yes
+                </label>
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="isSuperAdmin"
+                    value="no"
+                    class="accent-[#3BB273]"
+                    checked
+                  >
+                  No
+                </label>
+
+              </div>
+            </div>
+
+
+            <!-- MANAGE DRIVERS -->
+            <div
+              class="flex items-center justify-between px-[16px] py-[11px] border-b border-[#E5E7EB] bg-white"
+            >
+              <span class="text-[#11313B] text-[13px] font-medium">
+                Manage Drivers
+              </span>
+
+              <div class="flex items-center gap-[18px]">
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="drivers"
+                    value="yes"
+                    class="accent-[#3BB273]"
+                  >
+                  Yes
+                </label>
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="drivers"
+                    value="no"
+                    class="accent-[#3BB273]"
+                    checked
+                  >
+                  No
+                </label>
+
+              </div>
+            </div>
+
+
+            <!-- MANAGE SUPPORT TICKETS -->
+            <div
+              class="flex items-center justify-between px-[16px] py-[11px] border-b border-[#E5E7EB] bg-white"
+            >
+              <span class="text-[#11313B] text-[13px] font-medium">
+                Manage Support Tickets
+              </span>
+
+              <div class="flex items-center gap-[18px]">
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="support"
+                    value="yes"
+                    class="accent-[#3BB273]"
+                  >
+                  Yes
+                </label>
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="support"
+                    value="no"
+                    class="accent-[#3BB273]"
+                    checked
+                  >
+                  No
+                </label>
+
+              </div>
+            </div>
+
+
+            <!-- MANAGE PAYOUTS -->
+            <div
+              class="flex items-center justify-between px-[16px] py-[11px] border-b border-[#E5E7EB] bg-white"
+            >
+              <span class="text-[#11313B] text-[13px] font-medium">
+                Manage Payouts
+              </span>
+
+              <div class="flex items-center gap-[18px]">
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="payouts"
+                    value="yes"
+                    class="accent-[#3BB273]"
+                  >
+                  Yes
+                </label>
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="payouts"
+                    value="no"
+                    class="accent-[#3BB273]"
+                    checked
+                  >
+                  No
+                </label>
+
+              </div>
+            </div>
+
+
+            <!-- VIEW AUDIT LOGS -->
+            <div
+              class="flex items-center justify-between px-[16px] py-[11px] bg-white"
+            >
+              <span class="text-[#11313B] text-[13px] font-medium">
+                View Audit Logs
+              </span>
+
+              <div class="flex items-center gap-[18px]">
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="auditLogs"
+                    value="yes"
+                    class="accent-[#3BB273]"
+                  >
+                  Yes
+                </label>
+
+                <label
+                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="auditLogs"
+                    value="no"
+                    class="accent-[#3BB273]"
+                    checked
+                  >
+                  No
+                </label>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    
+
+      <!-- ================= FIXED FOOTER ================= -->
+      <div
+        class="shrink-0 px-[20px] py-[13px]  bg-white flex items-center justify-end gap-[12px]"
+      >
+
+        <button
+          id="cancelUpdateAdminBtn"
+          type="button"
+          class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-medium hover:bg-[#F9FAFB] cursor-pointer"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="h-[40px] px-[24px] rounded-[8px] bg-[#3BB273] hover:bg-[#32A86A] text-white text-[13px] font-semibold cursor-pointer"
+        >
+          Update User
+        </button>
+
       </div>
 
-   
-<!-- PERMISSIONS -->
-<div class="mt-[22px]">
-  <h3 class="text-[#11313B] text-[15px] font-semibold">
-    Rights & Permissions
-  </h3>
-
-  <p class="mt-[4px] text-[#7C8AA0] text-[12px]">
-    Choose what this admin user can access.
-  </p>
-
-  <div class="mt-[14px] rounded-[12px] border border-[#E5E7EB] overflow-hidden">
-
-    <!-- Is Super Admin -->
-    <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB] bg-white">
-      <span class="text-[#11313B] text-[13px] font-medium">
-        Is Super Admin?
-      </span>
-
-      <div class="flex items-center gap-[18px]">
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="isSuperAdmin" value="yes" class="accent-[#3BB273]">
-          Yes
-        </label>
-
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="isSuperAdmin" value="no" class="accent-[#3BB273]" checked>
-          No
-        </label>
-      </div>
-    </div>
-
-    <!-- Manage Drivers -->
-    <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB] bg-white">
-      <span class="text-[#11313B] text-[13px] font-medium">
-        Manage Drivers
-      </span>
-
-      <div class="flex items-center gap-[18px]">
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="drivers" value="yes" class="accent-[#3BB273]">
-          Yes
-        </label>
-
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="drivers" value="no" class="accent-[#3BB273]" checked>
-          No
-        </label>
-      </div>
-    </div>
-
-    <!-- Manage Support Tickets -->
-    <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB] bg-white">
-      <span class="text-[#11313B] text-[13px] font-medium">
-        Manage Support Tickets
-      </span>
-
-      <div class="flex items-center gap-[18px]">
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="support" value="yes" class="accent-[#3BB273]">
-          Yes
-        </label>
-
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="support" value="no" class="accent-[#3BB273]" checked>
-          No
-        </label>
-      </div>
-    </div>
-
-    <!-- Manage Payouts -->
-    <div class="flex items-center justify-between px-[16px] py-[14px] bg-white">
-      <span class="text-[#11313B] text-[13px] font-medium">
-        Manage Payouts
-      </span>
-
-      <div class="flex items-center gap-[18px]">
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="payouts" value="yes" class="accent-[#3BB273]">
-          Yes
-        </label>
-
-        <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-          <input type="radio" name="payouts" value="no" class="accent-[#3BB273]" checked>
-          No
-        </label>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- FOOTER -->
-<div class="mt-[20px] pt-[18px]  flex items-center justify-end gap-[12px]">
-
-  <button
-    id="cancelUpdateAdminBtn"
-    type="button"
-    class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-medium hover:bg-gray-50 cursor-pointer"
-  >
-    Cancel
-  </button>
-
-  <button
-    type="submit"
-    class="h-[40px] px-[24px] rounded-[8px] bg-[#3BB273] hover:bg-[#27AAB5] text-white text-[13px] font-semibold cursor-pointer"
-  >
-    Update User
-  </button>
-
-</div>
     </form>
+
   </div>
 </div>
 </section>
@@ -4054,7 +4258,36 @@
                 </label>
               </div>
             </div>
+<div
+  class="flex items-center justify-between px-[16px] py-[14px]"
+>
+  <span class="text-[#11313B] text-[13px] font-medium">
+    View Audit Logs
+  </span>
 
+  <div class="flex items-center gap-[18px]">
+    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+      <input
+        type="radio"
+        name="canViewLogs"
+        value="true"
+        class="accent-[#3BB273]"
+      />
+      Yes
+    </label>
+
+    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+      <input
+        type="radio"
+        name="canViewLogs"
+        value="false"
+        checked
+        class="accent-[#3BB273]"
+      />
+      No
+    </label>
+  </div>
+</div>
 
           </div>
         </div>
@@ -4083,6 +4316,483 @@
 </section>
 
 
+ <!-- ================= AUDIT LOGS SECTION ================= -->
+<section
+  id="auditLogsSection"
+  class="hidden absolute top-0 left-0 w-[1070px] min-h-[668px] p-[20px] bg-white rounded-[6px]"
+>
+  <div class="w-full min-h-full rounded-[16px] bg-white p-[20px]">
+
+    <!-- ================= HEADER ================= -->
+    <div class="w-full">
+      <h1
+        class="text-[#11313B] text-[28px] leading-[34px] font-semibold"
+        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      >
+        Audit Logs
+      </h1>
+
+      <p
+        class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium"
+        style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      >
+        Review administrative and system activity across the platform.
+      </p>
+    </div>
+
+
+    <!-- ================= AUDIT LOG DIRECTORY ================= -->
+    <section
+      id="auditLogsDirectorySection"
+      class="mt-[24px] w-full rounded-[16px] bg-white flex flex-col"
+    >
+
+      <!-- DIRECTORY TITLE -->
+      <div class="w-full">
+        <h2
+          class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+          style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+        >
+          Activity Log
+        </h2>
+      </div>
+
+
+    
+
+      <!-- ================= FILTER ROW ================= -->
+      <div
+        id="auditLogsFilterRow"
+        class="mt-[14px] w-full flex items-center gap-[12px]"
+      >
+
+       <!-- ================= CATEGORY FILTER ================= -->
+<div
+  id="auditCategoryFilterWrap"
+  class="relative w-[220px]"
+>
+  <!-- FILTER BUTTON -->
+  <button
+    id="auditCategoryFilterBtn"
+    type="button"
+    aria-haspopup="true"
+    aria-expanded="false"
+    class="w-full h-[38px] rounded-[5px] bg-[#F1F5F8] px-[12px] flex items-center justify-between gap-[10px] text-[#7C8AA0] text-[12px] font-medium cursor-pointer"
+  >
+    <span
+      id="auditCategoryFilterText"
+      class="truncate text-left"
+    >
+      All Categories
+    </span>
+
+    <i
+      id="auditCategoryFilterIcon"
+      class="fa-solid fa-chevron-down text-[10px] shrink-0 pointer-events-none"
+    ></i>
+  </button>
+
+  <!-- DROPDOWN -->
+  <div
+    id="auditCategoryDropdown"
+    class="hidden absolute top-[44px] left-0 w-[300px]  rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_8px_24px_rgba(0,0,0,0.08)] p-[6px] z-50"
+    style="scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; max-height: 270px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: initial;"
+  >
+    <!-- ALL CATEGORIES -->
+    <button
+      type="button"
+      data-category=""
+      data-category-name="All Categories"
+      class="auditCategoryOption w-full min-h-[36px] rounded-[5px] px-[10px] flex items-center text-left text-[12px] font-medium text-[#3BB273] bg-[#EAF8F1] cursor-pointer hover:bg-[#EAF8F1]"
+    >
+      All Categories
+    </button>
+
+    <!-- API CATEGORIES WILL BE ADDED HERE -->
+  </div>
+</div>
+
+      </div>
+
+
+      <!-- ================= TABLE ================= -->
+      <div
+        id="auditLogsTableWrap"
+        class="mt-[18px] w-full flex flex-col"
+      >
+
+        <!-- TABLE HEADER -->
+<div
+  id="auditLogsTableHeader"
+  class="w-full h-[40px] rounded-[5px] bg-[#F1F5F8] grid items-center"
+  style="
+    font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+    grid-template-columns: 120px 165px 120px 170px 130px 180px 120px;
+  "
+>
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    Time
+  </div>
+
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    Action
+  </div>
+
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    Entity
+  </div>
+
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    Performed By
+  </div>
+
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    IP Address
+  </div>
+
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    Description
+  </div>
+
+  <div class="h-[40px] px-[8px] flex items-center text-[#7C8AA0] text-[12px]">
+    Details
+  </div>
+</div>
+
+
+<!-- TABLE BODY -->
+<div
+  id="auditLogsTableBody"
+  class="w-full flex flex-col"
+  style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+>
+  
+</div>
+      </div>
+
+
+      <!-- ================= FOOTER / PAGINATION ================= -->
+      <div
+        id="auditLogsFooterRow"
+        class="mt-[22px] w-full flex items-center justify-between"
+      >
+
+        <!-- RECORD INFORMATION -->
+        <p
+          id="auditLogsRecordText"
+          class="text-[#7C8AA0] text-[12px] leading-[16px] tracking-[0.4px] font-medium"
+          style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+        >
+          Showing 1 to 50 of 2556 logs
+        </p>
+
+
+        <!-- PAGINATION -->
+        <div
+          id="auditLogsPagination"
+          class="flex items-center gap-[8px]"
+        >
+
+          <button
+            id="auditLogsPaginationPrev"
+            type="button"
+            class="w-[28px] h-[28px] rounded-[5px] border border-[#D0D5DD] text-[#98A2B3] text-[12px] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            ‹
+          </button>
+
+          <div
+            id="auditLogsPaginationNumbers"
+            class="flex items-center gap-[6px]"
+          >
+            <!-- JS WILL RENDER PAGE NUMBERS -->
+          </div>
+
+          <button
+            id="auditLogsPaginationNext"
+            type="button"
+            class="w-[28px] h-[28px] rounded-[5px] border border-[#D0D5DD] text-[#667085] text-[12px] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            ›
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+</section>
+
+<!-- ================= AUDIT LOG DETAILS SECTION ================= -->
+<section
+  id="auditLogDetailsSection"
+  class="hidden absolute top-0 left-0 w-[1070px] min-h-[668px] p-[20px] bg-white rounded-[6px]"
+>
+  <div class="w-full min-h-full rounded-[16px] bg-white p-[20px]">
+
+    <!-- HEADER -->
+    <div class="w-full flex items-start justify-between">
+      <div>
+        <button
+          id="backToAuditLogsBtn"
+          type="button"
+          class="mb-[12px] inline-flex items-center gap-[8px] text-[#3BB273] text-[13px] font-semibold cursor-pointer"
+        >
+          <i class="fa-solid fa-arrow-left text-[12px]"></i>
+          Back to Audit Logs
+        </button>
+
+        <h1
+          class="text-[#11313B] text-[28px] leading-[34px] font-semibold"
+          style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+        >
+          Audit Log Details
+        </h1>
+
+        <p
+          class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px]"
+          style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+        >
+          Review the complete activity information for this log entry.
+        </p>
+      </div>
+
+      <span
+        id="auditDetailsActionBadge"
+        class="inline-flex items-center h-[28px] px-[10px] rounded-full bg-[#EAF8F1] text-[#3BB273] text-[12px] font-semibold"
+      >
+        Action
+      </span>
+    </div>
+
+
+    <!-- MAIN DETAILS CARD -->
+    <div
+      class="mt-[24px] w-full rounded-[16px] border border-[#E5E7EB] bg-white p-[20px] shadow-[0px_1px_4px_rgba(178,163,163,0.28)]"
+    >
+
+      <!-- BASIC LOG INFORMATION -->
+      <div>
+        <h2 class="text-[#11313B] text-[16px] font-semibold">
+          Activity Information
+        </h2>
+
+        <div class="mt-[16px] grid grid-cols-3 gap-x-[28px] gap-y-[20px]">
+
+          <!-- ACTION -->
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Action
+            </p>
+
+            <p
+              id="auditDetailsAction"
+              class="mt-[5px] text-[#11313B] text-[14px] font-semibold break-words"
+            >
+              -
+            </p>
+          </div>
+
+
+          <!-- ENTITY TYPE -->
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Entity Type
+            </p>
+
+            <p
+              id="auditDetailsEntityType"
+              class="mt-[5px] text-[#11313B] text-[14px] font-medium"
+            >
+              -
+            </p>
+          </div>
+
+
+          <!-- ENTITY ID -->
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Entity ID
+            </p>
+
+            <p
+              id="auditDetailsEntityId"
+              class="mt-[5px] text-[#11313B] text-[13px] font-medium break-all"
+            >
+              -
+            </p>
+          </div>
+
+
+          <!-- TIMESTAMP -->
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Date & Time
+            </p>
+
+            <p
+              id="auditDetailsTimestamp"
+              class="mt-[5px] text-[#11313B] text-[14px] font-medium"
+            >
+              -
+            </p>
+          </div>
+
+
+          <!-- HUMAN TIME -->
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Time Ago
+            </p>
+
+            <p
+              id="auditDetailsTimestampHuman"
+              class="mt-[5px] text-[#11313B] text-[14px] font-medium"
+            >
+              -
+            </p>
+          </div>
+
+
+          <!-- IP -->
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              IP Address
+            </p>
+
+            <p
+              id="auditDetailsIpAddress"
+              class="mt-[5px] text-[#11313B] text-[14px] font-medium"
+            >
+              -
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- DIVIDER -->
+      <div class="my-[24px] border-t border-[#E5E7EB]"></div>
+
+
+      <!-- PERFORMED BY -->
+      <div>
+        <h2 class="text-[#11313B] text-[16px] font-semibold">
+          Performed By
+        </h2>
+
+        <div class="mt-[16px] grid grid-cols-3 gap-x-[28px] gap-y-[20px]">
+
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Name
+            </p>
+
+            <p
+              id="auditDetailsUserName"
+              class="mt-[5px] text-[#11313B] text-[14px] font-semibold"
+            >
+              -
+            </p>
+          </div>
+
+
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Email
+            </p>
+
+            <p
+              id="auditDetailsUserEmail"
+              class="mt-[5px] text-[#11313B] text-[14px] font-medium break-all"
+            >
+              -
+            </p>
+          </div>
+
+
+          <div>
+            <p class="text-[#7C8AA0] text-[12px] font-medium">
+              Role
+            </p>
+
+            <p
+              id="auditDetailsUserRole"
+              class="mt-[5px] text-[#11313B] text-[14px] font-medium capitalize"
+            >
+              -
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+
+      <!-- DIVIDER -->
+      <div class="my-[24px] border-t border-[#E5E7EB]"></div>
+
+
+      <!-- DESCRIPTION -->
+      <div>
+        <h2 class="text-[#11313B] text-[16px] font-semibold">
+          Description
+        </h2>
+
+        <div
+          class="mt-[12px] rounded-[10px] bg-[#F8FAFC] border border-[#EEF2F6] px-[16px] py-[14px]"
+        >
+          <p
+            id="auditDetailsDescription"
+            class="text-[#344054] text-[14px] leading-[21px]"
+          >
+            -
+          </p>
+        </div>
+      </div>
+
+
+      <!-- USER AGENT -->
+      <div class="mt-[22px]">
+        <h2 class="text-[#11313B] text-[16px] font-semibold">
+          Device / User Agent
+        </h2>
+
+        <div
+          class="mt-[12px] rounded-[10px] bg-[#F8FAFC] border border-[#EEF2F6] px-[16px] py-[14px]"
+        >
+          <p
+            id="auditDetailsUserAgent"
+            class="text-[#667085] text-[13px] leading-[20px] break-all"
+          >
+            -
+          </p>
+        </div>
+      </div>
+
+
+      <!-- CHANGES -->
+      <div class="mt-[22px]">
+        <h2 class="text-[#11313B] text-[16px] font-semibold">
+          Changes
+        </h2>
+
+        <div
+          id="auditDetailsChanges"
+          class="mt-[12px] rounded-[10px] bg-[#F8FAFC] border border-[#EEF2F6] px-[16px] py-[14px]"
+        >
+          <p class="text-[#7C8AA0] text-[13px]">
+            No recorded changes.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
      
 
 <!-- ================= LOGOUT SECTION ================= -->

@@ -59,6 +59,9 @@ function applyAdminSidebarRights(user) {
   const canManagePayouts =
     isSuperAdmin || rights.can_manage_payouts === true;
 
+    const canViewAuditLogs = 
+    isSuperAdmin || rights.can_view_logs === true;
+
   const canManageAdmins = isSuperAdmin;
 
   document
@@ -76,6 +79,10 @@ function applyAdminSidebarRights(user) {
   document
     .getElementById("sidebarAdminUsersLink")
     ?.classList.toggle("hidden", !canManageAdmins);
+
+  document
+    .getElementById("sidebarAuditLogsLink")
+    ?.classList.toggle("hidden", !canViewAuditLogs);
 }
 
 function loadAdminHeaderFromSession() {
@@ -198,6 +205,12 @@ const SIDEBAR_ITEMS = [
     sectionId: "adminUsersSection"
   },
   {
+    linkId: "sidebarAuditLogsLink",
+    iconId: "sidebarAuditLogsIcon",
+    textId: "sidebarAuditLogsText",
+    sectionId: "auditLogsSection"
+  },
+  {
     linkId: "sidebarSettingsLink",
     iconId: "sidebarSettingsIcon",
     textId: "sidebarSettingsText",
@@ -234,6 +247,7 @@ const ROUTE_MAP = {
   supportRequestsSection: "#support-requests",
   adminUsersSection: "#admin-users",
   createAdminUserSection: "#admin-users/create",
+  auditLogsSection: "#audit-logs",
   settingsSection: "#settings",
   notificationsSection: "#notifications",
   logoutSection: "#logout"
@@ -248,6 +262,7 @@ const HASH_TO_SECTION = {
   "#support-requests": "supportRequestsSection",
   "#admin-users": "adminUsersSection",
   "#admin-users/create": "createAdminUserSection",
+  "#audit-logs": "auditLogsSection",
   "#settings": "settingsSection",
     "#notifications": "notificationsSection",
     "#logout": "logoutSection"
@@ -263,6 +278,8 @@ const ALL_MAIN_SECTION_IDS = [
   "supportRequestsSection",
   "adminUsersSection",
   "createAdminUserSection",
+  "auditLogsSection",
+  "auditLogsDetailsSection",
   "settingsSection",
   "notificationsSection",
   "logoutSection"
@@ -359,59 +376,80 @@ function loadSectionFromHash() {
   const fullHash = window.location.hash || "#dashboard";
   const hash = fullHash.split("?")[0];
 
+  // ================= ACCESS CONTROL =================
   if (!canCurrentAdminAccessHash(hash)) {
-  showActionPopupMessage("You do not have permission to access this page.", "error");
+    showActionPopupMessage(
+      "You do not have permission to access this page.",
+      "error"
+    );
 
-  window.location.hash = "#dashboard";
-  return;
-}
+    window.location.hash = "#dashboard";
+    return;
+  }
 
+  // ================= DASHBOARD =================
   if (hash === "#dashboard") {
-  switchSidebarTab(
-    "dashboardHomeSection",
-    "sidebarDashboardLink",
-    "sidebarDashboardIcon",
-    "sidebarDashboardText",
-    false
-  );
+    switchSidebarTab(
+      "dashboardHomeSection",
+      "sidebarDashboardLink",
+      "sidebarDashboardIcon",
+      "sidebarDashboardText",
+      false
+    );
 
-  if (typeof loadDashboardStats === "function") {
-    loadDashboardStats();
+    if (typeof loadDashboardStats === "function") {
+      loadDashboardStats();
+    }
+
+    if (typeof loadDashboardData === "function") {
+      loadDashboardData();
+    }
+
+    return;
   }
 
-  if (typeof loadDashboardData === "function") {
-    loadDashboardData();
-  }
-
-  return;
-}
-
+  // ================= DRIVER DETAILS =================
   if (hash.startsWith("#drivers/details/")) {
     const driverId = hash.replace("#drivers/details/", "");
 
     resetSidebarMenuStyles();
-    activateSidebarMenu("sidebarDriversLink", "sidebarDriversIcon", "sidebarDriversText");
+
+    activateSidebarMenu(
+      "sidebarDriversLink",
+      "sidebarDriversIcon",
+      "sidebarDriversText"
+    );
 
     openDriverDetails(driverId, false);
     return;
   }
 
+  // ================= TAG DETAILS =================
   if (hash.startsWith("#tags/details/")) {
     const tagId = hash.replace("#tags/details/", "");
 
     showDashboardSection("deliveriesSection", false);
+
     resetSidebarMenuStyles();
-    activateSidebarMenu("sidebarDeliveriesLink", "sidebarDeliveriesIcon", "sidebarDeliveriesText");
+
+    activateSidebarMenu(
+      "sidebarDeliveriesLink",
+      "sidebarDeliveriesIcon",
+      "sidebarDeliveriesText"
+    );
 
     viewTag(tagId, false);
     return;
   }
 
+  // ================= SUPPORT CHAT =================
   if (hash.startsWith("#support-requests/chat/")) {
     const ticketId = hash.replace("#support-requests/chat/", "");
 
     showDashboardSection("supportRequestsSection", false);
+
     resetSidebarMenuStyles();
+
     activateSidebarMenu(
       "sidebarSupportRequestsLink",
       "sidebarSupportRequestsIcon",
@@ -419,58 +457,78 @@ function loadSectionFromHash() {
     );
 
     loadSupportTickets().then(() => {
-      if (ticketId) openSupportTicketFromAPI(ticketId);
+      if (ticketId) {
+        openSupportTicketFromAPI(ticketId);
+      }
     });
 
     return;
   }
 
-  if (hash.startsWith("#customers/")) {
+  // ================= CUSTOMER DETAILS =================
+  if (
+    hash.startsWith("#customers/") &&
+    hash !== "#customers"
+  ) {
     const customerId = hash.replace("#customers/", "");
 
     showDashboardSection("customersSection", false);
+
     resetSidebarMenuStyles();
-    activateSidebarMenu("sidebarCustomersLink", "sidebarCustomersIcon", "sidebarCustomersText");
+
+    activateSidebarMenu(
+      "sidebarCustomersLink",
+      "sidebarCustomersIcon",
+      "sidebarCustomersText"
+    );
 
     openSenderDetailsById(customerId);
     return;
   }
 
+  // ================= PAYOUT DETAILS =================
   if (hash.startsWith("#payout/details/")) {
-  const payoutId = hash.replace("#payout/details/", "");
+    const payoutId = hash.replace("#payout/details/", "");
 
-  showDashboardSection("paymentsSection", false);
+    showDashboardSection("paymentsSection", false);
 
-  resetSidebarMenuStyles();
+    resetSidebarMenuStyles();
 
-  activateSidebarMenu(
-    "sidebarPaymentsLink",
-    "sidebarPaymentsIcon",
-    "sidebarPaymentsText"
-  );
+    activateSidebarMenu(
+      "sidebarPaymentsLink",
+      "sidebarPaymentsIcon",
+      "sidebarPaymentsText"
+    );
 
-  openPayoutDetailsPage(payoutId, false);
+    openPayoutDetailsPage(payoutId, false);
+    return;
+  }
 
-  return;
-}
- if (hash === "#payout") {
-  switchSidebarTab(
-    "paymentsSection",
-    "sidebarPaymentsLink",
-    "sidebarPaymentsIcon",
-    "sidebarPaymentsText",
-    false
-  );
+  // ================= AUDIT LOG DETAILS =================
+  if (hash.startsWith("#audit-logs/details/")) {
+    const auditLogId = hash.replace("#audit-logs/details/", "");
 
-  document.getElementById("payoutDetailsView")?.classList.add("hidden");
-  document.getElementById("paymentsListView")?.classList.remove("hidden");
+    showDashboardSection("auditLogDetailsSection", false);
 
-  loadPaymentStats();
-  loadPaymentsFromUrl();
+    resetSidebarMenuStyles();
 
-  return;
-}
+    activateSidebarMenu(
+      "sidebarAuditLogsLink",
+      "sidebarAuditLogsIcon",
+      "sidebarAuditLogsText"
+    );
 
+    if (
+      auditLogId &&
+      typeof loadAuditLogDetails === "function"
+    ) {
+      loadAuditLogDetails(auditLogId);
+    }
+
+    return;
+  }
+
+  // ================= DRIVERS =================
   if (hash === "#drivers") {
     switchSidebarTab(
       "driversManagementSection",
@@ -487,6 +545,7 @@ function loadSectionFromHash() {
     return;
   }
 
+  // ================= CUSTOMERS =================
   if (hash === "#customers") {
     switchSidebarTab(
       "customersSection",
@@ -496,25 +555,31 @@ function loadSectionFromHash() {
       false
     );
 
-    loadSendersFromAPI(1);
+    if (typeof loadSendersFromAPI === "function") {
+      loadSendersFromAPI(1);
+    }
+
     return;
   }
-if (hash === "#tags") {
-  switchSidebarTab(
-    "deliveriesSection",
-    "sidebarDeliveriesLink",
-    "sidebarDeliveriesIcon",
-    "sidebarDeliveriesText",
-    false
-  );
 
-  if (typeof loadTagsFromAPI === "function") {
-    loadTagsFromAPI(1);
+  // ================= TAGS =================
+  if (hash === "#tags") {
+    switchSidebarTab(
+      "deliveriesSection",
+      "sidebarDeliveriesLink",
+      "sidebarDeliveriesIcon",
+      "sidebarDeliveriesText",
+      false
+    );
+
+    if (typeof loadTagsFromAPI === "function") {
+      loadTagsFromAPI(1);
+    }
+
+    return;
   }
 
-  return;
-}
-
+  // ================= PAYOUT =================
   if (hash === "#payout") {
     switchSidebarTab(
       "paymentsSection",
@@ -524,10 +589,26 @@ if (hash === "#tags") {
       false
     );
 
-    loadPaymentsFromUrl();
+    document
+      .getElementById("payoutDetailsView")
+      ?.classList.add("hidden");
+
+    document
+      .getElementById("paymentsListView")
+      ?.classList.remove("hidden");
+
+    if (typeof loadPaymentStats === "function") {
+      loadPaymentStats();
+    }
+
+    if (typeof loadPaymentsFromUrl === "function") {
+      loadPaymentsFromUrl();
+    }
+
     return;
   }
 
+  // ================= SUPPORT REQUESTS =================
   if (hash === "#support-requests") {
     switchSidebarTab(
       "supportRequestsSection",
@@ -537,70 +618,121 @@ if (hash === "#tags") {
       false
     );
 
-    loadSupportTickets();
+    if (typeof loadSupportTickets === "function") {
+      loadSupportTickets();
+    }
+
     return;
   }
-  if (
-  hash.startsWith("#admin-users/") &&
-  hash !== "#admin-users/create"
-) {
-  const adminId = hash.replace("#admin-users/", "");
 
+  // ================= ADMIN USER DETAILS / UPDATE =================
+  if (
+    hash.startsWith("#admin-users/") &&
+    hash !== "#admin-users/create"
+  ) {
+    const adminId = hash.replace("#admin-users/", "");
+
+    switchSidebarTab(
+      "adminUsersSection",
+      "sidebarAdminUsersLink",
+      "sidebarAdminUsersIcon",
+      "sidebarAdminUsersText",
+      false
+    );
+
+    if (typeof loadAdminUsers === "function") {
+      loadAdminUsers();
+    }
+
+    if (
+      adminId &&
+      typeof openUpdateAdminModal === "function"
+    ) {
+      openUpdateAdminModal(adminId);
+    }
+
+    return;
+  }
+
+  // ================= ADMIN USERS =================
+  if (hash === "#admin-users") {
+    switchSidebarTab(
+      "adminUsersSection",
+      "sidebarAdminUsersLink",
+      "sidebarAdminUsersIcon",
+      "sidebarAdminUsersText",
+      false
+    );
+
+    if (typeof loadAdminUsers === "function") {
+      loadAdminUsers();
+    }
+
+    return;
+  }
+
+  // ================= CREATE ADMIN =================
+  if (hash === "#admin-users/create") {
+    switchSidebarTab(
+      "createAdminUserSection",
+      "sidebarAdminUsersLink",
+      "sidebarAdminUsersIcon",
+      "sidebarAdminUsersText",
+      false
+    );
+
+    return;
+  }
+
+ if (hash === "#audit-logs") {
   switchSidebarTab(
-    "adminUsersSection",
-    "sidebarAdminUsersLink",
-    "sidebarAdminUsersIcon",
-    "sidebarAdminUsersText",
+    "auditLogsSection",
+    "sidebarAuditLogsLink",
+    "sidebarAuditLogsIcon",
+    "sidebarAuditLogsText",
     false
   );
 
-  loadAdminUsers();
+  setupAuditCategoryDropdown();
+  loadAuditLogCategories();
 
-  if (adminId) {
-    openUpdateAdminModal(adminId);
+  const page = getAuditLogPageFromUrl();
+  const category = getAuditLogCategoryFromUrl();
+
+  if (category) {
+    loadAuditLogsByCategory(
+      category,
+      page,
+      false
+    );
+  } else {
+    loadAuditLogs(
+      page,
+      false
+    );
   }
 
   return;
 }
 
-if (hash === "#admin-users") {
-  switchSidebarTab(
-    "adminUsersSection",
-    "sidebarAdminUsersLink",
-    "sidebarAdminUsersIcon",
-    "sidebarAdminUsersText",
-    false
-  );
+  // ================= SETTINGS =================
+  if (hash === "#settings") {
+    switchSidebarTab(
+      "settingsSection",
+      "sidebarSettingsLink",
+      "sidebarSettingsIcon",
+      "sidebarSettingsText",
+      false
+    );
 
-  loadAdminUsers();
-  return;
-}
+    if (typeof loadSettingsSection === "function") {
+      loadSettingsSection();
+    }
 
-if (hash === "#admin-users/create") {
-  switchSidebarTab(
-    "createAdminUserSection",
-    "sidebarAdminUsersLink",
-    "sidebarAdminUsersIcon",
-    "sidebarAdminUsersText",
-    false
-  );
+    return;
+  }
 
-  return;
-}
-
- if (hash === "#settings") {
-  switchSidebarTab(
-    "settingsSection",
-    "sidebarSettingsLink",
-    "sidebarSettingsIcon",
-    "sidebarSettingsText",
-    false
-  );
-
-  loadSettingsSection();
-
-  return;
-}
+  // ================= NOTIFICATIONS =================
   if (hash === "#notifications") {
     switchSidebarTab(
       "notificationsSection",
@@ -616,31 +748,45 @@ if (hash === "#admin-users/create") {
 
     return;
   }
- if (hash === "#logout") {
-  showDashboardSection("logoutSection", false);
-  resetSidebarMenuStyles();
-  activateLogoutMenu();
-  return;
+
+  // ================= LOGOUT =================
+  if (hash === "#logout") {
+    showDashboardSection("logoutSection", false);
+
+    resetSidebarMenuStyles();
+
+    activateLogoutMenu();
+
+    return;
+  }
+
+  // ================= FALLBACK =================
+  switchSidebarTab(
+    "dashboardHomeSection",
+    "sidebarDashboardLink",
+    "sidebarDashboardIcon",
+    "sidebarDashboardText",
+    false
+  );
+
+  if (typeof loadDashboardStats === "function") {
+    loadDashboardStats();
+  }
+
+  if (typeof loadDashboardData === "function") {
+    loadDashboardData();
+  }
 }
 
- switchSidebarTab(
-  "dashboardHomeSection",
-  "sidebarDashboardLink",
-  "sidebarDashboardIcon",
-  "sidebarDashboardText",
-  false
+window.addEventListener(
+  "hashchange",
+  loadSectionFromHash
 );
 
-
-
-if (typeof loadDashboardStats === "function") {
-  loadDashboardStats();
-}
-
-if (typeof loadDashboardData === "function") {
-  loadDashboardData();
-}
-}
+document.addEventListener(
+  "DOMContentLoaded",
+  loadSectionFromHash
+);
 
 window.addEventListener("hashchange", loadSectionFromHash);
 document.addEventListener("DOMContentLoaded", loadSectionFromHash);
@@ -737,6 +883,14 @@ function refreshSidebarSection(sectionId) {
   if (sectionId === "adminUsersSection") { 
     return;
   }
+
+  if (sectionId === "auditLogsSection") {
+  if (typeof loadAuditLogs === "function") {
+    loadAuditLogs(1);
+  }
+
+  return;
+}
 }
 
 
@@ -5742,8 +5896,20 @@ async function viewTag(id, updateUrl = true) {
 
     document.getElementById("tagPackageType").textContent = data.package?.type || "N/A";
     document.getElementById("tagPackageSize").textContent = data.package?.size || "N/A";
-    document.getElementById("tagPackageWeight").textContent = `${data.package?.weight_kg || "0"} kg`;
-    document.getElementById("tagDistance").textContent = `${data.distance_km || "0"} km`;
+document.getElementById("tagPackageType").textContent = data.package?.type || "N/A";
+document.getElementById("tagPackageSize").textContent = data.package?.size || "N/A";
+
+const weightKg = Number(data.package?.weight_kg || 0);
+const weightLbs = (weightKg * 2.20462).toFixed(2);
+
+const distanceKm = Number(data.distance_km || 0);
+const distanceMiles = (distanceKm * 0.621371).toFixed(2);
+
+document.getElementById("tagPackageWeight").textContent = `${weightLbs} lbs`;
+document.getElementById("tagDistance").textContent = `${distanceMiles} mi`;
+
+document.getElementById("tagPackageDescription").textContent =
+  data.package?.description || "No description";
     document.getElementById("tagPackageDescription").textContent = data.package?.description || "No description";
     const imagesWrap = document.getElementById("tagPackageImages");
 
@@ -9152,7 +9318,10 @@ async function updateAdminRights(event) {
       document.querySelector('input[name="payouts"]:checked')?.value === "yes",
 
     can_create_admins:
-      document.querySelector('input[name="admins"]:checked')?.value === "yes"
+      document.querySelector('input[name="admins"]:checked')?.value === "yes",
+
+      can_view_logs:
+      document.querySelector('input[name="logs"]:checked')?.value === "yes"
   };
 
   try {
@@ -9253,14 +9422,17 @@ async function createAdminUser(e) {
         document.querySelector('input[name="canManagePayouts"]:checked')?.value === "true",
 
       can_create_admins:
-        document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true"
+        document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true",
+        
+      can_view_logs:
+        document.querySelector('input[name="canViewLogs"]:checked')?.value === "true"
     })
   };
 
   try {
     showGlobalLoader();
 
-    const response = await fetch(`${API_BASE_URL}/admin/admin-users/create`, {
+    const response = await fetch(`${API_BASE_URL}/admin/admin-users/create-standalone`, {
       method: "POST",
       headers: {
         ...adminUsersAuthHeaders(),
@@ -9290,3 +9462,767 @@ async function createAdminUser(e) {
     hideGlobalLoader();
   }
 }
+
+
+/* ================= AUDIT LOG SECTION================= */
+let auditLogs = [];
+let currentAuditLogPagination = null;
+
+
+/* =================  LOAD AUDIT LOGS================= */
+async function loadAuditLogs(page = 1, updateUrl = true) {
+  console.log("loadAuditLogs started:", page);
+
+  showGlobalLoader();
+
+  if (updateUrl) {
+  window.history.pushState(
+    null,
+    "",
+    `#audit-logs?page=${page}`
+  );
+}
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/admin/audit-logs?page=${page}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    );
+
+    const result = await response.json();
+
+    console.log("AUDIT LOG RESPONSE:", result);
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Failed to load audit logs."
+      );
+    }
+
+    auditLogs = Array.isArray(result.data)
+      ? result.data
+      : [];
+
+   currentAuditLogPagination =
+  result.pagination || null;
+
+renderAuditLogs(auditLogs);
+
+renderAuditLogsPagination(
+  currentAuditLogPagination
+);
+  } catch (error) {
+    console.error("Audit Logs Error:", error);
+
+    showActionPopupMessage(
+      error.message || "Unable to load audit logs.",
+      "error"
+    );
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+/* =================  RENDER AUDIT LOGS================= */
+function renderAuditLogs(logs) {
+  const tableBody = document.getElementById("auditLogsTableBody");
+
+  if (!tableBody) return;
+
+  tableBody.innerHTML = "";
+
+  if (!logs.length) {
+    tableBody.innerHTML = `
+      <div class="w-full h-[120px] flex items-center justify-center text-[#7C8AA0] text-[13px]">
+        No audit logs found.
+      </div>
+    `;
+    return;
+  }
+
+  logs.forEach((log) => {
+    const row = document.createElement("div");
+
+    row.className =
+      "w-full min-h-[62px] grid items-center border-b border-[#E5E7EB] text-[#11313B] text-[12px]";
+
+    row.style.gridTemplateColumns =
+      "120px 165px 120px 170px 130px 180px 120px";
+
+    const userName = log.user?.name || "System";
+    const userEmail = log.user?.email || "";
+
+    const actionText = formatAuditAction(log.action);
+
+    const description =
+      log.description ||
+      formatAuditDescription(log.action, log.entity_type);
+
+    row.innerHTML = `
+      <!-- TIME -->
+      <div class="px-[8px]">
+        <p>${escapeAuditHtml(log.timestamp_human || "")}</p>
+
+        <p class="mt-[2px] text-[#98A2B3] text-[10px]">
+          ${escapeAuditHtml(formatAuditTimestamp(log.timestamp))}
+        </p>
+      </div>
+
+
+      <!-- ACTION -->
+      <div class="px-[8px]">
+        <span
+          class="inline-flex items-center px-[8px] min-h-[24px] rounded-full bg-[#EAF8F1] text-[#3BB273] text-[11px] font-semibold"
+        >
+          ${escapeAuditHtml(actionText)}
+        </span>
+      </div>
+
+
+      <!-- ENTITY -->
+      <div class="px-[8px] capitalize">
+        ${escapeAuditHtml(formatAuditEntity(log.entity_type))}
+      </div>
+
+
+      <!-- PERFORMED BY -->
+      <div class="px-[8px] min-w-0">
+        <p class="font-semibold truncate">
+          ${escapeAuditHtml(userName)}
+        </p>
+
+        ${
+          userEmail
+            ? `
+              <p class="mt-[2px] text-[#7C8AA0] text-[11px] truncate">
+                ${escapeAuditHtml(userEmail)}
+              </p>
+            `
+            : ""
+        }
+      </div>
+
+
+      <!-- IP ADDRESS -->
+      <div class="px-[8px]">
+        ${escapeAuditHtml(log.ip_address || "N/A")}
+      </div>
+
+
+      <!-- DESCRIPTION -->
+      <div
+        class="px-[8px] text-[#667085] truncate"
+        title="${escapeAuditHtml(description)}"
+      >
+        ${escapeAuditHtml(description)}
+      </div>
+
+
+      <!-- DETAILS -->
+      <div class="px-[8px]">
+        <button
+          type="button"
+          class="viewAuditLogBtn inline-flex items-center gap-[5px] h-[28px] px-[8px] rounded-[6px] bg-[#EAF5EE] text-[#3BB273] text-[11px] font-medium cursor-pointer hover:bg-[#DDEEDF] whitespace-nowrap"
+          data-log-id="${escapeAuditHtml(log.id || "")}"
+        >
+          <i class="fa-regular fa-eye text-[11px]"></i>
+
+          View Details
+        </button>
+      </div>
+    `;
+
+    tableBody.appendChild(row);
+  });
+}
+
+function getAuditLogPageFromUrl() {
+  const fullHash = window.location.hash || "#audit-logs";
+  const queryString = fullHash.split("?")[1] || "";
+
+  const params = new URLSearchParams(queryString);
+
+  return Number(params.get("page")) || 1;
+}
+/* ===========RENDER AUDIT LOG PAGINATION==== */
+
+function loadAuditLogPage(page) {
+  const category = getAuditLogCategoryFromUrl();
+
+  if (category) {
+    loadAuditLogsByCategory(category, page);
+  } else {
+    loadAuditLogs(page);
+  }
+}
+
+function renderAuditLogsPagination(pagination) {
+  const numbersWrap = document.getElementById("auditLogsPaginationNumbers");
+  const prevBtn = document.getElementById("auditLogsPaginationPrev");
+  const nextBtn = document.getElementById("auditLogsPaginationNext");
+  const recordText = document.getElementById("auditLogsRecordText");
+
+  if (!numbersWrap || !prevBtn || !nextBtn) return;
+
+  numbersWrap.innerHTML = "";
+
+  if (!pagination) {
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+
+    if (recordText) {
+      recordText.textContent = "No audit logs found";
+    }
+
+    return;
+  }
+
+  const currentPage = Number(pagination.current_page || 1);
+  const lastPage = Number(pagination.last_page || 1);
+
+  // ================= RECORD TEXT =================
+  if (recordText) {
+    const from = pagination.from ?? 0;
+    const to = pagination.to ?? 0;
+    const total = pagination.total ?? 0;
+
+    recordText.textContent =
+      `Showing ${from} to ${to} of ${total} logs`;
+  }
+
+  // ================= PREVIOUS =================
+  prevBtn.disabled = currentPage <= 1;
+
+  prevBtn.onclick = function () {
+    if (currentPage > 1) {
+      loadAuditLogPage(currentPage - 1);
+    }
+  };
+
+  // ================= NEXT =================
+  nextBtn.disabled = currentPage >= lastPage;
+
+  nextBtn.onclick = function () {
+    if (currentPage < lastPage) {
+      loadAuditLogPage(currentPage + 1);
+    }
+  };
+
+  // ================= PAGE NUMBER HELPER =================
+  function createPageButton(page) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = page;
+
+    const isActive = page === currentPage;
+
+    button.className = isActive
+      ? "w-[28px] h-[28px] rounded-[5px] bg-[#3BB273] text-white text-[12px] font-semibold cursor-pointer"
+      : "w-[28px] h-[28px] rounded-[5px] border border-[#D0D5DD] bg-white text-[#667085] text-[12px] font-medium cursor-pointer hover:bg-[#EAF8F1] hover:text-[#3BB273]";
+
+    button.addEventListener("click", function () {
+      if (page !== currentPage) {
+        loadAuditLogPage(page);
+      }
+    });
+
+    numbersWrap.appendChild(button);
+  }
+
+  // ================= ELLIPSIS HELPER =================
+  function createEllipsis() {
+    const span = document.createElement("span");
+
+    span.textContent = "...";
+
+    span.className =
+      "w-[24px] h-[28px] flex items-center justify-center text-[#98A2B3] text-[12px]";
+
+    numbersWrap.appendChild(span);
+  }
+
+  // ================= PAGE NUMBERS =================
+
+  // Small amount of pages
+  if (lastPage <= 7) {
+    for (let page = 1; page <= lastPage; page++) {
+      createPageButton(page);
+    }
+
+    return;
+  }
+
+  // Near beginning
+  if (currentPage <= 4) {
+    createPageButton(1);
+    createPageButton(2);
+    createPageButton(3);
+    createPageButton(4);
+    createPageButton(5);
+
+    createEllipsis();
+
+    createPageButton(lastPage);
+
+    return;
+  }
+
+  // Near end
+  if (currentPage >= lastPage - 3) {
+    createPageButton(1);
+
+    createEllipsis();
+
+    for (let page = lastPage - 4; page <= lastPage; page++) {
+      createPageButton(page);
+    }
+
+    return;
+  }
+
+  // Middle
+  createPageButton(1);
+
+  createEllipsis();
+
+  createPageButton(currentPage - 2);
+  createPageButton(currentPage - 1);
+  createPageButton(currentPage);
+  createPageButton(currentPage + 1);
+  createPageButton(currentPage + 2);
+
+  createEllipsis();
+
+  createPageButton(lastPage);
+}
+
+
+function formatAuditAction(action) {
+  if (!action) return "N/A";
+
+  return action
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+
+function formatAuditEntity(entity) {
+  if (!entity) return "N/A";
+
+  return entity
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+
+
+function formatAuditDescription(action, entityType) {
+  const formattedAction = formatAuditAction(action);
+  const formattedEntity = formatAuditEntity(entityType);
+
+  if (!action && !entityType) {
+    return "Activity recorded";
+  }
+
+  if (!entityType) {
+    return formattedAction;
+  }
+
+  return `${formattedAction} on ${formattedEntity}`;
+}
+
+
+
+function formatAuditTimestamp(timestamp) {
+  if (!timestamp) return "";
+
+  const [datePart, timePart] = timestamp.split(" ");
+
+  if (!datePart || !timePart) {
+    return timestamp;
+  }
+
+  const [year, month, day] = datePart.split("-");
+  const [hour, minute] = timePart.split(":");
+
+  const date = new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute)
+  );
+
+  return date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+
+function escapeAuditHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* ================= AUDIT LOG FILTER================= */
+
+async function loadAuditLogCategories() {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/admin/audit-logs/categories`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Unable to load audit log categories"
+      );
+    }
+
+    const categories = Array.isArray(result.data)
+      ? result.data
+      : [];
+
+    renderAuditLogCategories(categories);
+
+  } catch (error) {
+    console.error(
+      "Error loading audit log categories:",
+      error
+    );
+  }
+}
+
+function setupAuditCategoryDropdown() {
+  const filterWrap = document.getElementById("auditCategoryFilterWrap");
+  const filterBtn = document.getElementById("auditCategoryFilterBtn");
+  const dropdown = document.getElementById("auditCategoryDropdown");
+  const filterText = document.getElementById("auditCategoryFilterText");
+  const filterIcon = document.getElementById("auditCategoryFilterIcon");
+
+  if (!filterWrap || !filterBtn || !dropdown) {
+    console.log("Audit category dropdown elements not found");
+    return;
+  }
+
+  // Prevent duplicate setup
+  if (filterBtn.dataset.dropdownReady === "true") return;
+
+  filterBtn.dataset.dropdownReady = "true";
+
+  // ================= OPEN / CLOSE DROPDOWN =================
+  filterBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const isHidden = dropdown.classList.contains("hidden");
+
+    if (isHidden) {
+      dropdown.classList.remove("hidden");
+      filterBtn.setAttribute("aria-expanded", "true");
+
+      if (filterIcon) {
+        filterIcon.classList.add("rotate-180");
+      }
+    } else {
+      dropdown.classList.add("hidden");
+      filterBtn.setAttribute("aria-expanded", "false");
+
+      if (filterIcon) {
+        filterIcon.classList.remove("rotate-180");
+      }
+    }
+  });
+
+  // ================= SELECT CATEGORY =================
+  dropdown.addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const option = event.target.closest(".auditCategoryOption");
+
+    if (!option) return;
+
+    const categorySlug = option.dataset.category || "";
+    const categoryName =
+      option.dataset.categoryName || "All Categories";
+
+    console.log("CATEGORY CLICKED:", {
+      categorySlug,
+      categoryName
+    });
+
+    // Update dropdown text
+    if (filterText) {
+      filterText.textContent = categoryName;
+    }
+
+    // Reset all category styles
+    dropdown
+      .querySelectorAll(".auditCategoryOption")
+      .forEach((item) => {
+        item.classList.remove(
+          "bg-[#EAF8F1]",
+          "text-[#3BB273]"
+        );
+
+        item.classList.add(
+          "bg-white",
+          "text-[#667085]"
+        );
+      });
+
+    // Highlight selected category
+    option.classList.remove(
+      "bg-white",
+      "text-[#667085]"
+    );
+
+    option.classList.add(
+      "bg-[#EAF8F1]",
+      "text-[#3BB273]"
+    );
+
+    // Close dropdown
+    dropdown.classList.add("hidden");
+
+    filterBtn.setAttribute(
+      "aria-expanded",
+      "false"
+    );
+
+    if (filterIcon) {
+      filterIcon.classList.remove("rotate-180");
+    }
+
+    // ================= LOAD LOGS =================
+
+    // All Categories
+    if (!categorySlug) {
+      loadAuditLogs(1);
+      return;
+    }
+
+    // Individual Category
+    loadAuditLogsByCategory(
+      categorySlug,
+      1
+    );
+  });
+
+  // ================= CLICK OUTSIDE =================
+  document.addEventListener("click", function (event) {
+    if (!filterWrap.contains(event.target)) {
+      dropdown.classList.add("hidden");
+
+      filterBtn.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+      if (filterIcon) {
+        filterIcon.classList.remove("rotate-180");
+      }
+    }
+  });
+}
+
+function renderAuditLogCategories(categories) {
+  const dropdown =
+    document.getElementById("auditCategoryDropdown");
+
+  if (!dropdown) return;
+
+  dropdown.innerHTML = "";
+
+  // ALL CATEGORIES
+  const allButton = document.createElement("button");
+
+  allButton.type = "button";
+  allButton.dataset.category = "";
+  allButton.dataset.categoryName = "All Categories";
+
+  allButton.className =
+    "auditCategoryOption w-full h-[40px] shrink-0 rounded-[6px] px-[12px] flex items-center text-left text-[12px] font-medium text-[#3BB273] bg-[#EAF8F1] cursor-pointer hover:bg-[#DFF4E9] mb-[5px]";
+
+  allButton.textContent = "All Categories";
+
+  dropdown.appendChild(allButton);
+
+  // API CATEGORIES
+  categories.forEach((category, index) => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.dataset.category = category.slug;
+    button.dataset.categoryName = category.name;
+
+    button.className =
+      "auditCategoryOption w-full h-[40px] shrink-0 rounded-[6px] px-[12px] flex items-center text-left text-[12px] leading-[16px] font-medium text-[#667085] bg-white cursor-pointer hover:bg-[#F1F5F8] transition-colors";
+
+    button.textContent = category.name;
+
+    // Give space between categories
+    if (index < categories.length - 1) {
+      button.classList.add("mb-[4px]");
+    }
+
+    dropdown.appendChild(button);
+  });
+}
+
+
+async function loadAuditLogsByCategory(category, page = 1, updateUrl = true) {
+  showGlobalLoader();
+
+  if (updateUrl) {
+    window.history.pushState(
+      null,
+      "",
+      `#audit-logs?category=${encodeURIComponent(category)}&page=${page}`
+    );
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/admin/audit-logs/category?category=${encodeURIComponent(category)}&page=${page}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Failed to load audit logs by category."
+      );
+    }
+
+    auditLogs = Array.isArray(result.data)
+      ? result.data
+      : [];
+
+    currentAuditLogPagination =
+      result.pagination || null;
+
+    renderAuditLogs(auditLogs);
+
+    renderAuditLogsPagination(
+      currentAuditLogPagination
+    );
+
+  } catch (error) {
+    console.error("Audit Category Error:", error);
+
+    showActionPopupMessage(
+      error.message || "Unable to load category logs.",
+      "error"
+    );
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+document.addEventListener("click", function (event) {
+  const option = event.target.closest(".auditCategoryOption");
+
+  if (!option) return;
+
+  const dropdown = document.getElementById("auditCategoryDropdown");
+  const filterText = document.getElementById("auditCategoryFilterText");
+  const filterBtn = document.getElementById("auditCategoryFilterBtn");
+  const filterIcon = document.getElementById("auditCategoryFilterIcon");
+
+  const categorySlug = option.dataset.category || "";
+  const categoryName =
+    option.dataset.categoryName || "All Categories";
+
+  // Update text
+  if (filterText) {
+    filterText.textContent = categoryName;
+  }
+
+  // Reset styles
+  document.querySelectorAll(".auditCategoryOption").forEach((item) => {
+    item.classList.remove(
+      "bg-[#EAF8F1]",
+      "text-[#3BB273]"
+    );
+
+    item.classList.add("text-[#667085]");
+  });
+
+  // Highlight selected option
+  option.classList.remove("text-[#667085]");
+  option.classList.add(
+    "bg-[#EAF8F1]",
+    "text-[#3BB273]"
+  );
+
+  // Close dropdown
+  dropdown?.classList.add("hidden");
+  filterBtn?.setAttribute("aria-expanded", "false");
+  filterIcon?.classList.remove("rotate-180");
+
+  // ALL CATEGORIES
+  if (!categorySlug) {
+    loadAuditLogs(1);
+    return;
+  }
+
+  // SELECTED CATEGORY
+  loadAuditLogsByCategory(
+    categorySlug,
+    1
+  );
+});
+
+function getAuditLogCategoryFromUrl() {
+  const fullHash = window.location.hash || "#audit-logs";
+  const queryString = fullHash.split("?")[1] || "";
+
+  const params = new URLSearchParams(queryString);
+
+  return params.get("category") || "";
+}
+/* ================= AUDIT DETAILS BACK BUTTON================= */
+
+document
+  .getElementById("backToAuditLogsBtn")
+  ?.addEventListener("click", function () {
+    window.location.hash = "#audit-logs";
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+  setupAuditCategoryDropdown();
+  loadAuditLogCategories();
+});
