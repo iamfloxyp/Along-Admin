@@ -10214,15 +10214,276 @@ function getAuditLogCategoryFromUrl() {
 
   return params.get("category") || "";
 }
-/* ================= AUDIT DETAILS BACK BUTTON================= */
+/* ================= VIEW AUDIT LOG DETAILS ================= */
+
+document.addEventListener("click", async function (event) {
+  const viewBtn = event.target.closest(".viewAuditLogBtn");
+
+  if (!viewBtn) return;
+
+  const logId = viewBtn.dataset.logId;
+
+  if (!logId) {
+    showActionPopupMessage("Audit log ID not found.", "error");
+    return;
+  }
+
+  await openAuditLogDetailsModal(logId);
+});
+
+
+/* ================= OPEN AUDIT LOG DETAILS MODAL ================= */
+
+async function openAuditLogDetailsModal(logId) {
+  const modal = document.getElementById("auditLogDetailsModal");
+
+  if (!modal) {
+    console.error("auditLogDetailsModal not found.");
+    return;
+  }
+
+  try {
+    showGlobalLoader();
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/audit-logs/${logId}`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    );
+
+    const result = await response.json();
+
+    console.log("AUDIT LOG DETAILS RESPONSE:", result);
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Failed to load audit log details."
+      );
+    }
+
+    const log = result.data;
+
+    if (!log) {
+      throw new Error("Audit log details not found.");
+    }
+
+    /* ================= ACTION ================= */
+
+    const actionText = formatAuditAction(log.action);
+
+    document.getElementById("auditDetailsAction").textContent =
+      actionText;
+
+    document.getElementById("auditDetailsActionBadge").textContent =
+      actionText;
+
+
+    /* ================= ENTITY ================= */
+
+    document.getElementById("auditDetailsEntityType").textContent =
+      formatAuditEntity(log.entity_type);
+
+    document.getElementById("auditDetailsEntityId").textContent =
+      log.entity_id || "N/A";
+
+
+    /* ================= TIME ================= */
+
+    document.getElementById("auditDetailsTimestamp").textContent =
+      formatAuditTimestamp(log.timestamp) || "N/A";
+
+    document.getElementById("auditDetailsTimestampHuman").textContent =
+      log.timestamp_human || "N/A";
+
+
+    /* ================= IP ADDRESS ================= */
+
+    document.getElementById("auditDetailsIpAddress").textContent =
+      log.ip_address || "N/A";
+
+
+    /* ================= PERFORMED BY ================= */
+
+    document.getElementById("auditDetailsUserName").textContent =
+      log.user?.name || "System";
+
+    document.getElementById("auditDetailsUserEmail").textContent =
+      log.user?.email || "N/A";
+
+    document.getElementById("auditDetailsUserRole").textContent =
+      log.user?.role
+        ? formatAuditEntity(log.user.role)
+        : "N/A";
+
+
+    /* ================= DESCRIPTION ================= */
+
+    document.getElementById("auditDetailsDescription").textContent =
+      log.description ||
+      formatAuditDescription(
+        log.action,
+        log.entity_type
+      );
+
+
+    /* ================= USER AGENT ================= */
+
+    document.getElementById("auditDetailsUserAgent").textContent =
+      log.user_agent || "N/A";
+
+
+    /* ================= CHANGES ================= */
+
+    renderAuditLogChanges(log);
+
+
+    /* ================= OPEN MODAL ================= */
+
+    modal.classList.remove("hidden");
+
+    document.body.classList.add("overflow-hidden");
+
+  } catch (error) {
+    console.error("Audit Log Details Error:", error);
+
+    showActionPopupMessage(
+      error.message || "Unable to load audit log details.",
+      "error"
+    );
+  } finally {
+    hideGlobalLoader();
+  }
+}
+
+
+/* ================= RENDER AUDIT LOG CHANGES ================= */
+
+function renderAuditLogChanges(log) {
+  const changesContainer =
+    document.getElementById("auditDetailsChanges");
+
+  if (!changesContainer) return;
+
+  const changes = Array.isArray(log.changes)
+    ? log.changes
+    : [];
+
+  if (!changes.length) {
+    changesContainer.innerHTML = `
+      <p class="text-[#7C8AA0] text-[13px]">
+        No recorded changes.
+      </p>
+    `;
+
+    return;
+  }
+
+  changesContainer.innerHTML = "";
+
+  changes.forEach((change) => {
+    const item = document.createElement("div");
+
+    item.className =
+      "py-[10px] border-b border-[#E5E7EB] last:border-b-0";
+
+    /*
+      This allows us to handle different possible
+      change object structures safely.
+    */
+
+    const field =
+      change.field ||
+      change.key ||
+      change.attribute ||
+      "Field";
+
+    const oldValue =
+      change.old_value ??
+      change.old ??
+      "N/A";
+
+    const newValue =
+      change.new_value ??
+      change.new ??
+      "N/A";
+
+    item.innerHTML = `
+      <p class="text-[#11313B] text-[13px] font-semibold">
+        ${escapeAuditHtml(formatAuditEntity(field))}
+      </p>
+
+      <div class="mt-[6px] grid grid-cols-2 gap-[16px]">
+
+        <div>
+          <p class="text-[#98A2B3] text-[11px] font-medium">
+            Previous Value
+          </p>
+
+          <p class="mt-[3px] text-[#667085] text-[12px] break-words">
+            ${escapeAuditHtml(
+              typeof oldValue === "object"
+                ? JSON.stringify(oldValue)
+                : oldValue
+            )}
+          </p>
+        </div>
+
+        <div>
+          <p class="text-[#98A2B3] text-[11px] font-medium">
+            New Value
+          </p>
+
+          <p class="mt-[3px] text-[#11313B] text-[12px] font-medium break-words">
+            ${escapeAuditHtml(
+              typeof newValue === "object"
+                ? JSON.stringify(newValue)
+                : newValue
+            )}
+          </p>
+        </div>
+
+      </div>
+    `;
+
+    changesContainer.appendChild(item);
+  });
+}
+
+
+/* ================= CLOSE AUDIT LOG DETAILS ================= */
+
+function closeAuditLogDetailsModal() {
+  const modal =
+    document.getElementById("auditLogDetailsModal");
+
+  if (!modal) return;
+
+  modal.classList.add("hidden");
+
+  document.body.classList.remove("overflow-hidden");
+}
+
+
+/* ================= CLOSE BUTTON ================= */
 
 document
-  .getElementById("backToAuditLogsBtn")
-  ?.addEventListener("click", function () {
-    window.location.hash = "#audit-logs";
-  });
+  .getElementById("closeAuditLogDetailsBtn")
+  ?.addEventListener("click", closeAuditLogDetailsModal);
 
-  document.addEventListener("DOMContentLoaded", function () {
-  setupAuditCategoryDropdown();
-  loadAuditLogCategories();
-});
+
+/* ================= CLICK OUTSIDE MODAL ================= */
+
+document
+  .getElementById("auditLogDetailsModal")
+  ?.addEventListener("click", function (event) {
+
+    if (event.target === this) {
+      closeAuditLogDetailsModal();
+    }
+
+  });
