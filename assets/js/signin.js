@@ -58,7 +58,7 @@ $(document).ready(function () {
     try {
       signInBtn.prop("disabled", true).text("Signing in...");
 
-      const response = await fetch(`${API_BASE_URL}/admin/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/admin/auth/login-v2`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
