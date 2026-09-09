@@ -4,7 +4,6 @@ const API_BASE_URL =
 
 $(document).ready(function () {
 
-
   // ==========================================================
   // CONFIRM JAVASCRIPT LOADED
   // ==========================================================
@@ -18,14 +17,34 @@ $(document).ready(function () {
   // GET RESET TOKEN FROM URL
   // ==========================================================
 
-  const urlParams =
-    new URLSearchParams(
-      window.location.search
+  const currentUrl =
+    new URL(
+      window.location.href
     );
 
 
   const resetToken =
-    urlParams.get("token");
+    currentUrl.searchParams.get(
+      "token"
+    );
+
+
+  console.log(
+    "FULL RESET URL:",
+    window.location.href
+  );
+
+
+  console.log(
+    "QUERY STRING:",
+    window.location.search
+  );
+
+
+  console.log(
+    "RESET TOKEN:",
+    resetToken
+  );
 
 
   console.log(
@@ -68,6 +87,7 @@ $(document).ready(function () {
   ) {
 
     if (!$message.length) {
+
       console.error(
         "resetPasswordMessage element was not found."
       );
@@ -82,7 +102,10 @@ $(document).ready(function () {
       );
 
 
-    if (type === "success") {
+    if (
+      type ===
+      "success"
+    ) {
 
       $message.addClass(
         "bg-green-100 text-green-600"
@@ -109,12 +132,12 @@ $(document).ready(function () {
   function hideResetPasswordMessage() {
 
     $message
-      .addClass("hidden")
+      .addClass(
+        "hidden"
+      )
       .text("");
   }
 
-
-  
 
   // ==========================================================
   // SHOW / HIDE NEW PASSWORD
@@ -237,6 +260,18 @@ $(document).ready(function () {
 
       if (!resetToken) {
 
+        console.error(
+          "Reset token is missing from URL.",
+          {
+            href:
+              window.location.href,
+
+            search:
+              window.location.search
+          }
+        );
+
+
         showResetPasswordMessage(
           "This password reset link is invalid or incomplete.",
           "error"
@@ -284,7 +319,6 @@ $(document).ready(function () {
 
       try {
 
-
         // ======================================================
         // CLEAR OLD MESSAGE
         // ======================================================
@@ -318,7 +352,8 @@ $(document).ready(function () {
           await fetch(
             `${API_BASE_URL}/auth/reset-password`,
             {
-              method: "POST",
+              method:
+                "POST",
 
               headers: {
                 "Content-Type":
@@ -328,16 +363,17 @@ $(document).ready(function () {
                   "application/json"
               },
 
-              body: JSON.stringify({
-                reset_token:
-                  resetToken,
+              body:
+                JSON.stringify({
+                  reset_token:
+                    resetToken,
 
-                password:
-                  newPassword,
+                  password:
+                    newPassword,
 
-                password_confirmation:
-                  confirmPassword
-              })
+                  password_confirmation:
+                    confirmPassword
+                })
             }
           );
 
@@ -370,8 +406,9 @@ $(document).ready(function () {
             "Unable to reset password.";
 
 
-          if (data.errors) {
-
+          if (
+            data.errors
+          ) {
 
             // PASSWORD ERROR
             if (
@@ -386,7 +423,6 @@ $(document).ready(function () {
 
             }
 
-
             // RESET TOKEN ERROR
             else if (
               Array.isArray(
@@ -399,7 +435,6 @@ $(document).ready(function () {
                 data.errors.reset_token[0];
 
             }
-
 
             // PASSWORD CONFIRMATION ERROR
             else if (
@@ -456,14 +491,14 @@ $(document).ready(function () {
 
 
         // ======================================================
-        // REDIRECT TO LOGIN
+        // REDIRECT TO SIGN IN
         // ======================================================
 
         setTimeout(
           function () {
 
             window.location.href =
-              "login.html";
+              "../signin.html";
 
           },
           2000
@@ -471,7 +506,6 @@ $(document).ready(function () {
 
 
       } catch (error) {
-
 
         console.error(
           "Reset password error:",
@@ -502,23 +536,22 @@ $(document).ready(function () {
 
       } finally {
 
-
         // ======================================================
         // RE-ENABLE BUTTON
         // ======================================================
 
-        if (resetToken) {
+        $updatePasswordBtn
+          .prop(
+            "disabled",
+            false
+          )
+          .css({
+            opacity:
+              "1",
 
-          $updatePasswordBtn
-            .prop(
-              "disabled",
-              false
-            )
-            .css({
-              opacity: "1",
-              cursor: "pointer"
-            });
-        }
+            cursor:
+              "pointer"
+          });
       }
     }
   );
