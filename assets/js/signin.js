@@ -12,20 +12,52 @@ $(document).ready(function () {
   // ===============================
   // SHOW MESSAGE
   // ===============================
-  function showMessage(message, type = "error") {
-    if (!$messageBox.length) return;
+ function showMessage(message, type = "error") {
 
-    $messageBox.removeClass("hidden");
-    $messageBox.removeClass("bg-red-100 text-red-600 bg-green-100 text-green-600");
-
-    if (type === "success") {
-      $messageBox.addClass("bg-green-100 text-green-600");
-    } else {
-      $messageBox.addClass("bg-red-100 text-red-600");
-    }
-
-    $messageBox.text(message);
+  if (!$messageBox.length) {
+    return;
   }
+
+
+  // ==========================================================
+  // MAKE MESSAGE VISIBLE
+  // ==========================================================
+
+  $messageBox
+    .removeClass(
+      "hidden invisible bg-red-100 text-red-600 bg-green-100 text-green-600"
+    );
+
+
+  // ==========================================================
+  // APPLY MESSAGE COLOUR
+  // ==========================================================
+
+  if (type === "success") {
+
+    $messageBox
+      .addClass(
+        "bg-green-100 text-green-600"
+      );
+
+  } else {
+
+    $messageBox
+      .addClass(
+        "bg-red-100 text-red-600"
+      );
+  }
+
+
+  // ==========================================================
+  // SET MESSAGE
+  // ==========================================================
+
+  $messageBox
+    .text(
+      message
+    );
+}
 
   // ===============================
   // TOGGLE PASSWORD

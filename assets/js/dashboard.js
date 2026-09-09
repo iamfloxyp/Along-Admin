@@ -950,8 +950,2091 @@ function setupSidebarNavigation() {
   loadSectionFromHash();
 }
 
+// ==========================================================
+// GLOBAL ADMIN AUTH / SUSPENSION HANDLER
+// ==========================================================
+
+function forceAdminLogout() {
+
+  sessionStorage.removeItem("auth_token");
+  sessionStorage.removeItem("admin_user");
+  sessionStorage.removeItem("user_id");
+  sessionStorage.removeItem("admin_email");
 
 
+  // CHANGE THIS IF YOUR LOGIN PAGE HAS ANOTHER NAME
+  window.location.href = "index.html";
+}
+
+
+// ==========================================================
+// INTERCEPT ALL FETCH REQUESTS
+// ==========================================================
+
+const originalFetch =
+  window.fetch;
+
+
+window.fetch =
+  async function (...args) {
+
+    const requestUrl =
+      typeof args[0] === "string"
+        ? args[0]
+        : args[0]?.url || "";
+
+
+    // ======================================================
+    // DO NOT INTERCEPT LOGIN / AUTH REQUESTS
+    // ======================================================
+
+    const isAuthRequest =
+      requestUrl.includes(
+        "/admin/auth/"
+      );
+
+
+    const response =
+      await originalFetch(
+        ...args
+      );
+
+
+    // ======================================================
+    // ALLOW LOGIN PAGE TO HANDLE ITS OWN ERRORS
+    // ======================================================
+
+    if (isAuthRequest) {
+
+      return response;
+    }
+
+
+    // ======================================================
+    // 401 = TOKEN INVALID / REVOKED / UNAUTHENTICATED
+    // ======================================================
+
+    if (
+      response.status === 401
+    ) {
+
+      console.warn(
+        "Admin session is no longer authenticated."
+      );
+
+
+      forceAdminLogout();
+
+
+      return response;
+    }
+
+
+    // ======================================================
+    // 403 = CHECK WHETHER ACCOUNT WAS SUSPENDED
+    // ======================================================
+
+    if (
+      response.status === 403
+    ) {
+
+      try {
+
+        const clonedResponse =
+          response.clone();
+
+
+        const data =
+          await clonedResponse.json();
+
+
+        const message =
+          String(
+            data?.message || ""
+          ).toLowerCase();
+
+
+        if (
+          message.includes(
+            "suspended"
+          )
+        ) {
+
+          console.warn(
+            "Admin account has been suspended."
+          );
+
+
+          forceAdminLogout();
+
+
+          return response;
+        }
+
+      } catch (error) {
+
+        console.warn(
+          "Unable to inspect 403 response.",
+          error
+        );
+      }
+    }
+
+
+    return response;
+  };
+
+// ============================================================
+// UNIVERSAL USER SUSPEND / UNSUSPEND SYSTEM
+//
+// Used by:
+// 1. Driver Details
+// 2. Sender / User Details
+// 3. Admin Users Directory
+// ============================================================
+
+
+// ============================================================
+// CURRENT TARGETS
+// ============================================================
+
+let driverSuspensionTarget = null;
+let senderSuspensionTarget = null;
+let currentSuspensionTarget = null;
+
+
+// ============================================================
+// CHECK ACTING ADMIN PERMISSION
+// ============================================================
+
+function currentAdminCanSuspendUsers() {
+
+  try {
+
+    const savedUser =
+      sessionStorage.getItem("admin_user");
+
+    if (!savedUser) {
+      return false;
+    }
+
+    const adminUser =
+      JSON.parse(savedUser);
+
+    const rights =
+      adminUser?.rights || {};
+
+    return rights.suspend_users === true;
+
+  } catch (error) {
+
+    console.error(
+      "Unable to read admin suspension permission:",
+      error
+    );
+
+    return false;
+  }
+}
+
+
+// ============================================================
+// SUCCESS POPUP / TOAST
+// ============================================================
+
+function showSuspensionSuccessMessage(message) {
+
+  $("#suspensionSuccessToast").remove();
+
+  const toast = `
+    <div
+      id="suspensionSuccessToast"
+      style="
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2147483647;
+
+        width: 420px;
+        max-width: calc(100vw - 40px);
+
+        background-color: #ECFDF3;
+        border: 1px solid #ABEFC6;
+        border-radius: 10px;
+
+        box-shadow: 0 12px 35px rgba(16, 24, 40, 0.18);
+
+        padding: 14px 16px;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        "
+      >
+
+        <div
+          style="
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background-color: #D1FADF;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          <i
+            class="fa-solid fa-check"
+            style="
+              font-size: 11px;
+              color: #039855;
+            "
+          ></i>
+        </div>
+
+
+        <p
+          style="
+            margin: 0;
+            flex: 1;
+
+            color: #05603A;
+
+            font-size: 13px;
+            line-height: 19px;
+            font-weight: 600;
+          "
+        >
+          ${message || "Action completed successfully."}
+        </p>
+
+
+        <button
+          type="button"
+          id="closeSuspensionSuccessToast"
+          style="
+            width: 24px;
+            height: 24px;
+
+            border: none;
+            background: transparent;
+
+            cursor: pointer;
+
+            color: #667085;
+          "
+        >
+          <i
+            class="fa-solid fa-xmark"
+            style="font-size: 11px;"
+          ></i>
+        </button>
+
+      </div>
+    </div>
+  `;
+
+  $("body").append(toast);
+
+  setTimeout(function () {
+
+    $("#suspensionSuccessToast")
+      .fadeOut(
+        200,
+        function () {
+          $(this).remove();
+        }
+      );
+
+  }, 4000);
+}
+
+
+$(document).on(
+  "click",
+  "#closeSuspensionSuccessToast",
+  function () {
+
+    $("#suspensionSuccessToast").remove();
+
+  }
+);
+
+$(document).on(
+  "click",
+  "#closeSuspensionSuccessToast",
+  function () {
+
+    $("#suspensionSuccessToast").remove();
+
+  }
+);
+
+
+// ============================================================
+// SENDER / CUSTOMER SUSPENSION TARGET
+// API shape:
+// data.is_suspended
+// ============================================================
+
+function setSenderSuspensionTarget(user) {
+
+  if (!user) {
+
+    senderSuspensionTarget = null;
+
+    updateSenderSuspensionButton();
+
+    return;
+  }
+
+
+  const name =
+    user.full_name ||
+    [
+      user.first_name,
+      user.middle_name,
+      user.last_name
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .trim() ||
+    "-";
+
+
+  senderSuspensionTarget = {
+
+    id:
+      user.id || null,
+
+    name:
+      name,
+
+    email:
+      user.email || "-",
+
+    is_suspended:
+      user.is_suspended === true,
+
+    suspension_reason:
+      user.suspension_reason || "",
+
+    type:
+      "sender"
+  };
+
+
+  console.log(
+    "Sender suspension target:",
+    senderSuspensionTarget
+  );
+
+
+  updateSenderSuspensionButton();
+}
+
+
+// ============================================================
+// DRIVER SUSPENSION TARGET
+// API shape:
+// data.user.is_suspended
+// ============================================================
+
+function setDriverSuspensionTarget(profile) {
+
+  if (!profile) {
+
+    driverSuspensionTarget = null;
+
+    updateDriverSuspensionButton();
+
+    return;
+  }
+
+
+  const user =
+    profile.user || {};
+
+
+  const name =
+    profile.legal_name ||
+    user.full_name ||
+    [
+      user.first_name,
+      user.middle_name,
+      user.last_name
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .trim() ||
+    "-";
+
+
+  driverSuspensionTarget = {
+
+    id:
+      user.id || null,
+
+    name:
+      name,
+
+    email:
+      user.email || "-",
+
+    is_suspended:
+      user.is_suspended === true,
+
+    suspension_reason:
+      user.suspension_reason || "",
+
+    type:
+      "driver"
+  };
+
+
+  console.log(
+    "Driver suspension target:",
+    driverSuspensionTarget
+  );
+
+
+  updateDriverSuspensionButton();
+}
+
+
+
+
+// ============================================================
+// UPDATE SENDER / CUSTOMER BUTTON
+// ============================================================
+
+function updateSenderSuspensionButton() {
+
+  const $button =
+    $("#suspendSenderBtn");
+
+
+  if (!$button.length) {
+    return;
+  }
+
+
+  if (!currentAdminCanSuspendUsers()) {
+
+    $button.addClass("hidden");
+
+    return;
+  }
+
+
+  $button.removeClass("hidden");
+
+
+  const isSuspended =
+    senderSuspensionTarget?.is_suspended === true;
+
+
+  if (isSuspended) {
+
+    $button
+      .attr(
+        "data-suspension-action",
+        "unsuspend"
+      )
+      .css({
+        "background-color": "#039855",
+        "border-color": "#039855",
+        "color": "#FFFFFF"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-user-check mr-[7px] text-[12px]"
+          style="color:#FFFFFF;"
+        ></i>
+
+        Unsuspend User
+      `);
+
+  } else {
+
+    $button
+      .attr(
+        "data-suspension-action",
+        "suspend"
+      )
+      .css({
+        "background-color": "#D92D20",
+        "border-color": "#D92D20",
+        "color": "#FFFFFF"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-ban mr-[7px] text-[12px]"
+          style="color:#FFFFFF;"
+        ></i>
+
+        Suspend User
+      `);
+  }
+}
+
+
+// ============================================================
+// UPDATE DRIVER BUTTON
+// ============================================================
+
+function updateDriverSuspensionButton() {
+
+  const $button =
+    $("#suspendDriverBtn");
+
+
+  if (!$button.length) {
+    return;
+  }
+
+
+  if (!currentAdminCanSuspendUsers()) {
+
+    $button.addClass("hidden");
+
+    return;
+  }
+
+
+  $button.removeClass("hidden");
+
+
+  const isSuspended =
+    driverSuspensionTarget?.is_suspended === true;
+
+
+  if (isSuspended) {
+
+    $button
+      .attr(
+        "data-suspension-action",
+        "unsuspend"
+      )
+      .css({
+        "background-color": "#039855",
+        "border-color": "#039855",
+        "color": "#FFFFFF"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-user-check mr-[7px] text-[12px]"
+          style="color:#FFFFFF;"
+        ></i>
+
+        Unsuspend User
+      `);
+
+  } else {
+
+    $button
+      .attr(
+        "data-suspension-action",
+        "suspend"
+      )
+      .css({
+        "background-color": "#D92D20",
+        "border-color": "#D92D20",
+        "color": "#FFFFFF"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-ban mr-[7px] text-[12px]"
+          style="color:#FFFFFF;"
+        ></i>
+
+        Suspend User
+      `);
+  }
+}
+
+
+// ============================================================
+// OPEN UNIVERSAL MODAL
+// ============================================================
+
+function openSuspendUserModal(user = {}) {
+
+  if (!user?.id) {
+
+    console.error(
+      "Unable to open suspension modal because user ID is missing.",
+      user
+    );
+
+    return;
+  }
+
+
+  if (!currentAdminCanSuspendUsers()) {
+
+    console.warn(
+      "Current admin does not have suspend_users permission."
+    );
+
+    return;
+  }
+
+
+  // ==========================================================
+  // DETERMINE REAL SUSPENSION STATE
+  // ==========================================================
+
+  const resolvedIsSuspended =
+    user.is_suspended === true ||
+    user.is_suspended === "true";
+
+
+  currentSuspensionTarget = {
+
+    id:
+      user.id,
+
+    name:
+      user.name || "-",
+
+    email:
+      user.email || "-",
+
+    type:
+      user.type || "user",
+
+    is_suspended:
+      resolvedIsSuspended,
+
+    suspension_reason:
+      user.suspension_reason || "",
+
+    suspended_at:
+      user.suspended_at || null
+  };
+
+
+  const isUnsuspend =
+    currentSuspensionTarget.is_suspended === true;
+
+
+  console.log(
+    "OPEN SUSPEND MODAL:",
+    {
+      type:
+        currentSuspensionTarget.type,
+
+      is_suspended:
+        currentSuspensionTarget.is_suspended,
+
+      suspension_reason:
+        currentSuspensionTarget.suspension_reason,
+
+      suspended_at:
+        currentSuspensionTarget.suspended_at,
+
+      isUnsuspend:
+        isUnsuspend
+    }
+  );
+
+
+  // ==========================================================
+  // USER INFO
+  // ==========================================================
+
+  $("#suspendUserName")
+    .text(
+      currentSuspensionTarget.name
+    );
+
+
+  $("#suspendUserEmail")
+    .text(
+      currentSuspensionTarget.email
+    );
+
+
+  $("#suspendUserId")
+    .removeClass("hidden")
+    .text(
+      `ID: ${currentSuspensionTarget.id}`
+    );
+
+
+  // ==========================================================
+  // RESET FIELDS
+  // ==========================================================
+
+  $("#suspendUserReason")
+    .val("");
+
+
+  $("#suspendReasonCharacterCount")
+    .text("0 / 1000");
+
+
+  $("#suspendUserPassword")
+    .val("")
+    .attr(
+      "type",
+      "password"
+    );
+
+
+  $("#toggleSuspendPasswordIcon")
+    .removeClass(
+      "fa-eye-slash"
+    )
+    .addClass(
+      "fa-eye"
+    );
+
+
+  $("#suspendUserError")
+    .addClass("hidden")
+    .text("");
+
+
+  // ==========================================================
+  // UNSUSPEND MODE
+  // ==========================================================
+
+  if (isUnsuspend) {
+
+    // ========================================================
+    // HEADER
+    // ========================================================
+
+    $("#suspendUserModalTitle")
+      .text(
+        "Unsuspend User"
+      );
+
+
+    $("#suspendUserModalSubtitle")
+      .text(
+        "Restore this user's account access."
+      );
+
+
+    // ========================================================
+    // HEADER ICON
+    // ========================================================
+
+    $("#suspendUserHeaderIconBox")
+      .css({
+        "background-color": "#ECFDF3",
+        "border-color": "#ABEFC6"
+      });
+
+
+    $("#suspendUserHeaderIcon")
+      .removeClass(
+        "fa-ban"
+      )
+      .addClass(
+        "fa-user-check"
+      )
+      .css(
+        "color",
+        "#039855"
+      );
+
+
+    // ========================================================
+    // USER SECTION TITLE
+    // ========================================================
+
+    $("#suspendUserSectionTitle")
+      .text(
+        "User to be unsuspended"
+      );
+
+
+    // ========================================================
+    // INFORMATION BOX
+    // ========================================================
+
+    $("#suspendUserWarning")
+      .show()
+      .css({
+        "visibility": "visible",
+        "background-color": "#ECFDF3",
+        "border-color": "#ABEFC6"
+      });
+
+
+    $("#suspendUserWarningIcon")
+      .removeClass(
+        "fa-triangle-exclamation"
+      )
+      .addClass(
+        "fa-circle-info"
+      )
+      .css(
+        "color",
+        "#039855"
+      );
+
+
+    $("#suspendUserWarningText")
+      .text(
+        "This user will regain access to their account and will be able to log in again after being unsuspended."
+      )
+      .css(
+        "color",
+        "#05603A"
+      );
+
+
+    // ========================================================
+    // HIDE REASON SECTION
+    // ========================================================
+
+    $("#suspendUserReason")
+      .prop(
+        "required",
+        false
+      )
+      .val("");
+
+
+    $("#suspendUserReasonCard")
+      .hide();
+
+
+    // ========================================================
+    // PASSWORD CARD SPACING
+    // ========================================================
+
+    $("#suspendUserPasswordCard")
+      .css(
+        "margin-top",
+        "24px"
+      );
+
+
+    // ========================================================
+    // UNSUSPEND BUTTON
+    // ========================================================
+
+    $("#confirmSuspendUserBtn")
+      .prop(
+        "disabled",
+        false
+      )
+      .css({
+        "background-color": "#039855",
+        "border-color": "#039855",
+        "box-shadow":
+          "0 3px 8px rgba(3, 152, 85, 0.18)"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-user-check"
+          style="
+            font-size: 11px;
+            color: #FFFFFF;
+          "
+        ></i>
+
+        <span style="color:#FFFFFF;">
+          Unsuspend User
+        </span>
+      `);
+
+  }
+
+
+  // ==========================================================
+  // SUSPEND MODE
+  // ==========================================================
+
+  else {
+
+    // ========================================================
+    // HEADER
+    // ========================================================
+
+    $("#suspendUserModalTitle")
+      .text(
+        "Suspend User"
+      );
+
+
+    $("#suspendUserModalSubtitle")
+      .text(
+        "Restrict this user's account access."
+      );
+
+
+    // ========================================================
+    // HEADER ICON
+    // ========================================================
+
+    $("#suspendUserHeaderIconBox")
+      .css({
+        "background-color": "#FFF3F2",
+        "border-color": "#FECDCA"
+      });
+
+
+    $("#suspendUserHeaderIcon")
+      .removeClass(
+        "fa-user-check"
+      )
+      .addClass(
+        "fa-ban"
+      )
+      .css(
+        "color",
+        "#D92D20"
+      );
+
+
+    // ========================================================
+    // USER SECTION TITLE
+    // ========================================================
+
+    $("#suspendUserSectionTitle")
+      .text(
+        "User to be suspended"
+      );
+
+
+    // ========================================================
+    // WARNING BOX
+    // ========================================================
+
+    $("#suspendUserWarning")
+      .show()
+      .css({
+        "visibility": "visible",
+        "background-color": "#FFF3F2",
+        "border-color": "#FECDCA"
+      });
+
+
+    $("#suspendUserWarningIcon")
+      .removeClass(
+        "fa-circle-info"
+      )
+      .addClass(
+        "fa-triangle-exclamation"
+      )
+      .css(
+        "color",
+        "#D92D20"
+      );
+
+
+    $("#suspendUserWarningText")
+      .text(
+        "Suspending this user will revoke their active session and prevent them from logging in until their account is unsuspended."
+      )
+      .css(
+        "color",
+        "#B42318"
+      );
+
+
+    // ========================================================
+    // SHOW REASON SECTION
+    // ========================================================
+
+    $("#suspendUserReason")
+      .prop(
+        "required",
+        true
+      )
+      .val("");
+
+
+    $("#suspendUserReasonCard")
+      .show();
+
+
+    // ========================================================
+    // PASSWORD CARD SPACING
+    // ========================================================
+
+    $("#suspendUserPasswordCard")
+      .css(
+        "margin-top",
+        "24px"
+      );
+
+
+    // ========================================================
+    // SUSPEND BUTTON
+    // ========================================================
+
+    $("#confirmSuspendUserBtn")
+      .prop(
+        "disabled",
+        false
+      )
+      .css({
+        "background-color": "#D92D20",
+        "border-color": "#D92D20",
+        "box-shadow":
+          "0 3px 8px rgba(217, 45, 32, 0.18)"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-ban"
+          style="
+            font-size: 11px;
+            color: #FFFFFF;
+          "
+        ></i>
+
+        <span style="color:#FFFFFF;">
+          Suspend User
+        </span>
+      `);
+
+  }
+
+
+  // ==========================================================
+  // ENSURE TOP Z-INDEX
+  // ==========================================================
+
+  $("#suspendUserModal")
+    .css({
+      "z-index":
+        "2147483647"
+    });
+
+
+  $("#suspendUserModalCard")
+    .css({
+      "position":
+        "relative",
+
+      "z-index":
+        "2147483647"
+    });
+
+
+  // ==========================================================
+  // OPEN MODAL
+  // ==========================================================
+
+  $("#suspendUserModal")
+    .removeClass(
+      "hidden"
+    );
+
+
+  $("body")
+    .addClass(
+      "overflow-hidden"
+    );
+}
+
+// ============================================================
+// DRIVER BUTTON
+// ============================================================
+
+$(document).on(
+  "click",
+  "#suspendDriverBtn",
+  function () {
+
+    if (
+      !driverSuspensionTarget?.id
+    ) {
+
+      console.error(
+        "Driver suspension target is missing."
+      );
+
+      return;
+    }
+
+
+    openSuspendUserModal(
+      driverSuspensionTarget
+    );
+
+  }
+);
+
+
+// ============================================================
+// SENDER BUTTON
+// ============================================================
+
+$(document).on(
+  "click",
+  "#suspendSenderBtn",
+  function () {
+
+    if (
+      !senderSuspensionTarget?.id
+    ) {
+
+      console.error(
+        "Sender suspension target is missing."
+      );
+
+      return;
+    }
+
+
+    openSuspendUserModal(
+      senderSuspensionTarget
+    );
+
+  }
+);
+
+
+// ============================================================
+// ADMIN TABLE ACTION
+// ============================================================
+
+$(document).on(
+  "click",
+  ".suspendAdminActionBtn",
+  function () {
+
+    const adminId =
+      $(this).attr(
+        "data-admin-id"
+      );
+
+
+    const firstName =
+      $(this).attr(
+        "data-first-name"
+      ) || "";
+
+
+    const lastName =
+      $(this).attr(
+        "data-last-name"
+      ) || "";
+
+
+    const email =
+      $(this).attr(
+        "data-email"
+      ) || "";
+
+
+    const isSuspended =
+      $(this).attr(
+        "data-is-suspended"
+      ) === "true";
+
+
+    const suspensionReason =
+      $(this).attr(
+        "data-suspension-reason"
+      ) || "";
+
+
+    const fullName =
+      `${firstName} ${lastName}`.trim();
+
+
+    $(".adminActionsMenu")
+      .addClass(
+        "hidden"
+      );
+
+
+    openSuspendUserModal({
+
+      id:
+        adminId,
+
+      name:
+        fullName,
+
+      email:
+        email,
+
+      type:
+        "admin",
+
+      is_suspended:
+        isSuspended,
+
+      suspension_reason:
+        suspensionReason
+
+    });
+
+  }
+);
+
+// ============================================================
+// CLOSE MODAL
+// ============================================================
+
+function closeSuspendUserModal() {
+
+  $("#suspendUserModal")
+    .addClass("hidden");
+
+
+  $("#suspendUserReason")
+    .val("");
+
+
+  $("#suspendUserPassword")
+    .val("")
+    .attr(
+      "type",
+      "password"
+    );
+
+
+  $("#suspendReasonCharacterCount")
+    .text(
+      "0 / 1000"
+    );
+
+
+  $("#suspendUserError")
+    .addClass("hidden")
+    .text("");
+
+
+  $("#toggleSuspendPasswordIcon")
+    .removeClass(
+      "fa-eye-slash"
+    )
+    .addClass(
+      "fa-eye"
+    );
+
+
+  $("#suspendUserId")
+    .addClass("hidden")
+    .text("");
+
+
+  currentSuspensionTarget =
+    null;
+
+
+  $("body")
+    .removeClass(
+      "overflow-hidden"
+    );
+}
+
+
+// ============================================================
+// MODAL CLOSE EVENTS
+// ============================================================
+
+$("#closeSuspendUserModalBtn")
+  .on(
+    "click",
+    function () {
+
+      closeSuspendUserModal();
+
+    }
+  );
+
+
+$("#cancelSuspendUserBtn")
+  .on(
+    "click",
+    function () {
+
+      closeSuspendUserModal();
+
+    }
+  );
+
+
+$("#suspendUserModal")
+  .on(
+    "click",
+    function (e) {
+
+      if (
+        e.target === this
+      ) {
+
+        closeSuspendUserModal();
+
+      }
+
+    }
+  );
+
+
+// ============================================================
+// REASON CHARACTER COUNTER
+// ============================================================
+
+$("#suspendUserReason")
+  .on(
+    "input",
+    function () {
+
+      const length =
+        $(this)
+          .val()
+          .length;
+
+
+      $("#suspendReasonCharacterCount")
+        .text(
+          `${length} / 1000`
+        );
+
+    }
+  );
+
+
+// ============================================================
+// PASSWORD SHOW / HIDE
+// ============================================================
+
+$("#toggleSuspendPasswordBtn")
+  .on(
+    "click",
+    function () {
+
+      const $passwordInput =
+        $("#suspendUserPassword");
+
+
+      const $icon =
+        $("#toggleSuspendPasswordIcon");
+
+
+      const hidden =
+        $passwordInput
+          .attr("type") ===
+        "password";
+
+
+      if (hidden) {
+
+        $passwordInput
+          .attr(
+            "type",
+            "text"
+          );
+
+
+        $icon
+          .removeClass(
+            "fa-eye"
+          )
+          .addClass(
+            "fa-eye-slash"
+          );
+
+      } else {
+
+        $passwordInput
+          .attr(
+            "type",
+            "password"
+          );
+
+
+        $icon
+          .removeClass(
+            "fa-eye-slash"
+          )
+          .addClass(
+            "fa-eye"
+          );
+
+      }
+
+    }
+  );
+
+
+// ============================================================
+// SUBMIT SUSPEND / UNSUSPEND
+// ============================================================
+
+$("#suspendUserForm")
+  .on(
+    "submit",
+    async function (e) {
+
+      e.preventDefault();
+
+
+      // ======================================================
+      // TARGET
+      // ======================================================
+
+      if (
+        !currentSuspensionTarget?.id
+      ) {
+
+        $("#suspendUserError")
+          .removeClass(
+            "hidden"
+          )
+          .text(
+            "Unable to identify the user."
+          );
+
+        return;
+      }
+
+
+      // ======================================================
+      // PERMISSION
+      // ======================================================
+
+      if (
+        !currentAdminCanSuspendUsers()
+      ) {
+
+        $("#suspendUserError")
+          .removeClass(
+            "hidden"
+          )
+          .text(
+            "You do not have permission to perform this action."
+          );
+
+        return;
+      }
+
+
+      const isUnsuspend =
+        currentSuspensionTarget
+          .is_suspended === true;
+
+
+      const password =
+        $("#suspendUserPassword")
+          .val();
+
+
+      const reason =
+        $("#suspendUserReason")
+          .val()
+          .trim();
+
+
+      // ======================================================
+      // PASSWORD REQUIRED BOTH WAYS
+      // ======================================================
+
+      if (!password) {
+
+        $("#suspendUserError")
+          .removeClass(
+            "hidden"
+          )
+          .text(
+            "Enter your admin password to continue."
+          );
+
+        return;
+      }
+
+
+      // ======================================================
+      // REASON ONLY REQUIRED FOR SUSPEND
+      // ======================================================
+
+      if (!isUnsuspend) {
+
+        if (
+          reason.length < 10
+        ) {
+
+          $("#suspendUserError")
+            .removeClass(
+              "hidden"
+            )
+            .text(
+              "Suspension reason must be at least 10 characters."
+            );
+
+          return;
+        }
+
+
+        if (
+          reason.length >
+          1000
+        ) {
+
+          $("#suspendUserError")
+            .removeClass(
+              "hidden"
+            )
+            .text(
+              "Suspension reason cannot exceed 1000 characters."
+            );
+
+          return;
+        }
+
+      }
+
+
+      // ======================================================
+      // TOKEN
+      // ======================================================
+
+      const authToken =
+        sessionStorage.getItem(
+          "auth_token"
+        );
+
+
+      if (!authToken) {
+
+        $("#suspendUserError")
+          .removeClass(
+            "hidden"
+          )
+          .text(
+            "Authentication token not found. Please sign in again."
+          );
+
+        return;
+      }
+
+
+      const $submitBtn =
+        $("#confirmSuspendUserBtn");
+
+
+      try {
+
+        // ====================================================
+        // LOADING
+        // ====================================================
+
+        $submitBtn
+          .prop(
+            "disabled",
+            true
+          )
+          .html(`
+            <i
+              class="fa-solid fa-spinner fa-spin text-[11px]"
+              style="color:#FFFFFF;"
+            ></i>
+
+            <span style="color:#FFFFFF;">
+              ${
+                isUnsuspend
+                  ? "Unsuspending..."
+                  : "Suspending..."
+              }
+            </span>
+          `);
+
+
+        $("#suspendUserError")
+          .addClass(
+            "hidden"
+          )
+          .text("");
+
+
+        // ====================================================
+        // ENDPOINT
+        // ====================================================
+
+        const endpoint =
+          isUnsuspend
+            ? `${API_BASE_URL}/admin/users/${currentSuspensionTarget.id}/unsuspend`
+            : `${API_BASE_URL}/admin/users/${currentSuspensionTarget.id}/suspend`;
+
+
+        // ====================================================
+        // BODY
+        // ====================================================
+
+        const requestBody =
+          isUnsuspend
+            ? {
+                password:
+                  password
+              }
+            : {
+                reason:
+                  reason,
+
+                password:
+                  password
+              };
+
+
+        // ====================================================
+        // REQUEST
+        // ====================================================
+
+        const response =
+          await fetch(
+            endpoint,
+            {
+              method:
+                "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json",
+
+                "Authorization":
+                  `Bearer ${authToken}`
+              },
+
+              body:
+                JSON.stringify(
+                  requestBody
+                )
+            }
+          );
+
+
+        // ====================================================
+        // RESPONSE
+        // ====================================================
+
+        const contentType =
+          response.headers.get(
+            "content-type"
+          );
+
+
+        let data;
+
+
+        if (
+          contentType &&
+          contentType.includes(
+            "application/json"
+          )
+        ) {
+
+          data =
+            await response.json();
+
+        } else {
+
+          const rawResponse =
+            await response.text();
+
+
+          console.error(
+            "Suspend/unsuspend non-JSON response:",
+            rawResponse
+          );
+
+
+          throw new Error(
+            `Server returned ${response.status} instead of JSON`
+          );
+
+        }
+
+
+        // ====================================================
+        // ERROR
+        // ====================================================
+
+        if (
+          !response.ok ||
+          data.success !== true
+        ) {
+
+          let errorMessage =
+            data?.message ||
+            (
+              isUnsuspend
+                ? "Unable to unsuspend this user."
+                : "Unable to suspend this user."
+            );
+
+
+          if (
+            response.status ===
+              422 &&
+            data?.errors
+          ) {
+
+            const messages =
+              Object.values(
+                data.errors
+              )
+                .flat()
+                .filter(Boolean);
+
+
+            if (
+              messages.length
+            ) {
+
+              errorMessage =
+                messages.join(
+                  " "
+                );
+
+            }
+
+          }
+
+
+          throw new Error(
+            errorMessage
+          );
+
+        }
+
+
+        // ====================================================
+        // SUCCESS
+        // ====================================================
+
+        const updatedUser =
+          data?.data?.user;
+
+
+        const targetId =
+          currentSuspensionTarget.id;
+
+
+        const targetType =
+          currentSuspensionTarget.type;
+
+
+        const newSuspensionState =
+          updatedUser?.is_suspended ===
+          true;
+
+
+        const successMessage =
+          data?.message ||
+          (
+            newSuspensionState
+              ? "User suspended successfully"
+              : "User unsuspended successfully"
+          );
+
+
+        // ====================================================
+        // UPDATE STORED TARGET
+        // ====================================================
+
+        if (
+          targetType ===
+          "driver" &&
+          driverSuspensionTarget
+        ) {
+
+          driverSuspensionTarget
+            .is_suspended =
+            newSuspensionState;
+
+
+          driverSuspensionTarget
+            .suspension_reason =
+            updatedUser
+              ?.suspension_reason ||
+            "";
+
+        }
+
+
+        if (
+          targetType ===
+          "sender" &&
+          senderSuspensionTarget
+        ) {
+
+          senderSuspensionTarget
+            .is_suspended =
+            newSuspensionState;
+
+
+          senderSuspensionTarget
+            .suspension_reason =
+            updatedUser
+              ?.suspension_reason ||
+            "";
+
+        }
+
+
+        // ====================================================
+        // CLOSE MODAL
+        // ====================================================
+
+        closeSuspendUserModal();
+
+
+        // ====================================================
+        // UPDATE SCREEN BUTTONS
+        // ====================================================
+
+        if (
+          targetType ===
+          "driver"
+        ) {
+
+          updateDriverSuspensionButton();
+
+        }
+
+
+        if (
+          targetType ===
+          "sender"
+        ) {
+
+          updateSenderSuspensionButton();
+
+        }
+
+
+        if (
+          targetType ===
+          "admin"
+        ) {
+
+          const $adminButton =
+            $(
+              `.suspendAdminActionBtn[data-admin-id="${targetId}"]`
+            );
+
+
+          $adminButton.attr(
+            "data-is-suspended",
+            newSuspensionState
+              ? "true"
+              : "false"
+          );
+
+
+          updateAdminSuspensionAction(
+            $adminButton,
+            newSuspensionState
+          );
+
+        }
+
+
+        // ====================================================
+        // SHOW BACKEND MESSAGE
+        // ====================================================
+
+        showSuspensionSuccessMessage(
+          successMessage
+        );
+
+
+        // ====================================================
+        // OPTIONAL EXISTING SUCCESS HANDLER
+        // ====================================================
+
+        if (
+          typeof handleUserSuspendedSuccessfully ===
+          "function"
+        ) {
+
+          handleUserSuspendedSuccessfully(
+            targetType,
+            targetId,
+            updatedUser
+          );
+
+        }
+
+
+      } catch (error) {
+
+        console.error(
+          "Suspend/unsuspend error:",
+          error
+        );
+
+
+        $("#suspendUserError")
+          .removeClass(
+            "hidden"
+          )
+          .text(
+            error.message ||
+            "Something went wrong."
+          );
+
+
+      } finally {
+
+        if (
+          currentSuspensionTarget
+        ) {
+
+          const stillUnsuspend =
+            currentSuspensionTarget
+              .is_suspended ===
+            true;
+
+
+          $submitBtn
+            .prop(
+              "disabled",
+              false
+            )
+            .html(`
+              <span style="color:#FFFFFF;">
+                ${
+                  stillUnsuspend
+                    ? "Unsuspend User"
+                    : "Suspend User"
+                }
+              </span>
+            `);
+
+        }
+
+      }
+
+    }
+  );
+
+
+// ============================================================
+// ADMIN ACTION VISUAL
+// ============================================================
+
+function updateAdminSuspensionAction(
+  $button,
+  isSuspended
+) {
+
+  if (!$button?.length) {
+    return;
+  }
+
+
+  if (isSuspended) {
+
+    $button
+      .css({
+        "background-color":
+          "#ECFDF3",
+
+        "color":
+          "#039855"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-user-check"
+          style="
+            width: 14px;
+            font-size: 11px;
+            color: #039855;
+          "
+        ></i>
+
+        <span>
+          Unsuspend User
+        </span>
+      `);
+
+  } else {
+
+    $button
+      .css({
+        "background-color":
+          "#FFF1F0",
+
+        "color":
+          "#D92D20"
+      })
+      .html(`
+        <i
+          class="fa-solid fa-ban"
+          style="
+            width: 14px;
+            font-size: 11px;
+            color: #D92D20;
+          "
+        ></i>
+
+        <span>
+          Suspend User
+        </span>
+      `);
+
+  }
+}
+
+
+// ============================================================
+// SHOW / HIDE ALL SUSPEND AND UNSUSPEND BUTTONS
+// ============================================================
+
+function applySuspendUserPermissionUI() {
+
+  const canSuspend =
+    currentAdminCanSuspendUsers();
+
+
+  $(
+    ".suspendUserActionBtn, .suspendAdminActionBtn"
+  ).each(function () {
+
+    if (canSuspend) {
+
+      $(this)
+        .removeClass(
+          "hidden"
+        );
+
+    } else {
+
+      $(this)
+        .addClass(
+          "hidden"
+        );
+
+    }
+
+  });
+}
+
+
+// ============================================================
+// APPLY PERMISSION WHEN PAGE LOADS
+// ============================================================
+
+$(document).ready(
+  function () {
+
+    applySuspendUserPermissionUI();
+
+  }
+);
 /* ========================= NOTIFICATIONS ================================ */
 
 let adminNotifications = [];
@@ -970,6 +3053,7 @@ function notificationAuthHeaders() {
 function showLiveNotificationToast(data = {}) {
   const wrap = document.getElementById("liveNotificationToastWrap");
   if (!wrap) return;
+
 
   const toast = document.createElement("div");
 
@@ -2363,62 +4447,193 @@ async function openDriverDetails(driverProfileId, updateUrl = true) {
 }
 /* ================= RENDER DRIVER INFORMATION CARD ================= */
 function renderDriverInformation(profile) {
-  const user = profile.user || {};
+
+  const user =
+    profile.user || {};
+
 
   const name =
     profile.legal_name ||
-    [user.first_name, user.middle_name, user.last_name].filter(Boolean).join(" ") ||
+    [
+      user.first_name,
+      user.middle_name,
+      user.last_name
+    ]
+      .filter(Boolean)
+      .join(" ") ||
     "No Name";
 
-  const joinedDate = user.created_at ? formatDate(user.created_at) : "N/A";
-  const phone = user.phone || "N/A";
-  const email = user.email || "N/A";
-  const address = buildFullAddress(user);
-  const documentStatusText = getOverallDocumentStatus(profile);
+
+  const joinedDate =
+    user.created_at
+      ? formatDate(user.created_at)
+      : "N/A";
+
+
+  const phone =
+    user.phone || "N/A";
+
+
+  const email =
+    user.email || "N/A";
+
+
+  const address =
+    buildFullAddress(user);
+
+
+  const documentStatusText =
+    getOverallDocumentStatus(profile);
+
+
   const avatar =
-  profile.selfie_photo_url ||
-  user.driver_profile?.selfie_photo_url ||
-  user.profile_photo_url ||
-  user.profile_image_url ||
-  user.profile_photo ||
-  "assets/images/profile icon.png";
+    profile.selfie_photo_url ||
+    user.driver_profile?.selfie_photo_url ||
+    user.profile_photo_url ||
+    user.profile_image_url ||
+    user.profile_photo ||
+    "assets/images/profile icon.png";
 
-  const nameEl = document.getElementById("driverInformationName");
-  const memberSinceEl = document.getElementById("driverInformationMemberSince");
-  const phoneEl = document.getElementById("driverInformationPhoneText");
-  const emailEl = document.getElementById("driverInformationEmailText");
-  const addressEl = document.getElementById("driverInformationAddressText");
-  const avatarEl = document.getElementById("driverInformationAvatar");
 
-  if (nameEl) nameEl.textContent = name;
-  if (memberSinceEl) memberSinceEl.textContent = `Member Since: ${joinedDate}`;
-  if (phoneEl) phoneEl.textContent = phone;
-  if (emailEl) emailEl.textContent = email;
-  if (addressEl) addressEl.textContent = address;
-  if (avatarEl) avatarEl.src = avatar;
+  // ==========================================================
+  // IMPORTANT:
+  // LET THE UNIVERSAL SUSPENSION FUNCTION BUILD THE TARGET
+  // ==========================================================
+
+  setDriverSuspensionTarget(profile);
+
+
+  const nameEl =
+    document.getElementById(
+      "driverInformationName"
+    );
+
+
+  const memberSinceEl =
+    document.getElementById(
+      "driverInformationMemberSince"
+    );
+
+
+  const phoneEl =
+    document.getElementById(
+      "driverInformationPhoneText"
+    );
+
+
+  const emailEl =
+    document.getElementById(
+      "driverInformationEmailText"
+    );
+
+
+  const addressEl =
+    document.getElementById(
+      "driverInformationAddressText"
+    );
+
+
+  const avatarEl =
+    document.getElementById(
+      "driverInformationAvatar"
+    );
+
+
+  if (nameEl) {
+    nameEl.textContent = name;
+  }
+
+
+  if (memberSinceEl) {
+    memberSinceEl.textContent =
+      `Member Since: ${joinedDate}`;
+  }
+
+
+  if (phoneEl) {
+    phoneEl.textContent = phone;
+  }
+
+
+  if (emailEl) {
+    emailEl.textContent = email;
+  }
+
+
+  if (addressEl) {
+    addressEl.textContent = address;
+  }
+
+
+  if (avatarEl) {
+    avatarEl.src = avatar;
+  }
+
 
   updateBadge(
-    document.getElementById("driverInformationStatus"),
-    mapApprovalStatus(profile.approval_status)
+    document.getElementById(
+      "driverInformationStatus"
+    ),
+    mapApprovalStatus(
+      profile.approval_status
+    )
   );
 
+
   updateBadge(
-    document.getElementById("driverInformationDocumentStatusValue"),
+    document.getElementById(
+      "driverInformationDocumentStatusValue"
+    ),
     documentStatusText
   );
 
-  const reasonCard = document.getElementById("driverDeactivationReasonCard");
-  const reasonText = document.getElementById("driverDeactivationReasonText");
+
+  const reasonCard =
+    document.getElementById(
+      "driverDeactivationReasonCard"
+    );
+
+
+  const reasonText =
+    document.getElementById(
+      "driverDeactivationReasonText"
+    );
+
 
   if (profile.deactivation_reason) {
-    if (reasonCard) reasonCard.classList.remove("hidden");
-    if (reasonText) reasonText.textContent = profile.deactivation_reason;
+
+    if (reasonCard) {
+      reasonCard.classList.remove(
+        "hidden"
+      );
+    }
+
+
+    if (reasonText) {
+      reasonText.textContent =
+        profile.deactivation_reason;
+    }
+
   } else {
-    if (reasonCard) reasonCard.classList.add("hidden");
-    if (reasonText) reasonText.textContent = "--";
+
+    if (reasonCard) {
+      reasonCard.classList.add(
+        "hidden"
+      );
+    }
+
+
+    if (reasonText) {
+      reasonText.textContent =
+        "--";
+    }
   }
+
+
   renderDriverTopStatus(profile);
+
   setupAddressSeeMore();
+
   renderDriverPerformance(profile);
 }
 /* ================= BUILD FULL ADDRESS ================= */
@@ -5066,18 +7281,35 @@ async function loadSendersFromAPI(page = 1) {
       throw new Error(result.message || "Failed to load users");
     }
 
-    senders = result.data.map(mapApiUserToSender);
+    // =========================================================
+    // ONLY LOAD CUSTOMERS
+    // =========================================================
+
+    senders = result.data
+      .filter(function (user) {
+        return user.role === "customer";
+      })
+      .map(mapApiUserToSender);
 
     currentSenderPagination = result.pagination || null;
     currentSenderPage = currentSenderPagination?.current_page || page;
 
     renderSenders(senders);
     renderSenderPagination(currentSenderPagination);
+
   } catch (error) {
+
     console.error("Users error:", error);
-    showActionPopupMessage(error.message || "Unable to load users.", "error");
+
+    showActionPopupMessage(
+      error.message || "Unable to load users.",
+      "error"
+    );
+
   } finally {
+
     hideGlobalLoader();
+
   }
 }
 
@@ -5146,26 +7378,87 @@ function getSenderInitials(firstName, lastName, email) {
   return (email || "U").charAt(0).toUpperCase();
 }
 function mapApiUserToSender(user) {
-  const firstName = user.first_name || "";
-  const lastName = user.last_name || "";
-  const fullName = `${firstName} ${lastName}`.trim() || user.email || "No Name";
+
+  const firstName =
+    user.first_name || "";
+
+  const lastName =
+    user.last_name || "";
+
+  const fullName =
+    `${firstName} ${lastName}`.trim() ||
+    user.email ||
+    "No Name";
+
 
   return {
-    id: user.id,
-    firstName,
-    lastName,
-    name: fullName,
-    email: user.email || "N/A",
-    phone: user.phone || "N/A",
-    address: buildSenderAddress(user),
-    status: user.is_active ? "Active" : "Disabled",
-    joinDate: formatSenderDate(user.created_at),
-    lastActivity: formatSenderDate(user.last_login_at),
-    orders: 0,
-    role: user.role || "user",
-  profileImage: getUserImage(user),
-initials: getSenderInitials(firstName, lastName, user.email),
-    governmentId: "assets/images/id-card-placeholder.png"
+
+    id:
+      user.id,
+
+    firstName:
+      firstName,
+
+    lastName:
+      lastName,
+
+    name:
+      fullName,
+
+    email:
+      user.email || "N/A",
+
+    phone:
+      user.phone || "N/A",
+
+    address:
+      buildSenderAddress(user),
+
+    status:
+      user.is_active
+        ? "Active"
+        : "Disabled",
+
+    joinDate:
+      formatSenderDate(
+        user.created_at
+      ),
+
+    lastActivity:
+      formatSenderDate(
+        user.last_login_at
+      ),
+
+    orders:
+      0,
+
+    role:
+      user.role || "user",
+
+
+    // ==========================================
+    // IMPORTANT: KEEP SUSPENSION STATE
+    // ==========================================
+
+    is_suspended:
+      user.is_suspended === true,
+
+    suspension_reason:
+      user.suspension_reason || "",
+
+
+    profileImage:
+      getUserImage(user),
+
+    initials:
+      getSenderInitials(
+        firstName,
+        lastName,
+        user.email
+      ),
+
+    governmentId:
+      "assets/images/id-card-placeholder.png"
   };
 }
 
@@ -5250,89 +7543,199 @@ async function loadSenderStats() {
 }
 
 function renderSenders(list = senders) {
-  const body = document.getElementById("senderTableBody");
-  const countText = document.getElementById("senderCountText");
 
-  if (!body) return;
+  const body =
+    document.getElementById(
+      "senderTableBody"
+    );
+
+
+  const countText =
+    document.getElementById(
+      "senderCountText"
+    );
+
+
+  if (!body) {
+    return;
+  }
+
 
   body.innerHTML = "";
 
+
   list.forEach((sender) => {
-    const row = document.createElement("div");
+
+    const row =
+      document.createElement(
+        "div"
+      );
+
 
     row.className =
       "w-full h-[58px] flex items-center border-t border-[#E5E7EB] text-[#11313B] text-[12px] overflow-hidden";
 
-    row.innerHTML = `
-      <div class="w-[170px] px-[10px] font-semibold flex items-center gap-[8px] min-w-0">
-      ${
-  sender.profileImage
-    ? `
-      <img
-        src="${sender.profileImage}"
-        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');"
-        class="w-[28px] h-[28px] rounded-full object-cover shrink-0"
-      />
 
-      <div class="hidden w-[28px] h-[28px] rounded-full bg-[#EAFBFD] text-[#30BBC7] items-center justify-center text-[11px] font-bold shrink-0">
-        ${sender.initials || "U"}
+    const senderIsSuspended =
+      sender.is_suspended === true ||
+      sender.user?.is_suspended === true;
+
+
+    const senderSuspensionReason =
+      sender.suspension_reason ||
+      sender.user?.suspension_reason ||
+      "";
+
+
+    row.innerHTML = `
+
+      <div class="w-[170px] px-[10px] font-semibold flex items-center gap-[8px] min-w-0">
+
+        ${
+          sender.profileImage
+
+            ? `
+              <img
+                src="${sender.profileImage}"
+                onerror="
+                  this.style.display='none';
+                  this.nextElementSibling.classList.remove('hidden');
+                  this.nextElementSibling.classList.add('flex');
+                "
+                class="w-[28px] h-[28px] rounded-full object-cover shrink-0"
+              />
+
+              <div
+                class="hidden w-[28px] h-[28px] rounded-full bg-[#EAFBFD] text-[#30BBC7] items-center justify-center text-[11px] font-bold shrink-0"
+              >
+                ${sender.initials || "U"}
+              </div>
+            `
+
+            : `
+              <div
+                class="w-[28px] h-[28px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center text-[11px] font-bold shrink-0"
+              >
+                ${sender.initials || "U"}
+              </div>
+            `
+        }
+
+        <span class="truncate block">
+          ${sender.name}
+        </span>
+
       </div>
-    `
-    : `
-      <div class="w-[28px] h-[28px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center text-[11px] font-bold shrink-0">
-        ${sender.initials || "U"}
-      </div>
-    `
-}
-        <span class="truncate block">${sender.name}</span>
-      </div>
+
 
       <div class="w-[190px] px-[10px] min-w-0">
-        <p class="truncate">${sender.email}</p>
+
+        <p class="truncate">
+          ${sender.email}
+        </p>
+
       </div>
+
 
       <div class="w-[230px] px-[10px] min-w-0">
-        <p class="line-clamp-2 leading-[16px]">${sender.address}</p>
+
+        <p class="line-clamp-2 leading-[16px]">
+          ${sender.address}
+        </p>
+
       </div>
+
 
       <div class="w-[120px] px-[10px]">
+
         ${getSenderStatusBadge(sender.status)}
+
       </div>
+
 
       <div class="w-[130px] px-[10px] whitespace-nowrap">
+
         ${sender.joinDate}
+
       </div>
+
 
       <div class="w-[140px] px-[10px] whitespace-nowrap">
+
         ${sender.lastActivity}
+
       </div>
 
+
       <div class="w-[80px] px-[10px]">
+
         ${sender.orders}
+
       </div>
 
+
       <div class="w-[80px] px-[10px]">
+
         <button
           type="button"
           class="viewSenderBtn inline-flex items-center cursor-pointer gap-[5px] h-[26px] px-[10px] rounded-[6px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-medium"
+
           data-id="${sender.id}"
+
+          data-name="${sender.name || ""}"
+
+          data-email="${sender.email || ""}"
+
+          data-is-suspended="${
+            senderIsSuspended
+              ? "true"
+              : "false"
+          }"
+
+          data-suspension-reason="${senderSuspensionReason}"
         >
-          <i class="fa-solid fa-eye text-[11px] cursor-pointer"></i>
+
+          <i
+            class="fa-solid fa-eye text-[11px] cursor-pointer"
+          ></i>
+
           View
+
         </button>
+
       </div>
     `;
+
 
     body.appendChild(row);
   });
 
-  if (countText && currentSenderPagination) {
+
+  if (
+    countText &&
+    currentSenderPagination
+  ) {
+
     countText.textContent =
-      `${currentSenderPagination.from || 0}-${currentSenderPagination.to || 0} of ${currentSenderPagination.total || list.length} row(s) selected`;
+      `${
+        currentSenderPagination.from || 0
+      }-${
+        currentSenderPagination.to || 0
+      } of ${
+        currentSenderPagination.total ||
+        list.length
+      } row(s) selected`;
   }
+
 
   attachSenderViewEvents();
 }
+
+
+// ============================================================
+// STORE SELECTED SENDER FOR SUSPENSION
+// ============================================================
+
 
 function updateSenderPageUrl(page) {
   window.history.pushState(null, "", `#customers?page=${page}`);
@@ -5446,38 +7849,141 @@ function attachSenderViewEvents() {
 
 
 function openSenderDetails(sender) {
-  const listView = document.querySelector("#customersSection > div:first-child");
-  const detailsView = document.getElementById("senderDetailsView");
 
-  if (listView) listView.classList.add("hidden");
-  if (detailsView) detailsView.classList.remove("hidden");
+  const listView =
+    document.querySelector(
+      "#customersSection > div:first-child"
+    );
 
-  const imageWrap = document.getElementById("senderDetailsImageWrap");
+  const detailsView =
+    document.getElementById(
+      "senderDetailsView"
+    );
+
+
+  if (listView) {
+    listView.classList.add(
+      "hidden"
+    );
+  }
+
+
+  if (detailsView) {
+    detailsView.classList.remove(
+      "hidden"
+    );
+  }
+
+
+  // ============================================================
+  // STORE THIS EXACT CUSTOMER AS THE CURRENT SUSPENSION TARGET
+  // ============================================================
+
+  senderSuspensionTarget = {
+
+    id:
+      sender.id,
+
+    name:
+      sender.name || "-",
+
+    email:
+      sender.email || "-",
+
+    is_suspended:
+      sender.is_suspended === true,
+
+    suspension_reason:
+      sender.suspension_reason || "",
+
+    type:
+      "sender"
+  };
+
+
+  console.log(
+    "Sender details suspension target:",
+    senderSuspensionTarget
+  );
+
+
+  // ============================================================
+  // CHANGE BUTTON IMMEDIATELY BASED ON THIS USER'S STATE
+  // ============================================================
+
+  updateSenderSuspensionButton();
+
+
+  // ============================================================
+  // PROFILE IMAGE
+  // ============================================================
+
+  const imageWrap =
+    document.getElementById(
+      "senderDetailsImageWrap"
+    );
+
 
   if (imageWrap) {
+
     imageWrap.innerHTML = "";
 
+
     if (sender.profileImage) {
+
       imageWrap.innerHTML = `
         <img
           src="${sender.profileImage}"
           class="w-[96px] h-[96px] rounded-full object-cover"
         />
       `;
+
     } else {
+
       imageWrap.innerHTML = `
-        <div class="w-[96px] h-[96px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center text-[28px] font-bold">
+        <div
+          class="w-[96px] h-[96px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center text-[28px] font-bold"
+        >
           ${sender.initials || "U"}
         </div>
       `;
     }
   }
 
-  document.getElementById("senderFirstName").textContent = sender.firstName || "N/A";
-  document.getElementById("senderLastName").textContent = sender.lastName || "N/A";
-  document.getElementById("senderPhone").textContent = sender.phone || "N/A";
-  document.getElementById("senderEmail").textContent = sender.email || "N/A";
-  document.getElementById("senderAddress").textContent = sender.address || "No address";
+
+  // ============================================================
+  // DETAILS
+  // ============================================================
+
+  document.getElementById(
+    "senderFirstName"
+  ).textContent =
+    sender.firstName || "N/A";
+
+
+  document.getElementById(
+    "senderLastName"
+  ).textContent =
+    sender.lastName || "N/A";
+
+
+  document.getElementById(
+    "senderPhone"
+  ).textContent =
+    sender.phone || "N/A";
+
+
+  document.getElementById(
+    "senderEmail"
+  ).textContent =
+    sender.email || "N/A";
+
+
+  document.getElementById(
+    "senderAddress"
+  ).textContent =
+    sender.address ||
+    "No address";
 }
 
 
@@ -8391,11 +10897,26 @@ async function sendSupportReply(replyMessage = null) {
         body: formData
       }
     );
+const text = await response.text();
 
-   const result = await response.json();
+let result = {};
 
-if (!response.ok || result.success === false) {
-  throw new Error(result.message || "Failed to send reply");
+try {
+  result = text ? JSON.parse(text) : {};
+} catch (parseError) {
+  console.error("Non-JSON response from support reply API:", text);
+
+  throw new Error(
+    `Server error ${response.status}. The server returned an invalid response.`
+  );
+}
+
+if (!response.ok) {
+  throw new Error(
+    result.message ||
+    result.error ||
+    `Unable to send reply. Server returned ${response.status}.`
+  );
 }
 
 const localAttachments = files.map((file) => ({
@@ -9151,67 +11672,421 @@ function getAdminRoleBadge(role) {
 }
 
 function renderAdminUsers(users = []) {
-  const body = document.getElementById("adminUsersTableBody");
+
+  const body =
+    document.getElementById(
+      "adminUsersTableBody"
+    );
+
   if (!body) return;
+
 
   body.innerHTML = "";
 
+
   if (!users.length) {
+
     body.innerHTML = `
       <div class="w-full h-[58px] flex items-center px-[8px] border-b border-[#E5E7EB] text-[#7C8AA0] text-[12px]">
         No admin users found.
       </div>
     `;
+
     return;
   }
 
+
   users.forEach((user, index) => {
+
     body.innerHTML += `
+
       <div class="w-full h-[58px] flex items-center border-b border-[#E5E7EB] text-[#11313B] text-[12px]">
-        <div class="w-[50px] px-[8px]">${index + 1}</div>
+
+        <div class="w-[50px] px-[8px]">
+          ${index + 1}
+        </div>
+
 
         <div class="w-[115px] px-[8px] font-semibold truncate">
           ${user.first_name || "N/A"}
         </div>
 
+
         <div class="w-[115px] px-[8px] truncate">
           ${user.last_name || "N/A"}
         </div>
+
 
         <div class="w-[200px] px-[8px] truncate">
           ${user.email || "N/A"}
         </div>
 
+
         <div class="w-[160px] px-[8px] truncate">
           ${user.phone || "N/A"}
         </div>
+
 
         <div class="w-[115px] px-[8px]">
           ${getAdminRoleBadge(user.role)}
         </div>
 
+
         <div class="w-[110px] px-[8px]">
           ${getAdminStatusBadge(user.is_active)}
         </div>
 
-        <div class="w-[110px] px-[8px]">
+
+        <!-- ================= ACTIONS ================= -->
+
+        <div class="w-[110px] px-[8px] relative">
+
+
+          <!-- ACTIONS BUTTON -->
+
           <button
             type="button"
-            class="openUpdateAdminBtn inline-flex items-center gap-[5px] h-[26px] px-[10px] rounded-[6px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-medium cursor-pointer hover:bg-[#DDF7FA]"
-            data-admin-id="${user.id}"
+            class="adminActionsBtn inline-flex items-center justify-center gap-[6px] h-[28px] px-[10px] rounded-[6px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-medium cursor-pointer hover:bg-[#DDF7FA]"
           >
-            <i class="fa-solid fa-pen text-[11px]"></i>
-            Update
+
+            <span>
+              Update
+            </span>
+
+            <i
+              class="fa-solid fa-chevron-down"
+              style="font-size: 9px;"
+            ></i>
+
           </button>
+
+
+          <!-- ACTIONS DROPDOWN -->
+
+          <div
+            class="adminActionsMenu hidden absolute right-[8px] top-[34px] w-[180px] rounded-[10px] bg-white py-[6px]"
+            style="
+              z-index: 10000;
+              border: 1px solid #E5E7EB;
+              box-shadow: 0 10px 30px rgba(16, 24, 40, 0.14);
+            "
+          >
+
+
+            <!-- ======================================= -->
+            <!-- UPDATE ADMIN -->
+            <!-- ======================================= -->
+
+            <button
+              type="button"
+              class="openUpdateAdminBtn w-full h-[38px] px-[14px] flex items-center gap-[9px] text-left text-[12px] font-medium cursor-pointer"
+              style="
+                background-color: #EAFBFD;
+                color: #30BBC7;
+              "
+              data-admin-id="${user.id}"
+            >
+
+              <i
+                class="fa-solid fa-pen"
+                style="
+                  width: 14px;
+                  font-size: 11px;
+                  color: #30BBC7;
+                "
+              ></i>
+
+              <span>
+                Update Admin
+              </span>
+
+            </button>
+
+
+            <!-- ======================================= -->
+            <!-- SUSPEND / UNSUSPEND USER -->
+            <!-- ======================================= -->
+
+            <button
+              type="button"
+              class="suspendAdminActionBtn w-full h-[38px] px-[14px] flex items-center gap-[9px] text-left text-[12px] font-medium cursor-pointer"
+              style="
+                background-color: #FFF1F0;
+                color: #D92D20;
+              "
+              data-admin-id="${user.id}"
+              data-first-name="${user.first_name || ""}"
+              data-last-name="${user.last_name || ""}"
+              data-email="${user.email || ""}"
+            >
+
+              <i
+                class="fa-solid fa-ban"
+                style="
+                  width: 14px;
+                  font-size: 11px;
+                  color: #D92D20;
+                "
+              ></i>
+
+              <span>
+                Suspend User
+              </span>
+
+            </button>
+
+
+
+
+          </div>
+
         </div>
+
+        <!-- ================= END ACTIONS ================= -->
+
+
       </div>
     `;
+
   });
 }
 
 
 
+// ============================================================
+// ADMIN ACTIONS DROPDOWN
+// ============================================================
+
+$(document).on(
+  "click",
+  ".adminActionsBtn",
+  async function (e) {
+
+    e.stopPropagation();
+
+
+    const $button =
+      $(this);
+
+
+    const $currentMenu =
+      $button.siblings(
+        ".adminActionsMenu"
+      );
+
+
+    const $suspendButton =
+      $currentMenu.find(
+        ".suspendAdminActionBtn"
+      );
+
+
+    const adminId =
+      $suspendButton.attr(
+        "data-admin-id"
+      );
+
+
+    $(".adminActionsMenu")
+      .not($currentMenu)
+      .addClass("hidden");
+
+
+    if (!adminId) {
+
+      console.error(
+        "Admin ID is missing."
+      );
+
+      return;
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${API_BASE_URL}/admin/admin-users/${adminId}`,
+          {
+            method: "GET",
+            headers:
+              adminUsersAuthHeaders()
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (
+        !response.ok ||
+        result.success === false
+      ) {
+
+        throw new Error(
+          result.message ||
+          "Unable to load admin user."
+        );
+      }
+
+
+      const user =
+        result.data?.user;
+
+
+      if (!user) {
+
+        throw new Error(
+          "Admin user not found."
+        );
+      }
+
+
+      // ======================================================
+      // DETERMINE SUSPENSION STATE
+      // ======================================================
+
+      const isSuspended =
+       user.is_suspended === true ;
+
+
+      // ======================================================
+      // UPDATE BUTTON DATA
+      // ======================================================
+
+      $suspendButton
+        .attr(
+          "data-first-name",
+          user.first_name || ""
+        )
+        .attr(
+          "data-last-name",
+          user.last_name || ""
+        )
+        .attr(
+          "data-email",
+          user.email || ""
+        )
+        .attr(
+          "data-is-suspended",
+          isSuspended
+            ? "true"
+            : "false"
+        )
+        .attr(
+          "data-suspension-reason",
+          user.suspension_reason || ""
+        );
+
+
+      // ======================================================
+      // CHANGE TO UNSUSPEND
+      // ======================================================
+
+      if (isSuspended) {
+
+        $suspendButton
+          .css({
+            "background-color":
+              "#ECFDF3",
+
+            "color":
+              "#039855"
+          })
+          .html(`
+            <i
+              class="fa-solid fa-user-check"
+              style="
+                width: 14px;
+                font-size: 11px;
+                color: #039855;
+              "
+            ></i>
+
+            <span>
+              Unsuspend User
+            </span>
+          `);
+
+      }
+
+      // ======================================================
+      // CHANGE TO SUSPEND
+      // ======================================================
+
+      else {
+
+        $suspendButton
+          .css({
+            "background-color":
+              "#FFF1F0",
+
+            "color":
+              "#D92D20"
+          })
+          .html(`
+            <i
+              class="fa-solid fa-ban"
+              style="
+                width: 14px;
+                font-size: 11px;
+                color: #D92D20;
+              "
+            ></i>
+
+            <span>
+              Suspend User
+            </span>
+          `);
+
+      }
+
+
+      // ======================================================
+      // OPEN THIS ADMIN'S DROPDOWN
+      // ======================================================
+
+      $currentMenu
+        .toggleClass(
+          "hidden"
+        );
+
+
+    } catch (error) {
+
+      console.error(
+        "Unable to load admin suspension state:",
+        error
+      );
+
+
+      showActionPopupMessage(
+        error.message ||
+        "Unable to load admin user.",
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+$(document).on("click", ".adminActionsMenu", function (e) {
+  e.stopPropagation();
+});
+
+
+$(document).on("click", function () {
+  $(".adminActionsMenu").addClass("hidden");
+});
+
+
+
 const updateModal = document.getElementById("updateAdminUserModal");
+
+
 
 document.addEventListener("click", async function (event) {
   const updateBtn = event.target.closest(".openUpdateAdminBtn");
@@ -9321,7 +12196,11 @@ async function updateAdminRights(event) {
       document.querySelector('input[name="admins"]:checked')?.value === "yes",
 
       can_view_logs:
-      document.querySelector('input[name="logs"]:checked')?.value === "yes"
+      document.querySelector('input[name="logs"]:checked')?.value === "yes",
+
+      suspend_users:
+      document.querySelector('input[name="suspendUsers"]:checked')?.value === "yes"
+      
   };
 
   try {
@@ -9425,7 +12304,11 @@ async function createAdminUser(e) {
         document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true",
         
       can_view_logs:
-        document.querySelector('input[name="canViewLogs"]:checked')?.value === "true"
+        document.querySelector('input[name="canViewLogs"]:checked')?.value === "true",
+
+        suspend_users:
+      document.querySelector('input[name="suspendUsers"]:checked')?.value === "yes"
+
     })
   };
 
@@ -10214,6 +13097,511 @@ function getAuditLogCategoryFromUrl() {
 
   return params.get("category") || "";
 }
+
+// ===============================
+// AUDIT LOG CLASSIFICATION
+// ===============================
+
+let auditClassificationLoaded = false;
+
+
+// ===============================
+// HUMANIZE EVENT NAME
+// ===============================
+function formatAuditEventName(eventName) {
+  if (!eventName) return "";
+
+  return eventName
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, function (letter) {
+      return letter.toUpperCase();
+    });
+}
+
+
+// ===============================
+// RENDER CLASSIFICATIONS
+// ===============================
+// ===============================
+// RENDER CLASSIFICATIONS
+// ===============================
+function renderAuditClassifications(categories) {
+
+  const $list =
+    $("#auditClassificationList");
+
+  const $count =
+    $("#auditClassificationCount");
+
+
+  $list.empty();
+
+
+  if (
+    !Array.isArray(categories) ||
+    categories.length === 0
+  ) {
+
+    $count.text(
+      "0 classifications"
+    );
+
+
+    $list.html(`
+      <div
+        style="
+          padding: 44px 20px;
+          text-align: center;
+          border-radius: 14px;
+          background: rgba(255,255,255,0.72);
+          border: 1px solid #E5EAF0;
+          color: #7C8AA0;
+          font-size: 13px;
+        "
+      >
+        No audit log classifications available.
+      </div>
+    `);
+
+    return;
+  }
+
+
+  $count.text(
+    `${categories.length} ${
+      categories.length === 1
+        ? "classification"
+        : "classifications"
+    }`
+  );
+
+
+  categories.forEach(
+    function (
+      category,
+      categoryIndex
+    ) {
+
+      const events =
+        Array.isArray(
+          category.events
+        )
+          ? category.events
+          : [];
+
+
+      const eventItems =
+        events.map(
+          function (
+            eventName,
+            eventIndex
+          ) {
+
+            return `
+              <div
+                style="
+                  min-height: 58px;
+
+                  padding: 12px 14px;
+
+                  border-radius: 10px;
+
+                  background:
+                    linear-gradient(
+                      145deg,
+                      rgba(249,251,252,0.95),
+                      rgba(244,248,249,0.86)
+                    );
+
+                  border: 1px solid #E6EBEF;
+
+                  box-shadow:
+                    inset 0 1px 0 rgba(255,255,255,0.96);
+                "
+              >
+
+                <div
+                  style="
+                    min-width: 0;
+                  "
+                >
+
+                  <p
+                    style="
+                      margin: 0;
+
+                      color: #344054;
+
+                      font-size: 12px;
+                      line-height: 17px;
+
+                      font-weight: 600;
+
+                      word-break: break-word;
+                    "
+                  >
+                    ${formatAuditEventName(eventName)}
+                  </p>
+
+                  <p
+                    style="
+                      margin: 3px 0 0 0;
+
+                      color: #98A2B3;
+
+                      font-size: 10px;
+                      line-height: 14px;
+
+                      word-break: break-all;
+                    "
+                  >
+                    ${eventName}
+                  </p>
+
+                </div>
+
+              </div>
+            `;
+
+          }
+        )
+        .join("");
+
+
+      const categoryHtml = `
+        <div
+          style="
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            background:
+              linear-gradient(
+                145deg,
+                rgba(255,255,255,0.94),
+                rgba(248,251,252,0.88)
+              );
+
+            border: 1px solid #DEE6EB;
+
+            box-shadow:
+              0 7px 22px rgba(17,49,59,0.055),
+              inset 0 1px 0 rgba(255,255,255,0.98);
+          "
+        >
+
+          <!-- ================= CATEGORY HEADER ================= -->
+          <div
+            class="flex items-center justify-between"
+            style="
+              gap: 20px;
+
+              padding: 15px 16px;
+
+              background:
+                linear-gradient(
+                  135deg,
+                  rgba(246,250,248,0.96),
+                  rgba(241,247,245,0.92)
+                );
+
+              border-bottom: 1px solid #E4EBE7;
+            "
+          >
+
+            <div
+              class="flex items-center"
+              style="
+                gap: 11px;
+                min-width: 0;
+              "
+            >
+
+              <!-- CATEGORY NUMBER -->
+              <div
+                class="flex items-center justify-center shrink-0"
+                style="
+                  width: 34px;
+                  height: 34px;
+
+                  border-radius: 10px;
+
+                  background:
+                    linear-gradient(
+                      145deg,
+                      #EAF8F1,
+                      #E1F5EB
+                    );
+
+                  border: 1px solid #C8EED9;
+
+                  box-shadow:
+                    inset 0 1px 0 rgba(255,255,255,0.95);
+                "
+              >
+                <span
+                  style="
+                    color: #27885A;
+                    font-size: 11px;
+                    font-weight: 700;
+                  "
+                >
+                  ${String(categoryIndex + 1).padStart(2, "0")}
+                </span>
+              </div>
+
+
+              <!-- CATEGORY TEXT -->
+              <div
+                style="
+                  min-width: 0;
+                "
+              >
+
+                <p
+                  style="
+                    margin: 0;
+
+                    color: #11313B;
+
+                    font-size: 14px;
+                    line-height: 19px;
+
+                    font-weight: 650;
+
+                    word-break: break-word;
+                  "
+                >
+                  ${category.name || "-"}
+                </p>
+
+                <p
+                  style="
+                    margin: 3px 0 0 0;
+
+                    color: #98A2B3;
+
+                    font-size: 10px;
+                    line-height: 14px;
+
+                    font-weight: 500;
+
+                    word-break: break-all;
+                  "
+                >
+                  ${category.slug || "-"}
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <!-- EVENT COUNT -->
+            <span
+              class="shrink-0 inline-flex items-center justify-center"
+              style="
+                min-width: 72px;
+                height: 28px;
+
+                padding: 0 10px;
+
+                border-radius: 999px;
+
+                background:
+                  linear-gradient(
+                    145deg,
+                    #EAF8F1,
+                    #E2F6EC
+                  );
+
+                border: 1px solid #C7EFD9;
+
+                color: #27885A;
+
+                font-size: 10px;
+                font-weight: 650;
+              "
+            >
+              ${events.length}
+              ${events.length === 1 ? "event" : "events"}
+            </span>
+
+          </div>
+
+
+          <!-- ================= EVENTS ================= -->
+          <div
+            class="grid grid-cols-2"
+            style="
+              gap: 10px;
+              padding: 14px;
+            "
+          >
+            ${
+              events.length
+                ? eventItems
+                : `
+                  <div
+                    class="col-span-2"
+                    style="
+                      padding: 16px;
+
+                      border-radius: 10px;
+
+                      background-color: #F8FAFC;
+
+                      border: 1px dashed #D9E1E7;
+
+                      color: #98A2B3;
+
+                      font-size: 12px;
+                    "
+                  >
+                    No events available.
+                  </div>
+                `
+            }
+          </div>
+
+        </div>
+      `;
+
+
+      $list.append(
+        categoryHtml
+      );
+
+    }
+  );
+}
+
+
+// ===============================
+// LOAD CLASSIFICATIONS
+// ===============================
+async function loadAuditClassifications() {
+  const $loading = $("#auditClassificationLoading");
+  const $error = $("#auditClassificationError");
+  const $list = $("#auditClassificationList");
+
+  $loading.removeClass("hidden");
+  $error.addClass("hidden");
+  $list.empty();
+
+  try {
+    const authToken = sessionStorage.getItem("auth_token");
+
+    if (!authToken) {
+      throw new Error("Authentication token not found");
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/audit-logs/category-map`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`
+        }
+      }
+    );
+
+    const contentType = response.headers.get("content-type");
+
+    let data;
+
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      const rawResponse = await response.text();
+
+      console.error("Non-JSON response:", rawResponse);
+
+      throw new Error(
+        `Server returned ${response.status} instead of JSON`
+      );
+    }
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.message ||
+        "Unable to load audit log classifications"
+      );
+    }
+
+    renderAuditClassifications(data.data);
+
+    auditClassificationLoaded = true;
+
+  } catch (error) {
+    console.error(
+      "Audit classification error:",
+      error
+    );
+
+    $error
+      .removeClass("hidden")
+      .text(
+        error.message ||
+        "Unable to load audit log classifications."
+      );
+
+  } finally {
+    $loading.addClass("hidden");
+  }
+}
+
+// ===============================
+// OPEN CLASSIFICATION MODAL
+// ===============================
+$("#viewLogClassificationBtn").on("click", function () {
+
+  $("#auditLogClassificationModal")
+    .removeClass("hidden");
+
+  $("body").addClass("overflow-hidden");
+
+
+  if (!auditClassificationLoaded) {
+    loadAuditClassifications();
+  }
+
+});
+
+
+// ===============================
+// CLOSE CLASSIFICATION MODAL
+// ===============================
+function closeAuditClassificationModal() {
+
+  $("#auditLogClassificationModal")
+    .addClass("hidden");
+
+  $("body").removeClass("overflow-hidden");
+
+}
+
+
+$("#closeAuditLogClassificationBtn").on(
+  "click",
+  closeAuditClassificationModal
+);
+
+
+// ===============================
+// CLOSE WHEN BACKDROP IS CLICKED
+// ===============================
+$("#auditLogClassificationModal").on(
+  "click",
+  function (e) {
+
+    if (e.target === this) {
+      closeAuditClassificationModal();
+    }
+
+  }
+);
 /* ================= VIEW AUDIT LOG DETAILS ================= */
 
 document.addEventListener("click", async function (event) {

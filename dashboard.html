@@ -1240,7 +1240,7 @@
 
         <h3
           id="driverPerformanceRatingsValue"
-          class="mt-[14px] text-[#11313B] text-[28px] font-bold"
+          class="mt-[14px] text-[#11313B] text-[24px] font-bold"
         >
           0.0
         </h3>
@@ -1280,7 +1280,7 @@
 
         <h3
           id="driverPerformanceEarningsValue"
-          class="mt-[14px] text-[#11313B] text-[28px] font-bold"
+          class="mt-[14px] text-[#11313B] text-[22px] font-bold"
         >
           ₦0
         </h3>
@@ -1547,33 +1547,77 @@
             </div>
           </section>
 
-          <!-- DRIVER FINAL ACTIONS -->
+          
+<!-- ================= DRIVER FINAL ACTIONS ================= -->
 <section
   id="driverFinalActionsSection"
-  class="w-full h-[56px] px-[20px] flex items-center justify-end"
+  class="w-full h-[56px] px-[20px] flex items-center relative"
 >
-  <div class="relative">
+
+  <!-- ================= LEFT: SUSPEND USER ================= -->
+  <button
+  id="suspendDriverBtn"
+  type="button"
+  class="suspendUserActionBtn h-[40px] rounded-[8px] cursor-pointer px-[18px] text-[14px] leading-[20px] font-medium flex items-center justify-center gap-[12px]"
+  style="
+    font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+    background-color: #D92D20;
+    border: 1px solid #D92D20;
+    color: #FFFFFF;
+  "
+>
+  <i
+    class="fa-solid fa-ban"
+    style="
+      font-size: 12px;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    "
+  ></i>
+
+  <span
+    style="
+      color: #FFFFFF;
+    "
+  >
+    Suspend User
+  </span>
+</button>
+
+
+  <!-- ================= RIGHT: UPDATE DRIVER STATUS ================= -->
+  <div
+    class="absolute right-[20px] top-1/2 -translate-y-1/2"
+  >
 
     <button
       id="driverDetailsUpdateStatusBtn"
       type="button"
       class="h-[40px] rounded-[8px] cursor-pointer border border-[#3BB273] px-[18px] text-white text-[14px] leading-[20px] font-medium bg-[#3BB273]"
-      style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+      style="
+        font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+      "
     >
       Update Driver Status
     </button>
 
-    <!-- UPDATE STATUS MODAL -->
+
+    <!-- ================= UPDATE STATUS MODAL ================= -->
     <div
       id="updateDriverStatusOverlay"
       class="hidden absolute top-[50px] right-0 z-[3000]"
     >
+
       <div
         id="updateDriverStatusModal"
         class="w-[320px] rounded-[12px] bg-white border border-[#E5E7EB] shadow-[0_12px_32px_rgba(0,0,0,0.12)] p-[16px]"
       >
+
         <div class="flex items-center justify-between">
-          <h3 class="text-[#11313B] text-[16px] leading-[24px] font-semibold">
+
+          <h3
+            class="text-[#11313B] text-[16px] leading-[24px] font-semibold"
+          >
             Update Driver Status
           </h3>
 
@@ -1584,9 +1628,13 @@
           >
             ✕
           </button>
+
         </div>
 
+
         <div class="mt-[16px] flex flex-col gap-[10px]">
+
+          <!-- APPROVE -->
           <button
             id="approveDriverStatusBtn"
             type="button"
@@ -1595,6 +1643,8 @@
             Approve
           </button>
 
+
+          <!-- REJECT -->
           <button
             id="rejectDriverStatusBtn"
             type="button"
@@ -1602,12 +1652,20 @@
           >
             Reject
           </button>
+
         </div>
+
       </div>
+
     </div>
+    <!-- ================= END UPDATE STATUS MODAL ================= -->
 
   </div>
+
 </section>
+<!-- ================= END DRIVER FINAL ACTIONS ================= -->
+
+
           <!-- RECENT ACTIVITY -->
           <section
             id="driverRecentActivitySection"
@@ -1736,7 +1794,617 @@
           </div>
         </section>
 
-       
+
+
+<!-- ================= SUSPEND / UNSUSPEND USER MODAL ================= -->
+<div
+  id="suspendUserModal"
+  class="hidden fixed inset-0 overflow-y-auto"
+  style="
+    z-index: 2147483647;
+    background-color: rgba(17, 49, 59, 0.62);
+    backdrop-filter: blur(4px);
+  "
+>
+  <div
+    class="min-h-full w-full flex items-start justify-center px-[20px]"
+  >
+
+    <!-- ================= MODAL CARD ================= -->
+    <div
+      id="suspendUserModalCard"
+      class="w-[540px] max-w-full rounded-[18px]"
+      style="
+        margin-top: 60px;
+        margin-bottom: 60px;
+        position: relative;
+        z-index: 2147483647;
+        overflow: hidden;
+        background-color: #FFFFFF;
+        box-shadow:
+          0 30px 80px rgba(17, 49, 59, 0.28),
+          0 4px 12px rgba(16, 24, 40, 0.08);
+      "
+    >
+
+      <!-- ================= HEADER ================= -->
+      <div
+        class="flex items-center justify-between"
+        style="
+          padding: 26px 24px;
+          background-color: #FFFFFF;
+          border-bottom: 1px solid #E4E7EC;
+        "
+      >
+
+        <!-- HEADER LEFT -->
+        <div
+          class="flex items-center"
+          style="
+            gap: 14px;
+            min-width: 0;
+          "
+        >
+
+          <!-- HEADER ICON -->
+          <div
+            id="suspendUserHeaderIconBox"
+            class="flex items-center justify-center shrink-0"
+            style="
+              width: 42px;
+              height: 42px;
+              border-radius: 12px;
+              background-color: #FFF3F2;
+              border: 1px solid #FECDCA;
+            "
+          >
+            <i
+              id="suspendUserHeaderIcon"
+              class="fa-solid fa-ban"
+              style="
+                font-size: 14px;
+                color: #D92D20;
+              "
+            ></i>
+          </div>
+
+
+          <!-- HEADER TEXT -->
+          <div
+            style="
+              min-width: 0;
+            "
+          >
+
+            <h2
+              id="suspendUserModalTitle"
+              class="font-semibold"
+              style="
+                margin: 0;
+                color: #11313B;
+                font-size: 20px;
+                line-height: 25px;
+              "
+            >
+              Suspend user
+            </h2>
+
+            <p
+              id="suspendUserModalSubtitle"
+              style="
+                margin: 3px 0 0 0;
+                color: #7C8AA0;
+                font-size: 12px;
+                line-height: 18px;
+              "
+            >
+              Restrict this user's account access.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- CLOSE -->
+        <button
+          id="closeSuspendUserModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="flex items-center justify-center shrink-0 cursor-pointer"
+          style="
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background-color: #FFFFFF;
+            border: 1px solid #DDE3E9;
+            color: #667085;
+            margin-left: 16px;
+          "
+        >
+          <i
+            class="fa-solid fa-xmark"
+            style="
+              font-size: 12px;
+            "
+          ></i>
+        </button>
+
+      </div>
+
+
+      <!-- ================= FORM ================= -->
+      <form id="suspendUserForm">
+
+        <!-- ================= BODY ================= -->
+        <div
+          style="
+            background-color: #F5F8FA;
+            padding: 30px 24px 12px 24px;
+          "
+        >
+
+          <!-- ================= USER INFORMATION ================= -->
+          <div>
+
+            <p
+              id="suspendUserSectionTitle"
+              class="font-semibold"
+              style="
+                margin: 0 0 12px 0;
+                color: #475467;
+                font-size: 14px;
+                line-height: 20px;
+              "
+            >
+              User to be suspended
+            </p>
+
+
+            <!-- USER DETAILS CARD -->
+            <div
+              class="rounded-[12px]"
+              style="
+                background-color: #FFFFFF;
+                border: 1px solid #E2E8F0;
+                padding: 18px 20px;
+                box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+              "
+            >
+
+              <div
+                class="flex items-center"
+                style="
+                  gap: 14px;
+                "
+              >
+
+                <!-- USER ICON -->
+                <div
+                  class="flex items-center justify-center shrink-0"
+                  style="
+                    width: 42px;
+                    height: 42px;
+                    border-radius: 50%;
+                    background-color: #173746;
+                    color: #FFFFFF;
+                  "
+                >
+                  <i
+                    class="fa-solid fa-user"
+                    style="
+                      font-size: 13px;
+                      color: #FFFFFF;
+                    "
+                  ></i>
+                </div>
+
+
+                <!-- USER TEXT -->
+                <div
+                  style="
+                    min-width: 0;
+                    flex: 1;
+                  "
+                >
+
+                  <p
+                    id="suspendUserName"
+                    class="font-semibold"
+                    style="
+                      margin: 0;
+                      color: #11313B;
+                      font-size: 15px;
+                      line-height: 21px;
+                      word-break: break-word;
+                    "
+                  >
+                  </p>
+
+                  <p
+                    id="suspendUserEmail"
+                    style="
+                      margin: 4px 0 0 0;
+                      color: #7C8AA0;
+                      font-size: 12px;
+                      line-height: 18px;
+                      word-break: break-word;
+                    "
+                  >
+                  </p>
+
+                  <p
+                    id="suspendUserId"
+                    class="hidden"
+                    style="
+                      margin: 4px 0 0 0;
+                      color: #98A2B3;
+                      font-size: 10px;
+                      line-height: 16px;
+                      word-break: break-word;
+                    "
+                  >
+                  </p>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ================= WARNING / INFORMATION ================= -->
+          <div
+            id="suspendUserWarning"
+            class="rounded-[12px]"
+            style="
+              margin-top: 24px;
+              background-color: #FFF3F2;
+              border: 1px solid #FECDCA;
+              padding: 18px 22px;
+            "
+          >
+
+            <div
+              class="flex items-start"
+              style="
+                gap: 12px;
+              "
+            >
+
+              <!-- WARNING / INFO ICON -->
+              <div
+                class="flex items-center justify-center shrink-0"
+                style="
+                  width: 20px;
+                  height: 20px;
+                  margin-top: 1px;
+                "
+              >
+                <i
+                  id="suspendUserWarningIcon"
+                  class="fa-solid fa-triangle-exclamation"
+                  style="
+                    font-size: 12px;
+                    color: #D92D20;
+                  "
+                ></i>
+              </div>
+
+
+              <!-- WARNING / INFO TEXT -->
+              <p
+                id="suspendUserWarningText"
+                style="
+                  margin: 0;
+                  flex: 1;
+                  min-width: 0;
+                  color: #B42318;
+                  font-size: 12px;
+                  line-height: 19px;
+                  padding-right: 8px;
+                "
+              >
+                Suspending this user will revoke their active session
+                and prevent them from logging in until their account
+                is unsuspended.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- ================= REASON CARD ================= -->
+          <div
+            id="suspendUserReasonCard"
+            class="mt-[26px] rounded-[12px]"
+            style="
+              background-color: #FFFFFF;
+              border: 1px solid #E2E8F0;
+              padding: 20px;
+              box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+            "
+          >
+
+            <label
+              for="suspendUserReason"
+              class="block font-semibold"
+              style="
+                color: #1D2939;
+                font-size: 13px;
+                line-height: 19px;
+              "
+            >
+              Reason for suspension
+              <span style="color: #D92D20;">
+                *
+              </span>
+            </label>
+
+
+            <textarea
+              id="suspendUserReason"
+              name="reason"
+              rows="4"
+              minlength="10"
+              maxlength="1000"
+              required
+              placeholder="Enter the reason for suspending this user..."
+              class="block w-full resize-y rounded-[9px] outline-none"
+              style="
+                margin-top: 12px;
+                min-height: 112px;
+                border: 1px solid #CBD5E1;
+                background-color: #FBFCFD;
+                color: #344054;
+                padding: 13px 14px;
+                font-size: 13px;
+                line-height: 19px;
+                box-sizing: border-box;
+              "
+            ></textarea>
+
+
+            <div
+              class="flex items-center justify-between"
+              style="
+                gap: 12px;
+                margin-top: 9px;
+              "
+            >
+
+              <p
+                style="
+                  margin: 0;
+                  color: #98A2B3;
+                  font-size: 11px;
+                  line-height: 16px;
+                "
+              >
+                Minimum 10 characters.
+              </p>
+
+              <p
+                id="suspendReasonCharacterCount"
+                style="
+                  margin: 0;
+                  color: #98A2B3;
+                  font-size: 11px;
+                  line-height: 16px;
+                  white-space: nowrap;
+                "
+              >
+                0 / 1000
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <!-- ================= PASSWORD CARD ================= -->
+          <div
+            id="suspendUserPasswordCard"
+            class="mt-[24px] rounded-[12px]"
+            style="
+              background-color: #FFFFFF;
+              border: 1px solid #E2E8F0;
+              padding: 20px;
+              box-shadow: 0 1px 2px rgba(16, 24, 40, 0.02);
+            "
+          >
+
+            <label
+              for="suspendUserPassword"
+              class="block font-semibold"
+              style="
+                color: #1D2939;
+                font-size: 13px;
+                line-height: 19px;
+              "
+            >
+              Your password
+              <span style="color: #D92D20;">
+                *
+              </span>
+            </label>
+
+
+            <p
+              style="
+                margin: 4px 0 0 0;
+                color: #98A2B3;
+                font-size: 11px;
+                line-height: 17px;
+              "
+            >
+              Enter your own admin password to confirm this action.
+            </p>
+
+
+            <div
+              style="
+                position: relative;
+                width: 100%;
+                margin-top: 12px;
+              "
+            >
+
+              <input
+                id="suspendUserPassword"
+                name="password"
+                type="password"
+                required
+                autocomplete="current-password"
+                placeholder="Enter your password"
+                class="block w-full rounded-[9px] outline-none"
+                style="
+                  height: 46px;
+                  box-sizing: border-box;
+                  border: 1px solid #CBD5E1;
+                  background-color: #FBFCFD;
+                  color: #344054;
+                  padding-left: 14px;
+                  padding-right: 50px;
+                  font-size: 13px;
+                "
+              >
+
+
+              <button
+                id="toggleSuspendPasswordBtn"
+                type="button"
+                aria-label="Show or hide password"
+                style="
+                  position: absolute;
+                  right: 11px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  width: 30px;
+                  height: 30px;
+                  padding: 0;
+                  margin: 0;
+                  border: none;
+                  background: transparent;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  cursor: pointer;
+                  z-index: 3;
+                "
+              >
+                <i
+                  id="toggleSuspendPasswordIcon"
+                  class="fa-solid fa-eye"
+                  style="
+                    font-size: 13px;
+                    color: #7C8AA0;
+                  "
+                ></i>
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- ================= ERROR ================= -->
+          <div
+            id="suspendUserError"
+            class="hidden rounded-[9px]"
+            style="
+              margin-top: 18px;
+              background-color: #FFF1F0;
+              border: 1px solid #FECDCA;
+              color: #B42318;
+              padding: 11px 14px;
+              font-size: 12px;
+              line-height: 18px;
+            "
+          >
+          </div>
+
+        </div>
+
+
+        <!-- ================= FOOTER ================= -->
+        <div
+          class="flex items-center justify-end"
+          style="
+            gap: 12px;
+            padding: 30px 24px 32px 24px;
+            background-color: #F5F8FA;
+          "
+        >
+
+          <!-- CANCEL -->
+          <button
+            id="cancelSuspendUserBtn"
+            type="button"
+            class="font-medium cursor-pointer"
+            style="
+              min-width: 92px;
+              height: 42px;
+              padding: 0 20px;
+              border-radius: 9px;
+              background-color: #FFFFFF;
+              border: 1px solid #D0D5DD;
+              color: #475467;
+              font-size: 13px;
+            "
+          >
+            Cancel
+          </button>
+
+
+          <!-- CONFIRM -->
+          <button
+            id="confirmSuspendUserBtn"
+            type="submit"
+            class="font-semibold cursor-pointer flex items-center justify-center"
+            style="
+              min-width: 142px;
+              height: 42px;
+              padding: 0 20px;
+              gap: 8px;
+              border-radius: 9px;
+              background-color: #D92D20;
+              border: 1px solid #D92D20;
+              color: #FFFFFF;
+              font-size: 13px;
+              box-shadow: 0 3px 8px rgba(217, 45, 32, 0.18);
+            "
+          >
+
+            <i
+              class="fa-solid fa-ban"
+              style="
+                font-size: 11px;
+                color: #FFFFFF;
+              "
+            ></i>
+
+            <span style="color: #FFFFFF;">
+              Suspend user
+            </span>
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= END SUSPEND USER MODAL ================= -->
+
+
 <!-- ================= SENDERS/CUSTOMERS SECTION ================= -->
 <section
   id="customersSection"
@@ -1950,14 +2618,54 @@
       <label class="text-[#7C8AA0] text-[14px] font-medium">Address</label>
       <div id="senderAddress" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
     </div>
+<!-- ================= USER DETAILS ACTIONS ================= -->
+<div
+  class="mt-[24px] w-full flex items-center justify-between"
+>
+  <!-- CLOSE -->
+  <button
+    id="senderDetailsCloseBottomBtn"
+    type="button"
+    class="h-[44px] px-[28px] cursor-pointer rounded-[8px] bg-[#EAFBFD] text-[#30BBC7] text-[14px] font-semibold"
+  >
+    Close
+  </button>
 
-    <button
-      id="senderDetailsCloseBottomBtn"
-      type="button"
-      class="mt-[24px] h-[44px] px-[28px] cursor-pointer rounded-[8px] bg-[#EAFBFD] text-[#30BBC7] text-[14px] font-semibold"
-    >
-      Close
-    </button>
+
+  <!-- RIGHT ACTIONS -->
+  <div class="flex items-center gap-[12px]">
+
+  
+
+   <!-- SUSPEND USER -->
+<button
+  id="suspendSenderBtn"
+  type="button"
+  class="suspendUserActionBtn h-[44px] px-[20px] rounded-[8px] cursor-pointer flex items-center justify-center gap-[12px] text-[14px] font-semibold"
+  style="
+    background-color: #D92D20;
+    border: 1px solid #D92D20;
+    color: #FFFFFF;
+    font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+  "
+>
+  <i
+    class="fa-solid fa-ban"
+    style="
+      font-size: 12px;
+      color: #FFFFFF;
+      flex-shrink: 0;
+    "
+  ></i>
+
+  <span style="color: #FFFFFF;">
+    Suspend User
+  </span>
+</button>
+
+  </div>
+</div>
+<!-- ================= END USER DETAILS ACTIONS ================= -->
   </div>
 </section>
 
@@ -3682,400 +4390,517 @@
 <!-- ================= UPDATE ADMIN USER MODAL ================= -->
 <div
   id="updateAdminUserModal"
-  class="hidden fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-[2px] p-[16px]"
+  class="hidden fixed inset-0 z-[9999] bg-black/40 backdrop-blur-[2px] overflow-y-auto"
 >
-  <!-- MODAL -->
+  <!-- ================= MODAL POSITIONING WRAPPER ================= -->
   <div
-    class="w-[700px] max-w-[calc(100vw-32px)] max-h-[calc(100vh-32px)] rounded-[16px] bg-white shadow-[0px_12px_40px_rgba(0,0,0,0.18)] overflow-hidden flex flex-col"
+    class="min-h-full w-full flex items-start justify-center px-[20px]"
   >
 
-    <!-- ================= HEADER ================= -->
+    <!-- ================= MODAL CARD ================= -->
     <div
-      class="shrink-0 px-[20px] py-[14px] border-b border-[#E5E7EB] flex items-center justify-between"
-    >
-      <div>
-        <h2 class="text-[#11313B] text-[19px] font-semibold">
-          Update Admin User
-        </h2>
-
-        <p class="mt-[2px] text-[#7C8AA0] text-[12px]">
-          Modify administrator permissions.
-        </p>
-      </div>
-
-      <button
-        id="closeUpdateAdminModalBtn"
-        type="button"
-        class="w-[30px] h-[30px] rounded-full bg-[#3BB273] hover:bg-[#32A86A] text-white flex items-center justify-center cursor-pointer"
-      >
-        <i class="fa-solid fa-xmark text-[12px]"></i>
-      </button>
-    </div>
-
-
-    <!-- ================= FORM ================= -->
-    <form
-      id="updateAdminUserForm"
-      class="flex-1 min-h-0 flex flex-col"
+      id="updateAdminUserModalCard"
+      class="w-[700px] max-w-full rounded-[16px] bg-white shadow-[0px_12px_40px_rgba(0,0,0,0.18)] overflow-hidden"
+      style="margin-top: 70px; margin-bottom: 40px;"
     >
 
-      <!-- ================= SCROLLABLE CONTENT ================= -->
+      <!-- ================= HEADER ================= -->
       <div
-        class="flex-1 min-h-0 overflow-y-auto px-[20px] pt-[16px] pb-[20px]"
-        style="scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent;"
+        class="px-[20px] py-[14px] border-b border-[#E5E7EB] flex items-center justify-between"
       >
-
-       <!-- ================= BASIC INFORMATION ================= -->
-<div>
-  <h3 class="text-[#11313B] text-[14px] font-semibold">
-    Basic Information
-  </h3>
-
-  <div
-    class="mt-[14px] grid grid-cols-2"
-    style="
-      column-gap: 24px;
-      row-gap: 16px;
-    "
-  >
-
-    <!-- FIRST NAME -->
-    <div class="min-w-0">
-      <label
-        class="block text-[12px] font-medium text-[#344054]"
-      >
-        First Name
-      </label>
-
-      <input
-        id="updateAdminFirstName"
-        type="text"
-        class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
-      >
-    </div>
-
-
-    <!-- LAST NAME -->
-    <div class="min-w-0">
-      <label
-        class="block text-[12px] font-medium text-[#344054]"
-      >
-        Last Name
-      </label>
-
-      <input
-        id="updateAdminLastName"
-        type="text"
-        class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
-      >
-    </div>
-
-
-    <!-- EMAIL -->
-    <div class="min-w-0">
-      <label
-        class="block text-[12px] font-medium text-[#344054]"
-      >
-        Email
-      </label>
-
-      <input
-        id="updateAdminEmail"
-        type="email"
-        class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
-      >
-    </div>
-
-
-    <!-- PHONE NUMBER -->
-    <div class="min-w-0">
-      <label
-        class="block text-[12px] font-medium text-[#344054]"
-      >
-        Phone Number
-      </label>
-
-      <div
-        class="mt-[6px] w-full flex rounded-[8px] overflow-hidden border border-[#D0D5DD]"
-      >
-        <select
-          id="updatePhoneCode"
-          class="w-[82px] shrink-0 h-[38px] border-r border-[#D0D5DD] px-[8px] text-[12px] outline-none bg-white"
-        >
-          <option>+234</option>
-          <option>+1</option>
-        </select>
-
-        <input
-          id="updateAdminPhone"
-          type="text"
-          class="flex-1 min-w-0 h-[38px] px-[10px] text-[13px] outline-none"
-        >
-      </div>
-    </div>
-
-
-    <!-- ROLE -->
-    <div class="min-w-0">
-      <label
-        class="block text-[12px] font-medium text-[#344054]"
-      >
-        Role
-      </label>
-
-      <select
-        id="updateAdminRole"
-        class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white focus:border-[#3BB273]"
-      >
-        <option value="admin">Admin</option>
-      </select>
-    </div>
-
-  </div>
-</div>
-
-
-        <!-- ================= RIGHTS & PERMISSIONS ================= -->
-        <div class="mt-[20px]">
-
-          <h3 class="text-[#11313B] text-[15px] font-semibold">
-            Rights & Permissions
-          </h3>
-
-          <p class="mt-[3px] text-[#7C8AA0] text-[12px]">
-            Choose what this admin user can access.
-          </p>
-
-          <div
-            class="mt-[12px] rounded-[12px] border border-[#E5E7EB] overflow-hidden"
+        <div>
+          <h2
+            class="text-[#11313B] text-[19px] font-semibold"
           >
+            Update Admin User
+          </h2>
 
-            <!-- IS SUPER ADMIN -->
-            <div
-              class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
+          <p
+            class="mt-[2px] text-[#7C8AA0] text-[12px]"
+          >
+            Modify administrator permissions.
+          </p>
+        </div>
+
+        <button
+          id="closeUpdateAdminModalBtn"
+          type="button"
+          class="w-[30px] h-[30px] rounded-full bg-[#3BB273] hover:bg-[#32A86A] text-white flex items-center justify-center cursor-pointer"
+        >
+          <i class="fa-solid fa-xmark text-[12px]"></i>
+        </button>
+      </div>
+
+
+      <!-- ================= FORM ================= -->
+      <form
+        id="updateAdminUserForm"
+        class="w-full"
+      >
+
+        <!-- ================= FORM CONTENT ================= -->
+        <div
+          class="w-full px-[20px] pt-[16px] pb-[20px]"
+        >
+
+          <!-- ================= BASIC INFORMATION ================= -->
+          <div>
+
+            <h3
+              class="text-[#11313B] text-[14px] font-semibold"
             >
-              <span class="text-[#11313B] text-[13px] font-medium">
-                Is Super Admin?
-              </span>
+              Basic Information
+            </h3>
 
-              <div class="flex items-center gap-[18px]">
+            <div
+              class="mt-[14px] grid grid-cols-2"
+              style="
+                column-gap: 24px;
+                row-gap: 16px;
+              "
+            >
 
-                <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                >
-                  <input
-                    type="radio"
-                    name="isSuperAdmin"
-                    value="yes"
-                    class="accent-[#3BB273]"
-                  >
-                  Yes
-                </label>
+              <!-- ================= FIRST NAME ================= -->
+              <div class="min-w-0">
 
                 <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  class="block text-[12px] font-medium text-[#344054]"
                 >
-                  <input
-                    type="radio"
-                    name="isSuperAdmin"
-                    value="no"
-                    class="accent-[#3BB273]"
-                    checked
-                  >
-                  No
+                  First Name
                 </label>
+
+                <input
+                  id="updateAdminFirstName"
+                  type="text"
+                  class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
+                >
 
               </div>
-            </div>
 
 
-            <!-- MANAGE DRIVERS -->
-            <div
-              class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-            >
-              <span class="text-[#11313B] text-[13px] font-medium">
-                Manage Drivers
-              </span>
-
-              <div class="flex items-center gap-[18px]">
+              <!-- ================= LAST NAME ================= -->
+              <div class="min-w-0">
 
                 <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  class="block text-[12px] font-medium text-[#344054]"
                 >
-                  <input
-                    type="radio"
-                    name="drivers"
-                    value="yes"
-                    class="accent-[#3BB273]"
-                  >
-                  Yes
+                  Last Name
                 </label>
 
-                <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                <input
+                  id="updateAdminLastName"
+                  type="text"
+                  class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
                 >
-                  <input
-                    type="radio"
-                    name="drivers"
-                    value="no"
-                    class="accent-[#3BB273]"
-                    checked
-                  >
-                  No
-                </label>
 
               </div>
-            </div>
 
 
-            <!-- MANAGE SUPPORT TICKETS -->
-            <div
-              class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-            >
-              <span class="text-[#11313B] text-[13px] font-medium">
-                Manage Support Tickets
-              </span>
-
-              <div class="flex items-center gap-[18px]">
+              <!-- ================= EMAIL ================= -->
+              <div class="min-w-0">
 
                 <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  class="block text-[12px] font-medium text-[#344054]"
                 >
-                  <input
-                    type="radio"
-                    name="support"
-                    value="yes"
-                    class="accent-[#3BB273]"
-                  >
-                  Yes
+                  Email
                 </label>
 
-                <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                <input
+                  id="updateAdminEmail"
+                  type="email"
+                  class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none focus:border-[#3BB273]"
                 >
-                  <input
-                    type="radio"
-                    name="support"
-                    value="no"
-                    class="accent-[#3BB273]"
-                    checked
-                  >
-                  No
-                </label>
 
               </div>
-            </div>
 
 
-            <!-- MANAGE PAYOUTS -->
-            <div
-              class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-            >
-              <span class="text-[#11313B] text-[13px] font-medium">
-                Manage Payouts
-              </span>
-
-              <div class="flex items-center gap-[18px]">
+              <!-- ================= PHONE NUMBER ================= -->
+              <div class="min-w-0">
 
                 <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  class="block text-[12px] font-medium text-[#344054]"
                 >
-                  <input
-                    type="radio"
-                    name="payouts"
-                    value="yes"
-                    class="accent-[#3BB273]"
-                  >
-                  Yes
+                  Phone Number
                 </label>
 
-                <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                <div
+                  class="mt-[6px] w-full flex rounded-[8px] overflow-hidden border border-[#D0D5DD]"
                 >
-                  <input
-                    type="radio"
-                    name="payouts"
-                    value="no"
-                    class="accent-[#3BB273]"
-                    checked
+
+                  <select
+                    id="updatePhoneCode"
+                    class="w-[82px] shrink-0 h-[38px] border-r border-[#D0D5DD] px-[8px] text-[12px] outline-none bg-white"
                   >
-                  No
-                </label>
+                    <option>+234</option>
+                    <option>+1</option>
+                  </select>
+
+                  <input
+                    id="updateAdminPhone"
+                    type="text"
+                    class="flex-1 min-w-0 h-[38px] px-[10px] text-[13px] outline-none"
+                  >
+
+                </div>
 
               </div>
-            </div>
 
 
-            <!-- VIEW AUDIT LOGS -->
-            <div
-              class="flex items-center justify-between px-[16px] py-[10px] bg-white"
-            >
-              <span class="text-[#11313B] text-[13px] font-medium">
-                View Audit Logs
-              </span>
-
-              <div class="flex items-center gap-[18px]">
+              <!-- ================= ROLE ================= -->
+              <div class="min-w-0">
 
                 <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  class="block text-[12px] font-medium text-[#344054]"
                 >
-                  <input
-                    type="radio"
-                    name="auditLogs"
-                    value="yes"
-                    class="accent-[#3BB273]"
-                  >
-                  Yes
+                  Role
                 </label>
 
-                <label
-                  class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                <select
+                  id="updateAdminRole"
+                  class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white focus:border-[#3BB273]"
                 >
-                  <input
-                    type="radio"
-                    name="auditLogs"
-                    value="no"
-                    class="accent-[#3BB273]"
-                    checked
-                  >
-                  No
-                </label>
+                  <option value="admin">
+                    Admin
+                  </option>
+                </select>
 
               </div>
+
             </div>
 
           </div>
+
+
+          <!-- ================= RIGHTS & PERMISSIONS ================= -->
+          <div class="mt-[20px]">
+
+            <h3
+              class="text-[#11313B] text-[15px] font-semibold"
+            >
+              Rights & Permissions
+            </h3>
+
+            <p
+              class="mt-[3px] text-[#7C8AA0] text-[12px]"
+            >
+              Choose what this admin user can access.
+            </p>
+
+
+            <!-- ================= PERMISSION CARD ================= -->
+            <div
+              class="mt-[12px] rounded-[12px] border border-[#E5E7EB] overflow-hidden"
+            >
+
+              <!-- ================= IS SUPER ADMIN ================= -->
+              <div
+                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
+              >
+
+                <span
+                  class="text-[#11313B] text-[13px] font-medium"
+                >
+                  Is Super Admin?
+                </span>
+
+                <div
+                  class="flex items-center gap-[18px]"
+                >
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="isSuperAdmin"
+                      value="yes"
+                      class="accent-[#3BB273]"
+                    >
+                    Yes
+                  </label>
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="isSuperAdmin"
+                      value="no"
+                      class="accent-[#3BB273]"
+                      checked
+                    >
+                    No
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================= MANAGE DRIVERS ================= -->
+              <div
+                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
+              >
+
+                <span
+                  class="text-[#11313B] text-[13px] font-medium"
+                >
+                  Manage Drivers
+                </span>
+
+                <div
+                  class="flex items-center gap-[18px]"
+                >
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="drivers"
+                      value="yes"
+                      class="accent-[#3BB273]"
+                    >
+                    Yes
+                  </label>
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="drivers"
+                      value="no"
+                      class="accent-[#3BB273]"
+                      checked
+                    >
+                    No
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================= MANAGE SUPPORT TICKETS ================= -->
+              <div
+                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
+              >
+
+                <span
+                  class="text-[#11313B] text-[13px] font-medium"
+                >
+                  Manage Support Tickets
+                </span>
+
+                <div
+                  class="flex items-center gap-[18px]"
+                >
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="support"
+                      value="yes"
+                      class="accent-[#3BB273]"
+                    >
+                    Yes
+                  </label>
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="support"
+                      value="no"
+                      class="accent-[#3BB273]"
+                      checked
+                    >
+                    No
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================= MANAGE PAYOUTS ================= -->
+              <div
+                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
+              >
+
+                <span
+                  class="text-[#11313B] text-[13px] font-medium"
+                >
+                  Manage Payouts
+                </span>
+
+                <div
+                  class="flex items-center gap-[18px]"
+                >
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="payouts"
+                      value="yes"
+                      class="accent-[#3BB273]"
+                    >
+                    Yes
+                  </label>
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="payouts"
+                      value="no"
+                      class="accent-[#3BB273]"
+                      checked
+                    >
+                    No
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================= VIEW AUDIT LOGS ================= -->
+              <div
+                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
+              >
+
+                <span
+                  class="text-[#11313B] text-[13px] font-medium"
+                >
+                  View Audit Logs
+                </span>
+
+                <div
+                  class="flex items-center gap-[18px]"
+                >
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="auditLogs"
+                      value="yes"
+                      class="accent-[#3BB273]"
+                    >
+                    Yes
+                  </label>
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="auditLogs"
+                      value="no"
+                      class="accent-[#3BB273]"
+                      checked
+                    >
+                    No
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <!-- ================= SUSPEND USERS ================= -->
+              <div
+                class="flex items-center justify-between px-[16px] py-[10px] bg-white"
+              >
+
+                <span
+                  class="text-[#11313B] text-[13px] font-medium"
+                >
+                  Suspend Users
+                </span>
+
+                <div
+                  class="flex items-center gap-[18px]"
+                >
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="suspendUsers"
+                      value="yes"
+                      class="accent-[#3BB273]"
+                    >
+                    Yes
+                  </label>
+
+                  <label
+                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+                  >
+                    <input
+                      type="radio"
+                      name="suspendUsers"
+                      value="no"
+                      class="accent-[#3BB273]"
+                      checked
+                    >
+                    No
+                  </label>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
-      </div>
 
+   <!-- ================= FOOTER ================= -->
+<div
+  class="px-[20px] pt-[14px] pb-[20px] bg-white flex items-center justify-end gap-[12px]"
+>
 
-      <!-- ================= FIXED FOOTER ================= -->
-      <div
-        class="shrink-0 px-[20px] pt-[14px] pb-[20px] bg-white flex items-center justify-end gap-[12px]"
-      >
+  <button
+    id="cancelUpdateAdminBtn"
+    type="button"
+    class="h-[40px] px-[18px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-medium cursor-pointer"
+  >
+    Cancel
+  </button>
 
-        <button
-          id="cancelUpdateAdminBtn"
-          type="button"
-          class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-medium hover:bg-[#F9FAFB] cursor-pointer"
-        >
-          Cancel
-        </button>
+  <button
+    id="submitUpdateAdminBtn"
+    type="submit"
+    class="h-[40px] px-[18px] rounded-[8px] bg-[#3BB273] text-white text-[13px] font-semibold cursor-pointer"
+  >
+    Update User
+  </button>
 
-        <button
-          type="submit"
-          class="h-[40px] px-[24px] rounded-[8px] bg-[#3BB273] hover:bg-[#32A86A] text-white text-[13px] font-semibold cursor-pointer"
-        >
-          Update User
-        </button>
+</div>
 
-      </div>
+      </form>
 
-    </form>
+    </div>
+    <!-- ================= END MODAL CARD ================= -->
 
   </div>
+  <!-- ================= END POSITIONING WRAPPER ================= -->
+
 </div>
+<!-- ================= END UPDATE ADMIN USER MODAL ================= -->
 </section>
 
 
@@ -4309,6 +5134,36 @@
     </label>
   </div>
 </div>
+<div
+  class="flex items-center justify-between px-[16px] py-[14px]"
+>
+  <span class="text-[#11313B] text-[13px] font-medium">
+    Suspend users
+  </span>
+
+  <div class="flex items-center gap-[18px]">
+    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+      <input
+        type="radio"
+        name="canSuspendUsers"
+        value="true"
+        class="accent-[#3BB273]"
+      />
+      Yes
+    </label>
+
+    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
+      <input
+        type="radio"
+        name="canSuspendUsers"
+        value="false"
+        checked
+        class="accent-[#3BB273]"
+      />
+      No
+    </label>
+  </div>
+</div>
 
           </div>
         </div>
@@ -4381,59 +5236,77 @@
 
     
 
+      
       <!-- ================= FILTER ROW ================= -->
-      <div
-        id="auditLogsFilterRow"
-        class="mt-[14px] w-full flex items-center gap-[12px]"
-      >
-
-       <!-- ================= CATEGORY FILTER ================= -->
 <div
-  id="auditCategoryFilterWrap"
-  class="relative w-[220px]"
+  id="auditLogsFilterRow"
+  class="mt-[14px] w-full flex items-center justify-between gap-[12px]"
 >
-  <!-- FILTER BUTTON -->
-  <button
-    id="auditCategoryFilterBtn"
-    type="button"
-    aria-haspopup="true"
-    aria-expanded="false"
-    class="w-full h-[38px] rounded-[5px] bg-[#F1F5F8] px-[12px] flex items-center justify-between gap-[10px] text-[#7C8AA0] text-[12px] font-medium cursor-pointer"
-  >
-    <span
-      id="auditCategoryFilterText"
-      class="truncate text-left"
-    >
-      All Categories
-    </span>
 
-    <i
-      id="auditCategoryFilterIcon"
-      class="fa-solid fa-chevron-down text-[10px] shrink-0 pointer-events-none"
-    ></i>
-  </button>
-
-  <!-- DROPDOWN -->
+  <!-- ================= CATEGORY FILTER ================= -->
   <div
-    id="auditCategoryDropdown"
-    class="hidden absolute top-[44px] left-0 w-[300px]  rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_8px_24px_rgba(0,0,0,0.08)] p-[6px] z-50"
-    style="scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; max-height: 270px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: initial;"
+    id="auditCategoryFilterWrap"
+    class="relative w-[220px]"
   >
-    <!-- ALL CATEGORIES -->
+    <!-- FILTER BUTTON -->
     <button
+      id="auditCategoryFilterBtn"
       type="button"
-      data-category=""
-      data-category-name="All Categories"
-      class="auditCategoryOption w-full min-h-[36px] rounded-[5px] px-[10px] flex items-center text-left text-[12px] font-medium text-[#3BB273] bg-[#EAF8F1] cursor-pointer hover:bg-[#EAF8F1]"
+      aria-haspopup="true"
+      aria-expanded="false"
+      class="w-full h-[38px] rounded-[5px] bg-[#F1F5F8] px-[12px] flex items-center justify-between gap-[10px] text-[#7C8AA0] text-[12px] font-medium cursor-pointer"
     >
-      All Categories
+      <span
+        id="auditCategoryFilterText"
+        class="truncate text-left"
+      >
+        All Categories
+      </span>
+
+      <i
+        id="auditCategoryFilterIcon"
+        class="fa-solid fa-chevron-down text-[10px] shrink-0 pointer-events-none"
+      ></i>
     </button>
 
-    <!-- API CATEGORIES WILL BE ADDED HERE -->
-  </div>
-</div>
+    <!-- DROPDOWN -->
+    <div
+      id="auditCategoryDropdown"
+      class="hidden absolute top-[44px] left-0 w-[300px] rounded-[8px] bg-white border border-[#E5E7EB] shadow-[0_8px_24px_rgba(0,0,0,0.08)] p-[6px] z-50"
+      style="
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E1 transparent;
+        max-height: 270px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: initial;
+      "
+    >
+      <!-- ALL CATEGORIES -->
+      <button
+        type="button"
+        data-category=""
+        data-category-name="All Categories"
+        class="auditCategoryOption w-full min-h-[36px] rounded-[5px] px-[10px] flex items-center text-left text-[12px] font-medium text-[#3BB273] bg-[#EAF8F1] cursor-pointer hover:bg-[#EAF8F1]"
+      >
+        All Categories
+      </button>
 
-      </div>
+      <!-- API CATEGORIES WILL BE ADDED HERE -->
+    </div>
+  </div>
+
+
+  <!-- ================= VIEW LOG CLASSIFICATION ================= -->
+  <button
+    id="viewLogClassificationBtn"
+    type="button"
+    class="h-[38px] px-[16px] rounded-[5px] border border-[#3BB273] bg-[#3BB273] text-white text-[12px] font-semibold cursor-pointer "
+  >
+    View Log Classification
+  </button>
+
+</div>
 
 
       <!-- ================= TABLE ================= -->
@@ -4546,21 +5419,418 @@
   </div>
 </section>
 
+
+<!-- ================= LOG CLASSIFICATION MODAL ================= -->
+<div
+  id="auditLogClassificationModal"
+  class="hidden fixed inset-0 z-[9999] overflow-y-auto"
+  style="
+    background:
+      radial-gradient(
+        circle at 15% 10%,
+        rgba(59, 178, 115, 0.14),
+        transparent 30%
+      ),
+      radial-gradient(
+        circle at 85% 20%,
+        rgba(17, 49, 59, 0.14),
+        transparent 34%
+      ),
+      rgba(15, 23, 42, 0.46);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  "
+>
+  <div
+    class="min-h-full w-full flex items-start justify-center px-[20px] py-[40px]"
+  >
+
+    <!-- ================= MODAL CARD ================= -->
+    <div
+      id="auditLogClassificationCard"
+      class="w-[820px] max-w-full overflow-hidden"
+      style="
+        margin-top: 40px;
+        margin-bottom: 20px;
+
+        border-radius: 24px;
+
+        background:
+          linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.96),
+            rgba(248, 251, 252, 0.93)
+          );
+
+        border: 1px solid rgba(255, 255, 255, 0.92);
+
+        box-shadow:
+          0 30px 80px rgba(15, 23, 42, 0.22),
+          0 10px 30px rgba(17, 49, 59, 0.10),
+          inset 0 1px 0 rgba(255,255,255,0.98);
+
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+      "
+    >
+
+      <!-- ================= HEADER ================= -->
+      <div
+        class="flex items-start justify-between"
+        style="
+          padding: 30px 30px 24px 30px;
+          border-bottom: 1px solid rgba(226, 232, 240, 0.90);
+
+          background:
+            linear-gradient(
+              180deg,
+              rgba(255,255,255,0.96),
+              rgba(248,251,252,0.90)
+            );
+        "
+      >
+
+        <div
+          class="flex items-start"
+          style="
+            gap: 14px;
+            min-width: 0;
+          "
+        >
+
+          <!-- HEADER ICON -->
+          <div
+            class="flex items-center justify-center shrink-0"
+            style="
+              width: 44px;
+              height: 44px;
+              border-radius: 13px;
+
+              background:
+                linear-gradient(
+                  145deg,
+                  rgba(59, 178, 115, 0.16),
+                  rgba(59, 178, 115, 0.07)
+                );
+
+              border: 1px solid rgba(59, 178, 115, 0.20);
+
+              box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.95),
+                0 7px 18px rgba(59,178,115,0.09);
+            "
+          >
+            <i
+              class="fa-solid fa-layer-group"
+              style="
+                font-size: 15px;
+                color: #27885A;
+              "
+            ></i>
+          </div>
+
+
+          <!-- HEADER TEXT -->
+          <div style="min-width: 0;">
+
+            <h1
+              class="text-[#11313B] font-semibold"
+              style="
+                margin: 0;
+                font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+                font-size: 22px;
+                line-height: 28px;
+                letter-spacing: -0.01em;
+              "
+            >
+              Audit Log Classifications
+            </h1>
+
+            <p
+              style="
+                margin: 5px 0 0 0;
+                color: #7C8AA0;
+                font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+                font-size: 13px;
+                line-height: 19px;
+              "
+            >
+              View the activity categories and events recorded across the platform.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- CLOSE -->
+        <button
+          id="closeAuditLogClassificationBtn"
+          type="button"
+          aria-label="Close classification modal"
+          class="flex items-center justify-center shrink-0 cursor-pointer"
+          style="
+            width: 34px;
+            height: 34px;
+            margin-left: 20px;
+
+            border-radius: 10px;
+
+            background: rgba(255,255,255,0.82);
+
+            border: 1px solid #DDE3E9;
+
+            color: #667085;
+
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,0.95),
+              0 3px 8px rgba(17,49,59,0.04);
+
+            transition:
+              background-color 0.15s ease,
+              color 0.15s ease,
+              border-color 0.15s ease;
+          "
+        >
+          <i
+            class="fa-solid fa-xmark"
+            style="
+              font-size: 12px;
+            "
+          ></i>
+        </button>
+
+      </div>
+
+
+      <!-- ================= BODY ================= -->
+      <div
+        style="
+          padding: 24px 30px 30px 30px;
+
+          background:
+            radial-gradient(
+              circle at 100% 0%,
+              rgba(59,178,115,0.055),
+              transparent 25%
+            ),
+            #F6F9FA;
+        "
+      >
+
+        <!-- ================= SUMMARY ================= -->
+        <div
+          class="flex items-center justify-between"
+          style="
+            gap: 20px;
+
+            padding: 16px 18px;
+
+            border-radius: 14px;
+
+            background:
+              linear-gradient(
+                145deg,
+                rgba(255,255,255,0.88),
+                rgba(248,251,252,0.74)
+              );
+
+            border: 1px solid rgba(222,228,234,0.92);
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            box-shadow:
+              0 6px 20px rgba(17,49,59,0.05),
+              inset 0 1px 0 rgba(255,255,255,0.95);
+          "
+        >
+
+          <div
+            class="flex items-start"
+            style="
+              gap: 11px;
+              min-width: 0;
+            "
+          >
+
+            <div
+              class="flex items-center justify-center shrink-0"
+              style="
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                background-color: rgba(59,178,115,0.10);
+              "
+            >
+              <i
+                class="fa-solid fa-folder-tree"
+                style="
+                  font-size: 12px;
+                  color: #27885A;
+                "
+              ></i>
+            </div>
+
+
+            <div style="min-width:0;">
+
+              <p
+                style="
+                  margin: 0;
+                  color: #11313B;
+                  font-size: 13px;
+                  line-height: 18px;
+                  font-weight: 650;
+                "
+              >
+                Classification Directory
+              </p>
+
+              <p
+                style="
+                  margin: 3px 0 0 0;
+                  color: #7C8AA0;
+                  font-size: 12px;
+                  line-height: 18px;
+                "
+              >
+                Each classification groups related activities that may appear in the audit log.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div
+            style="
+              flex-shrink: 0;
+              min-width: 110px;
+              height: 34px;
+
+              padding: 0 12px;
+
+              border-radius: 999px;
+
+              background:
+                linear-gradient(
+                  145deg,
+                  rgba(236,253,243,0.96),
+                  rgba(227,248,237,0.88)
+                );
+
+              border: 1px solid #ABEFC6;
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              box-shadow:
+                inset 0 1px 0 rgba(255,255,255,0.95),
+                0 4px 10px rgba(59,178,115,0.06);
+            "
+          >
+            <p
+              id="auditClassificationCount"
+              style="
+                margin: 0;
+                color: #27885A;
+                font-size: 11.5px;
+                font-weight: 650;
+              "
+            >
+              -
+            </p>
+          </div>
+
+        </div>
+
+
+        <!-- ================= LOADING STATE ================= -->
+        <div
+          id="auditClassificationLoading"
+          class="hidden"
+          style="
+            padding: 50px 0;
+            text-align: center;
+            color: #7C8AA0;
+            font-size: 13px;
+          "
+        >
+          Loading classifications...
+        </div>
+
+
+        <!-- ================= ERROR STATE ================= -->
+        <div
+          id="auditClassificationError"
+          class="hidden"
+          style="
+            margin-top: 16px;
+
+            padding: 12px 14px;
+
+            border-radius: 10px;
+
+            background-color: #FFF1F0;
+            border: 1px solid #FECDCA;
+
+            color: #B42318;
+
+            font-size: 12px;
+            line-height: 18px;
+          "
+        >
+          Unable to load audit log classifications.
+        </div>
+
+
+        <!-- ================= CLASSIFICATION CONTENT ================= -->
+        <div
+          id="auditClassificationList"
+          class="mt-[18px] flex flex-col gap-[14px] max-h-[520px] overflow-y-auto"
+          style="
+            padding-right: 5px;
+
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E1 transparent;
+          "
+        >
+          <!-- JS WILL RENDER CLASSIFICATIONS HERE -->
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
 <!-- ================= AUDIT LOG DETAILS MODAL ================= -->
 <div
   id="auditLogDetailsModal"
   class="hidden fixed inset-0 z-[9999] bg-black/40 backdrop-blur-[2px] overflow-y-auto"
 >
-  <div class="min-h-full w-full flex items-start justify-center px-[20px] py-[32px]">
 
-    <!-- MODAL CARD -->
+  <!-- ================= MODAL POSITIONING WRAPPER ================= -->
+  <div
+    class="min-h-full w-full flex items-start justify-center px-[20px]"
+  >
+
+    <!-- ================= MODAL CARD ================= -->
     <div
       id="auditLogDetailsCard"
       class="w-[720px] max-w-full rounded-[18px] bg-white shadow-[0_18px_60px_rgba(0,0,0,0.16)] overflow-hidden"
+      style="margin-top: 70px; margin-bottom: 40px;"
     >
 
-      <!-- HEADER -->
-      <div class="px-[24px] pt-[22px] pb-[16px] flex items-start justify-between">
+      <!-- ================= HEADER ================= -->
+      <div
+        class="px-[24px] pt-[40px] pb-[16px] flex items-start justify-between"
+      >
 
         <div>
           <h1
@@ -4577,6 +5847,7 @@
             Review the activity information for this log entry.
           </p>
         </div>
+
 
         <div class="flex items-center gap-[10px]">
 
@@ -4596,24 +5867,33 @@
           </button>
 
         </div>
+
       </div>
 
 
-      <!-- BODY -->
+      <!-- ================= BODY ================= -->
       <div class="px-[24px] pb-[24px]">
 
         <!-- ================= ACTIVITY INFORMATION ================= -->
-        <div class="rounded-[14px] bg-[#F8FAFC] px-[18px] py-[16px]">
+        <div
+          class="rounded-[14px] bg-[#F8FAFC] px-[18px] py-[16px]"
+        >
 
-          <h2 class="text-[#11313B] text-[14px] font-semibold">
+          <h2
+            class="text-[#11313B] text-[14px] font-semibold"
+          >
             Activity Information
           </h2>
 
-          <div class="mt-[14px] grid grid-cols-2 gap-x-[30px] gap-y-[18px]">
+          <div
+            class="mt-[14px] grid grid-cols-2 gap-x-[30px] gap-y-[18px]"
+          >
 
             <!-- ACTION -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Action
               </p>
 
@@ -4625,9 +5905,12 @@
               </p>
             </div>
 
+
             <!-- ENTITY TYPE -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Entity Type
               </p>
 
@@ -4639,9 +5922,12 @@
               </p>
             </div>
 
+
             <!-- ENTITY ID -->
             <div class="col-span-2">
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Entity ID
               </p>
 
@@ -4653,9 +5939,12 @@
               </p>
             </div>
 
+
             <!-- DATE -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Date & Time
               </p>
 
@@ -4667,9 +5956,12 @@
               </p>
             </div>
 
+
             <!-- TIME AGO -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Time Ago
               </p>
 
@@ -4681,9 +5973,12 @@
               </p>
             </div>
 
-            <!-- IP -->
+
+            <!-- IP ADDRESS -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 IP Address
               </p>
 
@@ -4696,20 +5991,30 @@
             </div>
 
           </div>
+
         </div>
 
 
         <!-- ================= PERFORMED BY ================= -->
-        <div class="mt-[16px] rounded-[14px] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] px-[18px] py-[16px]">
+        <div
+          class="mt-[16px] rounded-[14px] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)] px-[18px] py-[16px]"
+        >
 
-          <h2 class="text-[#11313B] text-[14px] font-semibold">
+          <h2
+            class="text-[#11313B] text-[14px] font-semibold"
+          >
             Performed By
           </h2>
 
-          <div class="mt-[14px] grid grid-cols-3 gap-x-[22px] gap-y-[14px]">
+          <div
+            class="mt-[14px] grid grid-cols-3 gap-x-[22px] gap-y-[14px]"
+          >
 
+            <!-- NAME -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Name
               </p>
 
@@ -4721,8 +6026,12 @@
               </p>
             </div>
 
+
+            <!-- EMAIL -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Email
               </p>
 
@@ -4734,8 +6043,12 @@
               </p>
             </div>
 
+
+            <!-- ROLE -->
             <div>
-              <p class="text-[#98A2B3] text-[11px] font-medium">
+              <p
+                class="text-[#98A2B3] text-[11px] font-medium"
+              >
                 Role
               </p>
 
@@ -4748,23 +6061,30 @@
             </div>
 
           </div>
+
         </div>
 
 
         <!-- ================= DESCRIPTION ================= -->
         <div class="mt-[16px]">
 
-          <h2 class="text-[#11313B] text-[14px] font-semibold">
+          <h2
+            class="text-[#11313B] text-[14px] font-semibold"
+          >
             Description
           </h2>
 
-          <div class="mt-[8px] rounded-[12px] bg-[#F8FAFC] px-[14px] py-[12px]">
+          <div
+            class="mt-[8px] rounded-[12px] bg-[#F8FAFC] px-[14px] py-[12px]"
+          >
+
             <p
               id="auditDetailsDescription"
               class="text-[#344054] text-[13px] leading-[19px]"
             >
               -
             </p>
+
           </div>
 
         </div>
@@ -4773,17 +6093,23 @@
         <!-- ================= DEVICE / USER AGENT ================= -->
         <div class="mt-[16px]">
 
-          <h2 class="text-[#11313B] text-[14px] font-semibold">
+          <h2
+            class="text-[#11313B] text-[14px] font-semibold"
+          >
             Device / User Agent
           </h2>
 
-          <div class="mt-[8px] rounded-[12px] bg-[#F8FAFC] px-[14px] py-[12px]">
+          <div
+            class="mt-[8px] rounded-[12px] bg-[#F8FAFC] px-[14px] py-[12px]"
+          >
+
             <p
               id="auditDetailsUserAgent"
               class="text-[#667085] text-[12px] leading-[18px] break-all"
             >
               -
             </p>
+
           </div>
 
         </div>
@@ -4792,7 +6118,9 @@
         <!-- ================= CHANGES ================= -->
         <div class="mt-[16px]">
 
-          <h2 class="text-[#11313B] text-[14px] font-semibold">
+          <h2
+            class="text-[#11313B] text-[14px] font-semibold"
+          >
             Changes
           </h2>
 
@@ -4800,18 +6128,27 @@
             id="auditDetailsChanges"
             class="mt-[8px] rounded-[12px] bg-[#F8FAFC] px-[14px] py-[12px]"
           >
-            <p class="text-[#7C8AA0] text-[12px]">
+
+            <p
+              class="text-[#7C8AA0] text-[12px]"
+            >
               No recorded changes.
             </p>
+
           </div>
 
         </div>
 
       </div>
+    
 
     </div>
+  
+
   </div>
+ 
 </div>
+<!-- ================= END AUDIT LOG DETAILS MODAL ================= -->
      
 
 <!-- ================= LOGOUT SECTION ================= -->
