@@ -62,40 +62,84 @@
           </p>
         </div>
 
-        <!-- OTP BLOCK -->
-        <div class="mt-[28px] w-[320px] max-w-full flex flex-col">
-          <label
-            for="otp-1"
-            class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium tracking-[0.4px]"
-            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-          >
-            OTP
-          </label>
+   <!-- OTP BLOCK -->
+<div class="mt-[28px] w-[320px] max-w-full flex flex-col">
+  <label
+    for="otp-1"
+    class="text-[#7C8AA0] text-[12px] leading-[16px] font-medium tracking-[0.4px]"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+    OTP
+  </label>
 
-          <div class="mt-[8px] flex items-center justify-between gap-[8px]">
-            <input type="text" maxlength="1" id="otp-1" class="otp-input" />
-            <input type="text" maxlength="1" id="otp-2" class="otp-input" />
-            <input type="text" maxlength="1" id="otp-3" class="otp-input" />
-            <input type="text" maxlength="1" id="otp-4" class="otp-input" />
-            <input type="text" maxlength="1" id="otp-5" class="otp-input" />
-            <input type="text" maxlength="1" id="otp-6" class="otp-input" />
-          </div>
+  <div class="mt-[8px] flex items-center justify-between gap-[8px]">
 
-          <p
-            class="mt-[16px] text-[#7C8AA0] text-[11.83px] leading-[16.9px] font-medium tracking-[0.21px]"
-            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-          >
-            Resend Code in <span id="countdown">01:56</span>
-          </p>
+    <input
+      type="text"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+      id="otp-1"
+      class="otp-input"
+    />
 
-          <p
-            class="mt-[8px] text-[11.83px] leading-[16.9px] font-medium tracking-[0.21px] text-[#7C8AA0]"
-            style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-          >
-            Didn't get a code?
-            <a href="#" id="resendOtp" class="text-[#F08B7E]">Resend OTP</a>
-          </p>
-        </div>
+    <input
+      type="text"
+      inputmode="numeric"
+      id="otp-2"
+      class="otp-input"
+    />
+
+    <input
+      type="text"
+      inputmode="numeric"
+      id="otp-3"
+      class="otp-input"
+    />
+
+    <input
+      type="text"
+      inputmode="numeric"
+      id="otp-4"
+      class="otp-input"
+    />
+
+    <input
+      type="text"
+      inputmode="numeric"
+      id="otp-5"
+      class="otp-input"
+    />
+
+    <input
+      type="text"
+      inputmode="numeric"
+      id="otp-6"
+      class="otp-input"
+    />
+
+  </div>
+
+  <p
+    class="mt-[16px] text-[#7C8AA0] text-[11.83px] leading-[16.9px] font-medium tracking-[0.21px]"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+    Resend Code in <span id="countdown">01:56</span>
+  </p>
+
+  <p
+    class="mt-[8px] text-[11.83px] leading-[16.9px] font-medium tracking-[0.21px] text-[#7C8AA0]"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+    Didn't get a code?
+    <a
+      href="#"
+      id="resendOtp"
+      class="text-[#F08B7E]"
+    >
+      Resend OTP
+    </a>
+  </p>
+</div>
       </div>
     </section>
   </div>
