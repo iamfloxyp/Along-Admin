@@ -497,6 +497,7 @@
   class="hidden absolute top-0 left-0 w-[1070px] h-full p-[20px] bg-white rounded-[6px]"
 >
   <div class="w-full h-full flex flex-col gap-[18px]">
+
     <!-- HEADER -->
     <div>
       <h1 class="text-[#11313B] text-[34px] leading-[36px] font-semibold">
@@ -508,195 +509,316 @@
       </p>
     </div>
 
+
     <!-- TOP ROW -->
-<div class="w-full flex items-start gap-[16px]">
-  <!-- DRIVERS -->
-  <div
-    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
-    <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Drivers</h3>
+    <div class="w-full flex items-start gap-[16px]">
+
+
+      <!-- DRIVERS -->
+      <div
+        class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px] cursor-pointer"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+        onclick="window.location.hash='#drivers'"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-[#11313B] text-[16px] font-semibold">
+            Drivers
+          </h3>
+        </div>
+
+        <div class="mt-[10px] h-[120px]">
+          <canvas id="driversChart"></canvas>
+        </div>
+
+        <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
+
+          <p class="flex items-center gap-[8px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+              Total
+            </span>
+
+            <b
+              id="dashboardTotalDrivers"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+              Approved
+            </span>
+
+            <b
+              id="dashboardApprovedDrivers"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
+              Pending
+            </span>
+
+            <b
+              id="dashboardPendingDrivers"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#E57373]"></span>
+              Rejected
+            </span>
+
+            <b
+              id="dashboardRejectedDrivers"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+        </div>
+      </div>
+
+
+      <!-- CUSTOMERS -->
+      <div
+        class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px] cursor-pointer"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+        onclick="window.location.hash='#customers'"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-[#11313B] text-[16px] font-semibold">
+            Customers
+          </h3>
+        </div>
+
+        <div class="mt-[12px] h-[120px]">
+          <canvas id="sendersChart"></canvas>
+        </div>
+
+        <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+              Total
+            </span>
+
+            <b
+              id="dashboardTotalCustomers"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+              Active
+            </span>
+
+            <b
+              id="dashboardActiveCustomers"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#9B51E0]"></span>
+              New Customers This Week
+            </span>
+
+            <b
+              id="dashboardNewCustomersThisWeek"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
+              New Customers This Month
+            </span>
+
+            <b
+              id="dashboardNewCustomersThisMonth"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+        </div>
+      </div>
+
     </div>
 
-    <div class="mt-[10px] h-[120px]">
-      <canvas id="driversChart"></canvas>
+
+    <!-- BOTTOM ROW -->
+    <div class="w-full flex items-start gap-[16px]">
+
+
+      <!-- TAGS -->
+      <div
+        class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px] cursor-pointer"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+        onclick="window.location.hash='#tags'"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-[#11313B] text-[16px] font-semibold">
+            Tags
+          </h3>
+        </div>
+
+        <div class="mt-[12px] h-[120px]">
+          <canvas id="deliveriesChart"></canvas>
+        </div>
+
+        <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+              Total
+            </span>
+
+            <b
+              id="dashboardTotalDeliveries"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
+              In Progress
+            </span>
+
+            <b
+              id="dashboardInProgressDeliveries"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+              Completed
+            </span>
+
+            <b
+              id="dashboardCompletedDeliveries"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#E57373]"></span>
+              Failed
+            </span>
+
+            <b
+              id="dashboardFailedDeliveries"
+              class="text-[#11313B]"
+            >
+              0
+            </b>
+          </p>
+
+        </div>
+      </div>
+
+
+      <!-- PAYOUT -->
+      <div
+        class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px] cursor-pointer"
+        style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+        onclick="window.location.hash='#payout'"
+      >
+        <div class="flex items-center justify-between">
+          <h3 class="text-[#11313B] text-[16px] font-semibold">
+            Payout
+          </h3>
+        </div>
+
+        <div class="mt-[12px] h-[120px]">
+          <canvas id="paymentsChart"></canvas>
+        </div>
+
+        <div class="mt-[14px] grid grid-cols-1 gap-y-[10px] text-[12px]">
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
+              Total Revenue
+            </span>
+
+            <b
+              id="dashboardTotalRevenue"
+              class="text-[#11313B]"
+            >
+              $0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#9B51E0]"></span>
+              Pending Payouts
+            </span>
+
+            <b
+              id="dashboardPendingPayouts"
+              class="text-[#11313B]"
+            >
+              $0
+            </b>
+          </p>
+
+          <p class="flex items-center gap-[12px]">
+            <span class="flex items-center gap-[7px] text-[#344054]">
+              <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
+              Completed Payouts
+            </span>
+
+            <b
+              id="dashboardCompletedPayouts"
+              class="text-[#11313B]"
+            >
+              $0
+            </b>
+          </p>
+
+        </div>
+      </div>
+
     </div>
 
-    <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
-      <p class="flex items-center gap-[8px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
-          Total
-        </span>
-        <b id="dashboardTotalDrivers" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
-          Approved
-        </span>
-        <b id="dashboardApprovedDrivers" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
-          Pending
-        </span>
-        <b id="dashboardPendingDrivers" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#E57373]"></span>
-          Rejected
-        </span>
-        <b id="dashboardRejectedDrivers" class="text-[#11313B]">0</b>
-      </p>
-    </div>
-  </div>
-
-  <!-- SENDERS -->
-  <div
-    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
-    <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Customers</h3>
-    </div>
-
-    <div class="mt-[12px] h-[120px]">
-      <canvas id="sendersChart"></canvas>
-    </div>
-
-    <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
-          Total
-        </span>
-        <b id="dashboardTotalCustomers" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
-          Active
-        </span>
-        <b id="dashboardActiveCustomers" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#9B51E0]"></span>
-          New Customers This Week
-        </span>
-        <b id="dashboardNewCustomersThisWeek" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
-          New Customers This Week Month
-        </span>
-        <b id="dashboardNewCustomersThisMonth" class="text-[#11313B]">0</b>
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- BOTTOM ROW -->
-<div class="w-full flex items-start gap-[16px]">
-  <!-- DELIVERIES -->
-  <div
-    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
-    <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Tags</h3>
-    </div>
-
-    <div class="mt-[12px] h-[120px]">
-      <canvas id="deliveriesChart"></canvas>
-    </div>
-
-    <div class="mt-[14px] grid grid-cols-2 gap-x-[16px] gap-y-[10px] text-[12px]">
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
-          Total
-        </span>
-        <b id="dashboardTotalDeliveries" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#F2B66D]"></span>
-          In Progress
-        </span>
-        <b id="dashboardInProgressDeliveries" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
-          Completed
-        </span>
-        <b id="dashboardCompletedDeliveries" class="text-[#11313B]">0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#E57373]"></span>
-          Failed
-        </span>
-        <b id="dashboardFailedDeliveries" class="text-[#11313B]">0</b>
-      </p>
-    </div>
-  </div>
-
-  <!-- PAYMENTS -->
-  <div
-    class="dashboardCard dashboardChartCard flex-1 min-w-0 h-[280px] rounded-[16px] bg-white p-[18px] transition hover:-translate-y-[2px]"
-    style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
-  >
-    <div class="flex items-center justify-between">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Payout</h3>
-    </div>
-
-    <div class="mt-[12px] h-[120px]">
-      <canvas id="paymentsChart"></canvas>
-    </div>
-
-    <div class="mt-[14px] grid grid-cols-1 gap-y-[10px] text-[12px]">
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#3BB273]"></span>
-          Total Revenue
-        </span>
-        <b id="dashboardTotalRevenue" class="text-[#11313B]">$0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#9B51E0]"></span>
-          Pending Payouts
-        </span>
-        <b id="dashboardPendingPayouts" class="text-[#11313B]">$0</b>
-      </p>
-
-      <p class="flex items-center gap-[12px]">
-        <span class="flex items-center gap-[7px] text-[#344054]">
-          <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
-          Completed Payouts
-        </span>
-        <b id="dashboardCompletedPayouts" class="text-[#11313B]">$0</b>
-      </p>
-    </div>
-  </div>
-</div>
   </div>
 </section>
 
@@ -943,7 +1065,7 @@
               >
                 <div id="thDriverName" class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Driver Name</div>
                 <div id="thEmail" class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Email</div>
-                <div id="thAddress" class="w-[160px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Address</div>
+                <div id="thTotalCompletedTags" class="w-[160px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Total Completed Tags</div>
                 <div id="thRatings" class="w-[88px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Ratings</div>
                 <div id="thDeliveries" class="w-[92px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Deliveries</div>
                 <div id="thEarnings" class="w-[96px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Earnings</div>
@@ -2486,7 +2608,7 @@
           </p>
         </div>
 
-        <h3 id="senderDisabledUsers" class="mt-[12px] text-[#E57373] text-[20px] font-semibold">
+        <h3 id="senderNewThisWeek" class="mt-[12px] text-[#E57373] text-[20px] font-semibold">
           --
         </h3>
       </div>
@@ -2502,7 +2624,7 @@
           </div>
 
           <p class="text-[#7C8AA0] text-[13px] font-medium">
-            New This Month
+            New Customer This Month
           </p>
         </div>
 
@@ -2550,7 +2672,7 @@
         <div class="w-[105px] px-[10px]">Status</div>
         <div class="w-[120px] px-[10px]">Join Date</div>
         <div class="w-[130px] px-[10px]">Last Activity</div>
-        <div class="w-[70px] px-[10px]">Orders</div>
+        <div class="w-[70px] px-[10px]">Completed Tags</div>
         <div class="w-[70px] px-[10px]">Actions</div>
       </div>
 
@@ -2618,6 +2740,37 @@
       <label class="text-[#7C8AA0] text-[14px] font-medium">Address</label>
       <div id="senderAddress" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
     </div>
+
+    <!-- ================= CUSTOMER RECENT ACTIVITY ================= -->
+<section
+  id="senderRecentActivitySection"
+  class="mt-[24px] w-full rounded-[16px] bg-white p-[20px] flex flex-col"
+>
+  <h3
+    id="senderRecentActivityTitle"
+    class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+  >
+    Recent Activity
+  </h3>
+
+  <div
+    id="senderRecentActivityList"
+    class="mt-[20px] flex flex-col gap-[12px]"
+  >
+    <div
+      class="w-full min-h-[52px] rounded-[12px] bg-[#ffffff] border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+    >
+      <p class="text-[#11313B] text-[14px] leading-[20px] font-medium">
+        No recent activity yet
+      </p>
+
+      <span class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium">
+        --
+      </span>
+    </div>
+  </div>
+</section>
 <!-- ================= USER DETAILS ACTIONS ================= -->
 <div
   class="mt-[24px] w-full flex items-center justify-between"
@@ -2784,20 +2937,48 @@
   </button>
 
 </div>
-  <!-- FILTERS -->
-  <div class="flex items-center gap-[8px]">
+  
 
-    <select
-      id="statusFilter"
-      class="h-[38px] w-[130px] cursor-pointer rounded-[8px] bg-[#F1F5F8] px-[10px] text-[12px] text-[#7C8AA0] outline-none"
+<!-- FILTERS -->
+<div class="flex items-center gap-[8px]">
+
+  <!-- STATUS FILTER -->
+  <div
+    id="statusFilter"
+    class="relative"
+  >
+
+    <!-- STATUS BUTTON -->
+    <button
+      type="button"
+      id="statusFilterButton"
+      class="h-[38px] w-[150px] cursor-pointer rounded-[8px] bg-[#F1F5F8] px-[10px] text-[12px] text-[#7C8AA0] outline-none flex items-center justify-between"
     >
-      <option value="">All Status</option>
-      <option value="pending">Pending</option>
-      <option value="in_progress">In Progress</option>
-      <option value="delivered">Delivered</option>
-    </select>
+      <span
+        id="statusFilterLabel"
+        class="truncate"
+      >
+        All Status
+      </span>
+
+      <i
+        id="statusFilterIcon"
+        class="fa-solid fa-chevron-down text-[9px] shrink-0"
+      ></i>
+    </button>
+
+
+    <!-- MAIN STATUS DROPDOWN -->
+    <div
+      id="statusFilterDropdown"
+      class="hidden absolute right-0 top-[42px] z-[9999] w-[190px] overflow-hidden rounded-[8px] border border-[#E5E7EB] bg-white py-[5px] shadow-lg"
+    >
+      <!-- Statuses rendered here -->
+    </div>
 
   </div>
+
+</div>
 
 </div>
 
@@ -2947,6 +3128,93 @@
       <h3 class="text-[#11313B] text-[16px] font-semibold">Package Images</h3>
       <div id="tagPackageImages" class="mt-[14px] flex gap-[12px] flex-wrap"></div>
     </div>
+
+    <!-- Assigned Driver Details -->
+<div
+  id="tagAssignedDriverSection"
+  class="mt-[18px] rounded-[16px] bg-white p-[22px]"
+  style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
+>
+  <h3 class="text-[#11313B] text-[18px] font-semibold">
+    Assigned Driver
+  </h3>
+
+  <div class="mt-[18px] grid grid-cols-2 gap-[16px] text-[13px]">
+
+    <div>
+      <p class="text-[#7C8AA0]">Driver Name</p>
+      <p
+        id="tagDriverName"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Email</p>
+      <p
+        id="tagDriverEmail"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Phone Number</p>
+      <p
+        id="tagDriverPhone"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Vehicle Type</p>
+      <p
+        id="tagDriverVehicleType"
+        class="mt-[5px] font-semibold capitalize"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Vehicle Make</p>
+      <p
+        id="tagDriverVehicleMake"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Vehicle Model</p>
+      <p
+        id="tagDriverVehicleModel"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Vehicle Year</p>
+      <p
+        id="tagDriverVehicleYear"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Plate Number</p>
+      <p
+        id="tagDriverPlateNumber"
+        class="mt-[5px] font-semibold"
+      ></p>
+    </div>
+
+    <div>
+      <p class="text-[#7C8AA0]">Vehicle Color</p>
+      <p
+        id="tagDriverVehicleColor"
+        class="mt-[5px] font-semibold capitalize"
+      ></p>
+    </div>
+
+  </div>
+</div>
   </div>
 </section>
         
@@ -3559,11 +3827,11 @@
 >
   <div class="w-full h-full rounded-[16px] bg-white p-[20px] box-border">
     <h1 class="text-[#11313B] text-[34px] leading-[34px] font-semibold">
-      Settings
+      Profile Settings
     </h1>
 
     <p class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium">
-      Manage your logistics platform configuration
+      Manage your profile information 
     </p>
 
     <div class="mt-[18px] grid grid-cols-[410px_1fr] gap-[28px] items-start w-full">
@@ -4555,14 +4823,12 @@
                   Role
                 </label>
 
-                <select
-                  id="updateAdminRole"
-                  class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white focus:border-[#3BB273]"
-                >
-                  <option value="admin">
-                    Admin
-                  </option>
-                </select>
+               <select
+  id="updateAdminRole"
+  class="mt-[6px] block w-full h-[38px] rounded-[8px] border border-[#D0D5DD] px-[10px] text-[13px] outline-none bg-white focus:border-[#3BB273]"
+>
+  <option value="">Loading roles...</option>
+</select>
 
               </div>
 
@@ -4587,281 +4853,15 @@
             </p>
 
 
-            <!-- ================= PERMISSION CARD ================= -->
-            <div
-              class="mt-[12px] rounded-[12px] border border-[#E5E7EB] overflow-hidden"
-            >
-
-              <!-- ================= IS SUPER ADMIN ================= -->
-              <div
-                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-              >
-
-                <span
-                  class="text-[#11313B] text-[13px] font-medium"
-                >
-                  Is Super Admin?
-                </span>
-
-                <div
-                  class="flex items-center gap-[18px]"
-                >
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="isSuperAdmin"
-                      value="yes"
-                      class="accent-[#3BB273]"
-                    >
-                    Yes
-                  </label>
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="isSuperAdmin"
-                      value="no"
-                      class="accent-[#3BB273]"
-                      checked
-                    >
-                    No
-                  </label>
-
-                </div>
-
-              </div>
-
-
-              <!-- ================= MANAGE DRIVERS ================= -->
-              <div
-                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-              >
-
-                <span
-                  class="text-[#11313B] text-[13px] font-medium"
-                >
-                  Manage Drivers
-                </span>
-
-                <div
-                  class="flex items-center gap-[18px]"
-                >
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="drivers"
-                      value="yes"
-                      class="accent-[#3BB273]"
-                    >
-                    Yes
-                  </label>
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="drivers"
-                      value="no"
-                      class="accent-[#3BB273]"
-                      checked
-                    >
-                    No
-                  </label>
-
-                </div>
-
-              </div>
-
-
-              <!-- ================= MANAGE SUPPORT TICKETS ================= -->
-              <div
-                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-              >
-
-                <span
-                  class="text-[#11313B] text-[13px] font-medium"
-                >
-                  Manage Support Tickets
-                </span>
-
-                <div
-                  class="flex items-center gap-[18px]"
-                >
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="support"
-                      value="yes"
-                      class="accent-[#3BB273]"
-                    >
-                    Yes
-                  </label>
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="support"
-                      value="no"
-                      class="accent-[#3BB273]"
-                      checked
-                    >
-                    No
-                  </label>
-
-                </div>
-
-              </div>
-
-
-              <!-- ================= MANAGE PAYOUTS ================= -->
-              <div
-                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-              >
-
-                <span
-                  class="text-[#11313B] text-[13px] font-medium"
-                >
-                  Manage Payouts
-                </span>
-
-                <div
-                  class="flex items-center gap-[18px]"
-                >
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="payouts"
-                      value="yes"
-                      class="accent-[#3BB273]"
-                    >
-                    Yes
-                  </label>
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="payouts"
-                      value="no"
-                      class="accent-[#3BB273]"
-                      checked
-                    >
-                    No
-                  </label>
-
-                </div>
-
-              </div>
-
-
-              <!-- ================= VIEW AUDIT LOGS ================= -->
-              <div
-                class="flex items-center justify-between px-[16px] py-[10px] border-b border-[#E5E7EB] bg-white"
-              >
-
-                <span
-                  class="text-[#11313B] text-[13px] font-medium"
-                >
-                  View Audit Logs
-                </span>
-
-                <div
-                  class="flex items-center gap-[18px]"
-                >
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="auditLogs"
-                      value="yes"
-                      class="accent-[#3BB273]"
-                    >
-                    Yes
-                  </label>
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="auditLogs"
-                      value="no"
-                      class="accent-[#3BB273]"
-                      checked
-                    >
-                    No
-                  </label>
-
-                </div>
-
-              </div>
-
-
-              <!-- ================= SUSPEND USERS ================= -->
-              <div
-                class="flex items-center justify-between px-[16px] py-[10px] bg-white"
-              >
-
-                <span
-                  class="text-[#11313B] text-[13px] font-medium"
-                >
-                  Suspend Users
-                </span>
-
-                <div
-                  class="flex items-center gap-[18px]"
-                >
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="suspendUsers"
-                      value="yes"
-                      class="accent-[#3BB273]"
-                    >
-                    Yes
-                  </label>
-
-                  <label
-                    class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      name="suspendUsers"
-                      value="no"
-                      class="accent-[#3BB273]"
-                      checked
-                    >
-                    No
-                  </label>
-
-                </div>
-
-              </div>
-
-            </div>
+           <!-- ================= PERMISSION CARD ================= -->
+<div
+  id="updateAdminRightsContainer"
+  class="mt-[12px] rounded-[12px] border border-[#E5E7EB] overflow-hidden"
+>
+  <div class="px-[16px] py-[12px] text-[#7C8AA0] text-[12px]">
+    Loading rights...
+  </div>
+</div>
 
           </div>
 
@@ -4904,6 +4904,7 @@
 </section>
 
 
+
 <!-- ================= CREATE ADMIN USER SECTION ================= -->
 <section
   id="createAdminUserSection"
@@ -4914,6 +4915,7 @@
     <!-- HEADER -->
     <div class="flex items-center justify-between">
       <div>
+
         <button
           id="backToAdminUsersBtn"
           type="button"
@@ -4930,98 +4932,177 @@
         <p class="mt-[4px] text-[#7C8AA0] text-[14px]">
           Fill in the details below to create a new admin account.
         </p>
+
       </div>
     </div>
 
-    <!-- FORM CARD -->
-    <div class="mt-[24px] w-full rounded-[16px] bg-white border border-[#E5E7EB] p-[22px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]">
-      <form id="createAdminUserForm" class="w-full">
 
-        <!-- NAME ROW -->
+    <!-- FORM CARD -->
+    <div
+      class="mt-[24px] w-full rounded-[16px] bg-white border border-[#E5E7EB] p-[22px] shadow-[0px_1px_4px_rgba(178,163,163,0.35)]"
+    >
+
+      <form
+        id="createAdminUserForm"
+        class="w-full"
+        novalidate
+      >
+
+        <!-- ================= NAME ROW ================= -->
         <div class="grid grid-cols-2 gap-[20px]">
+
+          <!-- FIRST NAME -->
           <div>
-            <label class="text-[#11313B] text-[12px] font-semibold">
+
+            <label
+              for="adminFirstNameInput"
+              class="text-[#11313B] text-[12px] font-semibold"
+            >
               First Name
             </label>
+
             <input
               id="adminFirstNameInput"
+              name="first_name"
               type="text"
+              autocomplete="given-name"
               placeholder="Enter first name"
+              required
               class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none"
             />
+
           </div>
 
+
+          <!-- LAST NAME -->
           <div>
-            <label class="text-[#11313B] text-[12px] font-semibold">
+
+            <label
+              for="adminLastNameInput"
+              class="text-[#11313B] text-[12px] font-semibold"
+            >
               Last Name
             </label>
+
             <input
               id="adminLastNameInput"
+              name="last_name"
               type="text"
+              autocomplete="family-name"
               placeholder="Enter last name"
+              required
               class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none"
             />
+
           </div>
+
         </div>
 
-        <!-- CONTACT ROW -->
+
+        <!-- ================= CONTACT ROW ================= -->
         <div class="mt-[18px] grid grid-cols-2 gap-[20px]">
+
+          <!-- EMAIL -->
           <div>
-            <label class="text-[#11313B] text-[12px] font-semibold">
+
+            <label
+              for="adminEmailInput"
+              class="text-[#11313B] text-[12px] font-semibold"
+            >
               Email Address
             </label>
+
             <input
               id="adminEmailInput"
+              name="email"
               type="email"
+              autocomplete="email"
               placeholder="Enter email address"
+              required
               class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none"
             />
+
           </div>
 
+
+          <!-- PHONE -->
           <div>
-            <label class="text-[#11313B] text-[12px] font-semibold">
+
+            <label
+              for="adminPhoneInput"
+              class="text-[#11313B] text-[12px] font-semibold"
+            >
               Phone Number
             </label>
 
-          <div class="mt-[6px] flex rounded-[8px] overflow-hidden border border-[#D0D5DD]">
 
-    <select
-        id="adminPhoneCodeInput"
-        class="w-[100px] h-[40px] border-r border-[#D0D5DD] bg-white px-[8px] outline-none"
-    >
-        <option>NG +234</option>
-        <option>US +1</option>
-    </select>
+            <div
+              class="mt-[6px] flex rounded-[8px] overflow-hidden border border-[#D0D5DD]"
+            >
 
-    <input
-        id="adminPhoneInput"
-        type="text"
-        placeholder="Enter phone number"
-        class="flex-1 h-[40px] px-[12px] outline-none"
-    />
+              <select
+                id="adminPhoneCodeInput"
+                class="w-[100px] h-[40px] border-r border-[#D0D5DD] bg-white px-[8px] outline-none"
+              >
+                <option value="NG +234">
+                  NG +234
+                </option>
 
-</div>
+                <option value="US +1">
+                  US +1
+                </option>
+              </select>
+
+
+              <input
+                id="adminPhoneInput"
+                name="phone"
+                type="tel"
+                inputmode="numeric"
+                autocomplete="tel-national"
+                placeholder="Enter phone number"
+                required
+                class="flex-1 h-[40px] px-[12px] outline-none"
+              />
+
+            </div>
+
           </div>
+
         </div>
 
-        <!-- ROLE ROW -->
-        <div class="mt-[18px] ">
+
+        <!-- ================= ROLE ROW ================= -->
+        <div class="mt-[18px]">
+
           <div>
-            <label class="text-[#11313B] text-[12px] font-semibold">
+
+            <label
+              for="adminRoleInput"
+              class="text-[#11313B] text-[12px] font-semibold"
+            >
               Role
             </label>
+
             <select
               id="adminRoleInput"
+              name="role"
+              required
               class="mt-[6px] w-full h-[40px] rounded-[8px] border border-[#D0D5DD] px-[12px] text-[13px] outline-none bg-white"
             >
-              <option value="admin" selected>Admin</option>
-              
+              <option value="">
+                Loading roles...
+              </option>
             </select>
+
           </div>
+
         </div>
 
-        <!-- RIGHTS -->
+
+        <!-- ================= RIGHTS ================= -->
         <div class="mt-[24px]">
+
           <h2 class="text-[#11313B] text-[16px] font-semibold">
             Rights
           </h2>
@@ -5030,153 +5111,36 @@
             Choose what this admin user can access.
           </p>
 
-          
 
-          <div class="mt-[14px] rounded-[12px] border border-[#E5E7EB] overflow-hidden">
+          <div
+            id="createAdminRightsContainer"
+            class="mt-[14px] rounded-[12px] border border-[#E5E7EB] overflow-hidden"
+          >
 
-            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
-  <span class="text-[#11313B] text-[13px] font-medium">
-    Is Super Admin?
-  </span>
-
-  <div class="flex items-center gap-[18px]">
-    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-      <input
-        type="radio"
-        name="canCreateAdmins"
-        value="true"
-        class="accent-[#3BB273]"
-      />
-      Yes
-    </label>
-
-    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-      <input
-        type="radio"
-        name="canCreateAdmins"
-        value="false"
-        checked
-        class="accent-[#3BB273]"
-      />
-      No
-    </label>
-  </div>
-</div>
-
-            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
-              <span class="text-[#11313B] text-[13px] font-medium">Manage Drivers</span>
-              <div class="flex items-center gap-[18px]">
-                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-                  <input type="radio" name="canManageDrivers" class="accent-[#3BB273]" value="true" />
-                  Yes
-                </label>
-                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-                  <input type="radio" name="canManageDrivers" class="accent-[#3BB273]" value="false" checked />
-                  No
-                </label>
-              </div>
+            <div
+              class="px-[16px] py-[14px] text-[#7C8AA0] text-[12px]"
+            >
+              Loading rights...
             </div>
-
-            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
-              <span class="text-[#11313B] text-[13px] font-medium">Manage Support Tickets</span>
-              <div class="flex items-center gap-[18px]">
-                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-                  <input type="radio" name="canManageSupportTicket" class="accent-[#3BB273]" value="true" />
-                  Yes
-                </label>
-                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-                  <input type="radio" name="canManageSupportTicket" class="accent-[#3BB273]" value="false" checked />
-                  No
-                </label>
-              </div>
-            </div>
-
-            <div class="flex items-center justify-between px-[16px] py-[14px] border-b border-[#E5E7EB]">
-              <span class="text-[#11313B] text-[13px] font-medium">Manage Payouts</span>
-              <div class="flex items-center gap-[18px]">
-                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-                  <input type="radio" name="canManagePayouts" class="accent-[#3BB273]" value="true" />
-                  Yes
-                </label>
-                <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-                  <input type="radio" name="canManagePayouts" class="accent-[#3BB273]" value="false" checked />
-                  No
-                </label>
-              </div>
-            </div>
-<div
-  class="flex items-center justify-between px-[16px] py-[14px]"
->
-  <span class="text-[#11313B] text-[13px] font-medium">
-    View Audit Logs
-  </span>
-
-  <div class="flex items-center gap-[18px]">
-    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-      <input
-        type="radio"
-        name="canViewLogs"
-        value="true"
-        class="accent-[#3BB273]"
-      />
-      Yes
-    </label>
-
-    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-      <input
-        type="radio"
-        name="canViewLogs"
-        value="false"
-        checked
-        class="accent-[#3BB273]"
-      />
-      No
-    </label>
-  </div>
-</div>
-<div
-  class="flex items-center justify-between px-[16px] py-[14px]"
->
-  <span class="text-[#11313B] text-[13px] font-medium">
-    Suspend users
-  </span>
-
-  <div class="flex items-center gap-[18px]">
-    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-      <input
-        type="radio"
-        name="canSuspendUsers"
-        value="true"
-        class="accent-[#3BB273]"
-      />
-      Yes
-    </label>
-
-    <label class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer">
-      <input
-        type="radio"
-        name="canSuspendUsers"
-        value="false"
-        checked
-        class="accent-[#3BB273]"
-      />
-      No
-    </label>
-  </div>
-</div>
 
           </div>
+
         </div>
 
-        <!-- BUTTONS -->
-        <div class="mt-[26px] flex items-center justify-end gap-[12px]">
+
+        <!-- ================= BUTTONS ================= -->
+        <div
+          class="mt-[26px] flex items-center justify-end gap-[12px]"
+        >
+
           <button
             id="cancelCreateAdminBtn"
             type="button"
-            class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-semibold cursor-pointer "
+            class="h-[40px] px-[20px] rounded-[8px] border border-[#D0D5DD] bg-white text-[#344054] text-[13px] font-semibold cursor-pointer"
           >
             Cancel
           </button>
+
 
           <button
             type="submit"
@@ -5184,10 +5148,13 @@
           >
             Create User
           </button>
+
         </div>
 
       </form>
+
     </div>
+
   </div>
 </section>
 

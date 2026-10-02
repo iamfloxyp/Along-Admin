@@ -343,33 +343,153 @@ function switchSidebarTab(sectionId, linkId, iconId, textId, updateUrl = true) {
 }
 
 function canCurrentAdminAccessHash(hash) {
-  const savedUser = sessionStorage.getItem("admin_user");
-  const user = savedUser ? JSON.parse(savedUser) : {};
-  const rights = user.rights || {};
+  const savedUser =
+    sessionStorage.getItem("admin_user");
+
+  const user =
+    savedUser
+      ? JSON.parse(savedUser)
+      : {};
+
+  const rights =
+    user.rights || {};
+
+
+  // ==========================================
+  // SUPER ADMIN
+  // ==========================================
 
   const isSuperAdmin =
     rights.is_super_admin === true ||
     rights.can_create_admins === true;
 
-  if (isSuperAdmin) return true;
+  if (isSuperAdmin) {
+    return true;
+  }
+
+
+  // ==========================================
+  // DRIVERS
+  // ==========================================
+  // View Drivers:
+  // Can open driver list + driver details.
+  //
+  // Manage Drivers:
+  // Can also open driver list + driver details.
+  //
+  // Action buttons will be controlled separately.
 
   if (hash.startsWith("#drivers")) {
-    return rights.can_manage_drivers === true;
+    return (
+      rights.can_view_drivers === true ||
+      rights.can_manage_drivers === true
+    );
   }
+
+
+  // ==========================================
+  // CUSTOMERS / USERS
+  // ==========================================
+
+  if (hash.startsWith("#customers")) {
+    return rights.can_view_user === true;
+  }
+
+
+  // ==========================================
+  // PAYOUT
+  // ==========================================
 
   if (hash.startsWith("#payout")) {
     return rights.can_manage_payouts === true;
   }
 
+
+  // ==========================================
+  // SUPPORT REQUESTS
+  // ==========================================
+
   if (hash.startsWith("#support-requests")) {
     return rights.can_manage_support_ticket === true;
   }
+
+
+  // ==========================================
+  // ADMIN USERS
+  // ==========================================
 
   if (hash.startsWith("#admin-users")) {
     return false;
   }
 
+
+  // ==========================================
+  // EVERYTHING ELSE
+  // ==========================================
+
   return true;
+}
+
+function currentAdminCanManageDrivers() {
+  try {
+    const savedUser =
+      sessionStorage.getItem("admin_user");
+
+    if (!savedUser) return false;
+
+    const user =
+      JSON.parse(savedUser);
+
+    const rights =
+      user?.rights || {};
+
+    return (
+      rights.is_super_admin === true ||
+      rights.can_manage_drivers === true
+    );
+
+  } catch (error) {
+    console.error(
+      "Unable to read driver management permission:",
+      error
+    );
+
+    return false;
+  }
+}
+
+function applyDriverManagementPermissions() {
+  const canManage =
+    currentAdminCanManageDrivers();
+
+  if (canManage) {
+    return;
+  }
+
+  const selectors = [
+    "#approvePersonalInfoBtn",
+    "#rejectPersonalInfoBtn",
+    "#approveVehicleInfoBtn",
+    "#rejectVehicleInfoBtn",
+    ".documentApproveBtn",
+    ".documentRejectBtn",
+    "#driverDetailsUpdateStatusBtn",
+    "#approveDriverStatusBtn",
+    "#rejectDriverStatusBtn"
+  ];
+
+  selectors.forEach((selector) => {
+    document
+      .querySelectorAll(selector)
+      .forEach((button) => {
+        button.disabled = true;
+
+        button.classList.add(
+          "cursor-not-allowed",
+          "opacity-50"
+        );
+      });
+  });
 }
 
 function loadSectionFromHash() {
@@ -3214,71 +3334,609 @@ async function updateNotificationBadge() {
 }
 
 function renderNotifications() {
+
   adminNotifications = [
-  ...new Map(adminNotifications.map(item => [item.id, item])).values()
-];
-  const list = document.getElementById("notificationsList");
+    ...new Map(
+      adminNotifications.map(
+        item => [item.id, item]
+      )
+    ).values()
+  ];
+
+  const list =
+    document.getElementById(
+      "notificationsList"
+    );
+
   if (!list) return;
 
   list.innerHTML = "";
 
   if (!adminNotifications.length) {
+
     list.innerHTML = `
       <div class="rounded-[14px] bg-white p-[18px] border border-[#E5E7EB]">
         <p class="text-[#11313B] text-[14px] font-semibold">
           No notifications found.
         </p>
+
         <p class="mt-[4px] text-[#7C8AA0] text-[13px]">
           New alerts will appear here.
         </p>
       </div>
     `;
+
     return;
   }
 
+
   adminNotifications.forEach((item) => {
+
     list.innerHTML += `
-     
+      <div
+        class="notificationItem w-full rounded-[12px] p-[12px] border bg-white border-[#E5E7EB] shadow-[0px_1px_4px_rgba(178,163,163,0.45)] cursor-pointer hover:bg-[#F9FAFB] transition"
+        data-id="${item.id}"
+      >
 
-          <div
-  class="notificationItem w-full rounded-[12px] p-[12px] border bg-white border-[#E5E7EB] shadow-[0px_1px_4px_rgba(178,163,163,0.45)]"
-  data-id="${item.id}"
->
-  <div class="flex items-start justify-between gap-[10px]">
-    <div class="flex items-start gap-[10px] min-w-0">
-      <div class="w-[32px] h-[32px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0">
-        <i class="fa-solid fa-bell text-[12px]"></i>
+        <div class="flex items-start justify-between gap-[10px]">
+
+          <div class="flex items-start gap-[10px] min-w-0">
+
+            <div class="w-[32px] h-[32px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0">
+              <i class="fa-solid fa-bell text-[12px]"></i>
+            </div>
+
+            <div class="min-w-0 flex-1">
+
+              <h3 class="text-[#11313B] text-[13px] font-semibold">
+                ${item.title || "Notification"}
+              </h3>
+
+              <p class="mt-[2px] text-[#7C8AA0] text-[12px] leading-[16px]">
+                ${item.message || ""}
+              </p>
+
+              <p class="mt-[4px] text-[#98A2B3] text-[11px]">
+                ${formatNotificationTime(item.created_at)}
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="markNotificationReadBtn w-[24px] h-[24px] rounded-full bg-[#FDECEF] text-[#E57373] flex items-center justify-center shrink-0 cursor-pointer hover:bg-[#FAD8DE]"
+            data-id="${item.id}"
+          >
+            <i class="fa-solid fa-xmark text-[10px]"></i>
+          </button>
+
+        </div>
+
       </div>
-
-      <div class="min-w-0 flex-1">
-        <h3 class="text-[#11313B] text-[13px] font-semibold">
-          ${item.title || "Notification"}
-        </h3>
-
-        <p class="mt-[2px] text-[#7C8AA0] text-[12px] leading-[16px]">
-          ${item.message || ""}
-        </p>
-
-        <p class="mt-[4px] text-[#98A2B3] text-[11px]">
-          ${formatNotificationTime(item.created_at)}
-        </p>
-      </div>
-    </div>
-
-    <button
-      type="button"
-      class="markNotificationReadBtn w-[24px] h-[24px] rounded-full bg-[#FDECEF] text-[#E57373] flex items-center justify-center shrink-0 cursor-pointer hover:bg-[#FAD8DE]"
-      data-id="${item.id}"
-    >
-      <i class="fa-solid fa-xmark text-[10px]"></i>
-    </button>
-  </div>
-</div>
     `;
+
   });
 
+
   attachNotificationReadEvents();
+  attachNotificationNavigationEvents();
 }
+
+
+
+// ============================================================
+// 1. GET NORMAL NOTIFICATION ROUTE
+// Customer, Payout and Support keep their existing working logic
+// ============================================================
+
+// ============================================================
+// 1. GET NORMAL NOTIFICATION ROUTE
+// Customer, Payout and Support
+// ============================================================
+
+function getNotificationRoute(item) {
+  if (!item) return null;
+
+  const type =
+    String(item.type || "")
+      .toLowerCase();
+
+  const data =
+    item.data || {};
+
+
+  // ==========================================
+  // NEW CUSTOMER / NEW DRIVER
+  // ==========================================
+
+  if (type === "user_signup") {
+
+    const role =
+      String(data.role || "")
+        .toLowerCase();
+
+    const userId =
+      data.user_id ||
+      item.user_id;
+
+
+    // ========================================
+    // CUSTOMER
+    // ========================================
+
+    if (role === "customer") {
+
+      if (userId) {
+        return `#customers/${userId}`;
+      }
+
+      return "#customers";
+    }
+
+
+    // ========================================
+    // DRIVER
+    // ========================================
+    // Driver is handled separately by
+    // openDriverFromNotification().
+    // This is only a fallback.
+
+    if (role === "driver") {
+      return "#drivers";
+    }
+
+
+    // Unknown signup role
+    return null;
+  }
+
+
+  // ==========================================
+  // PAYOUT REQUEST
+  // ==========================================
+
+  if (type === "payout_requested") {
+
+    const payoutId =
+      data.payout_id;
+
+    if (payoutId) {
+      return `#payout/details/${payoutId}`;
+    }
+
+    return "#payout";
+  }
+
+
+  // ==========================================
+  // SUPPORT TICKET
+  // ==========================================
+
+  if (type === "ticket_created") {
+
+    const ticketId =
+      data.ticket_id;
+
+    if (ticketId) {
+      return `#support-requests/chat/${ticketId}`;
+    }
+
+    return "#support-requests";
+  }
+
+
+  // ==========================================
+  // NO MATCHING ROUTE
+  // ==========================================
+
+  return null;
+}
+
+
+
+// ============================================================
+// 2. OPEN EXACT DRIVER FROM NOTIFICATION
+//
+// Notification gives us the USER ID / email.
+// Driver Details requires the DriverProfile ID.
+//
+// We fetch the drivers, find the matching driver,
+// get the DriverProfile ID, then call the existing
+// openDriverDetails() function directly.
+// ============================================================
+
+async function openDriverFromNotification(item) {
+
+  if (!item) {
+    window.location.hash = "#drivers";
+    return;
+  }
+
+
+  const data =
+    item.data || {};
+
+
+  // ==========================================
+  // USER ID FROM NOTIFICATION
+  // ==========================================
+
+  const notificationUserId =
+    data.user_id ||
+    item.user_id ||
+    null;
+
+
+  // ==========================================
+  // EMAIL FROM NOTIFICATION
+  // ==========================================
+
+  const notificationEmail =
+    String(data.email || "")
+      .trim()
+      .toLowerCase();
+
+
+  try {
+
+    // ========================================
+    // FETCH DRIVER PROFILES
+    // ========================================
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/drivers`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+        "Failed to load drivers"
+      );
+    }
+
+
+    // ========================================
+    // GET DRIVER ARRAY
+    // ========================================
+
+    const drivers =
+      Array.isArray(result.data)
+        ? result.data
+        : [];
+
+
+    // ========================================
+    // FIND MATCHING DRIVER
+    //
+    // First try User ID.
+    // If unavailable, fall back to email.
+    // ========================================
+
+    const matchingDriver =
+      drivers.find((driver) => {
+
+        const driverUserId =
+          driver.user?.id ||
+          driver.user_id ||
+          null;
+
+
+        const driverEmail =
+          String(
+            driver.email ||
+            driver.user?.email ||
+            ""
+          )
+            .trim()
+            .toLowerCase();
+
+
+        const userIdMatches =
+          notificationUserId &&
+          driverUserId &&
+          String(driverUserId) ===
+            String(notificationUserId);
+
+
+        const emailMatches =
+          notificationEmail &&
+          driverEmail &&
+          driverEmail === notificationEmail;
+
+
+        return (
+          userIdMatches ||
+          emailMatches
+        );
+
+      });
+
+
+    // ========================================
+    // DRIVER NOT FOUND
+    // ========================================
+
+    if (!matchingDriver) {
+
+      console.warn(
+        "No driver matched this notification:",
+        {
+          notificationUserId,
+          notificationEmail,
+          notification: item
+        }
+      );
+
+      window.location.hash =
+        "#drivers";
+
+      return;
+    }
+
+
+    // ========================================
+    // GET DRIVER PROFILE ID
+    // ========================================
+
+    const driverProfileId =
+      matchingDriver.id;
+
+
+    if (!driverProfileId) {
+
+      console.warn(
+        "Matched driver has no DriverProfile ID:",
+        matchingDriver
+      );
+
+      window.location.hash =
+        "#drivers";
+
+      return;
+    }
+
+
+    console.log(
+      "Driver notification resolved:",
+      {
+        notificationUserId,
+        notificationEmail,
+        driverProfileId
+      }
+    );
+
+
+    // ========================================
+    // OPEN EXISTING DRIVER DETAILS
+    //
+    // IMPORTANT:
+    // This uses the same function your normal
+    // Driver Details page already uses.
+    // ========================================
+
+    await openDriverDetails(
+      driverProfileId,
+      true
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Unable to open driver from notification:",
+      error
+    );
+
+
+    window.location.hash =
+      "#drivers";
+  }
+}
+
+
+
+// ============================================================
+// 3. ATTACH NOTIFICATION NAVIGATION EVENTS
+// ============================================================
+
+function attachNotificationNavigationEvents() {
+
+  document
+    .querySelectorAll(".notificationItem")
+    .forEach((element) => {
+
+      element.addEventListener(
+        "click",
+        async function () {
+
+
+          // ==================================
+          // GET NOTIFICATION ID
+          // ==================================
+
+          const notificationId =
+            this.dataset.id;
+
+
+          // ==================================
+          // FIND NOTIFICATION
+          // ==================================
+
+          const notification =
+            adminNotifications.find(
+              (item) =>
+                String(item.id) ===
+                String(notificationId)
+            );
+
+
+          if (!notification) {
+            return;
+          }
+
+
+          // ==================================
+          // GET TYPE AND ROLE
+          // ==================================
+
+          const notificationType =
+            String(
+              notification.type || ""
+            )
+              .toLowerCase();
+
+
+          const notificationRole =
+            String(
+              notification.data?.role || ""
+            )
+              .toLowerCase();
+
+
+          // ==================================
+          // DRIVER SIGNUP
+          // ==================================
+          //
+          // Driver is special because the
+          // notification contains the User ID,
+          // while Driver Details requires the
+          // DriverProfile ID.
+          //
+          // We handle Driver here and RETURN,
+          // so it never reaches the normal
+          // hash routing below.
+          // ==================================
+
+          if (
+            notificationType === "user_signup" &&
+            notificationRole === "driver"
+          ) {
+
+
+            // ================================
+            // MARK DRIVER NOTIFICATION READ
+            // ================================
+
+            try {
+
+              if (!notification.read_at) {
+
+                await markNotificationAsRead(
+                  notificationId
+                );
+
+
+                await updateNotificationBadge();
+
+              }
+
+            } catch (error) {
+
+              console.error(
+                "Unable to mark driver notification as read:",
+                error
+              );
+
+            }
+
+
+            // ================================
+            // OPEN EXACT DRIVER
+            // ================================
+
+            await openDriverFromNotification(
+              notification
+            );
+
+
+            // VERY IMPORTANT:
+            // Stop here so normal routing
+            // does not run afterwards.
+            return;
+          }
+
+
+          // ==================================
+          // CUSTOMER / PAYOUT / SUPPORT
+          // ==================================
+
+          const route =
+            getNotificationRoute(
+              notification
+            );
+
+
+          // ==================================
+          // NO ROUTE
+          // ==================================
+
+          if (!route) {
+            return;
+          }
+
+
+          // ==================================
+          // MARK NOTIFICATION AS READ
+          // ==================================
+
+          try {
+
+            if (!notification.read_at) {
+
+              await markNotificationAsRead(
+                notificationId
+              );
+
+
+              await updateNotificationBadge();
+
+            }
+
+          } catch (error) {
+
+            console.error(
+              "Unable to mark notification as read:",
+              error
+            );
+
+            // Do not block navigation.
+          }
+
+
+          // ==================================
+          // NORMAL NAVIGATION
+          // ==================================
+
+          window.location.hash =
+            route;
+
+        }
+      );
+
+    });
+}
+
+
+
+
 
 function attachNotificationReadEvents() {
   document.querySelectorAll(".markNotificationReadBtn").forEach((btn) => {
@@ -3399,6 +4057,81 @@ async function fetchDashboardAnalytics() {
   finally {
     hideGlobalLoader();
   }
+}
+
+function setupDashboardTileNavigation() {
+
+  const tileRoutes = [
+    {
+      ids: [
+        "dashboardTotalDrivers",
+        "dashboardApprovedDrivers",
+        "dashboardPendingDrivers",
+        "dashboardRejectedDrivers"
+      ],
+      route: "#drivers"
+    },
+
+    {
+      ids: [
+        "dashboardTotalCustomers",
+        "dashboardActiveCustomers",
+        "dashboardNewCustomersThisWeek",
+        "dashboardNewCustomersThisMonth"
+      ],
+      route: "#customers"
+    },
+
+    {
+      ids: [
+        "dashboardTotalDeliveries",
+        "dashboardInProgressDeliveries",
+        "dashboardCompletedDeliveries",
+        "dashboardTodayDeliveries",
+        "dashboardFailedDeliveries"
+      ],
+      route: "#tags"
+    },
+
+    {
+      ids: [
+        "dashboardTotalRevenue",
+        "dashboardPendingPayouts",
+        "dashboardCompletedPayouts"
+      ],
+      route: "#payout"
+    }
+  ];
+
+  tileRoutes.forEach(({ ids, route }) => {
+
+    ids.forEach((id) => {
+
+      const valueElement =
+        document.getElementById(id);
+
+      if (!valueElement) return;
+
+      const tile =
+        valueElement.closest(
+          ".dashboard-tile"
+        );
+
+      if (!tile) return;
+
+      tile.style.cursor = "pointer";
+
+      tile.addEventListener(
+        "click",
+        function () {
+          window.location.hash = route;
+        }
+      );
+
+    });
+
+  });
+
 }
 
 function renderDashboardAnalytics(data) {
@@ -3742,7 +4475,7 @@ function formatDashboardMoney(value) {
     maximumFractionDigits: 2
   })}`;
 }
-
+setupDashboardTileNavigation();
 fetchDashboardAnalytics();
 /*============================= END OF DASHBOARD SECTION =============================*/
 
@@ -3750,7 +4483,1043 @@ fetchDashboardAnalytics();
 /* =========================
    FETCH DRIVERS FROM API
 ========================= */
+
 let currentDriverPagination = null;
+
+// ============================================================
+// RECENT ACTIVITY
+// DRIVER + CUSTOMER
+// ============================================================
+
+
+// ============================================================
+// FETCH COMPLETED TAGS
+// ============================================================
+
+async function fetchUserCompletedTags(userId) {
+
+  const response = await fetch(
+    `${API_BASE_URL}/admin/tags/user/${userId}/completed`,
+    {
+      method: "GET",
+      headers: adminUsersAuthHeaders()
+    }
+  );
+
+
+  const result =
+    await response.json();
+
+
+  if (
+    !response.ok ||
+    result.success === false
+  ) {
+
+    throw new Error(
+      result.message ||
+      "Failed to load completed tags."
+    );
+
+  }
+
+
+  return result;
+}
+
+
+// ============================================================
+// FETCH RECENT AUDIT LOGS
+// ============================================================
+
+async function fetchUserRecentAuditLogs(userId) {
+
+  const response = await fetch(
+    `${API_BASE_URL}/admin/audit-logs/user/${userId}/recent`,
+    {
+      method: "GET",
+      headers: adminUsersAuthHeaders()
+    }
+  );
+
+
+  const result =
+    await response.json();
+
+
+  if (
+    !response.ok ||
+    result.success === false
+  ) {
+
+    throw new Error(
+      result.message ||
+      "Failed to load recent audit logs."
+    );
+
+  }
+
+
+  return result;
+}
+
+
+// ============================================================
+// LOAD USER RECENT ACTIVITY
+// COMBINES:
+// 1. COMPLETED TAGS
+// 2. AUDIT LOGS
+//
+// THEN:
+// SORTS NEWEST FIRST
+// DISPLAYS ONLY FIRST 10
+// ============================================================
+
+async function loadUserRecentActivity(
+  userId,
+  listElementId
+) {
+
+  const list =
+    document.getElementById(
+      listElementId
+    );
+
+
+  if (
+    !list ||
+    !userId
+  ) {
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // LOADING STATE
+  // ==========================================================
+
+  list.innerHTML = `
+    <div
+      class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center"
+    >
+      <p
+        class="text-[#7C8AA0] text-[13px] leading-[20px] font-medium"
+      >
+        Loading recent activity...
+      </p>
+    </div>
+  `;
+
+
+  try {
+
+    // ========================================================
+    // FETCH TAGS + LOGS TOGETHER
+    // ========================================================
+
+    const [
+      completedTagsResult,
+      auditLogsResult
+    ] = await Promise.allSettled([
+
+      fetchUserCompletedTags(
+        userId
+      ),
+
+      fetchUserRecentAuditLogs(
+        userId
+      )
+
+    ]);
+
+
+    // ========================================================
+    // GET COMPLETED TAGS
+    // ========================================================
+
+    let completedTags = [];
+
+
+    if (
+      completedTagsResult.status ===
+      "fulfilled"
+    ) {
+
+      const result =
+        completedTagsResult.value;
+
+
+      completedTags =
+        Array.isArray(
+          result?.data
+        )
+          ? result.data
+
+          : Array.isArray(
+              result?.data?.tags
+            )
+            ? result.data.tags
+
+            : Array.isArray(
+                result?.data?.completed_tags
+              )
+              ? result.data.completed_tags
+
+              : [];
+
+    } else {
+
+      console.error(
+        "Completed tags error:",
+        completedTagsResult.reason
+      );
+
+    }
+
+
+    // ========================================================
+    // GET AUDIT LOGS
+    // ========================================================
+
+    let auditLogs = [];
+
+
+    if (
+      auditLogsResult.status ===
+      "fulfilled"
+    ) {
+
+      const result =
+        auditLogsResult.value;
+
+
+      auditLogs =
+        Array.isArray(
+          result?.data
+        )
+          ? result.data
+
+          : Array.isArray(
+              result?.data?.logs
+            )
+            ? result.data.logs
+
+            : [];
+
+    } else {
+
+      console.error(
+        "Audit logs error:",
+        auditLogsResult.reason
+      );
+
+    }
+
+
+    console.log(
+      "Recent completed tags:",
+      completedTags
+    );
+
+
+    console.log(
+      "Recent audit logs:",
+      auditLogs
+    );
+
+
+    // ========================================================
+    // NORMALIZE COMPLETED TAGS
+    // ========================================================
+
+    const tagActivities =
+      completedTags.map(
+        (tag) => {
+
+          return {
+
+            type:
+              "tag",
+
+            id:
+              tag.id ||
+              tag.tag_id ||
+              null,
+
+            title:
+              getRecentTagActivityTitle(
+                tag
+              ),
+
+            timestamp:
+              tag.completed_at ||
+              tag.timestamp ||
+              tag.updated_at ||
+              tag.created_at ||
+              null,
+
+            timestampHuman:
+              tag.timestamp_human ||
+              tag.completed_at_human ||
+              "",
+
+            entityType:
+              "Tag",
+
+            entityId:
+              tag.id ||
+              tag.tag_id ||
+              null,
+
+            raw:
+              tag
+
+          };
+
+        }
+      );
+
+
+    // ========================================================
+    // NORMALIZE AUDIT LOGS
+    //
+    // ACTUAL BACKEND RESPONSE USES:
+    // log.timestamp
+    // log.timestamp_human
+    // log.action
+    // log.entity_type
+    // log.entity_id
+    // ========================================================
+
+    const logActivities =
+      auditLogs.map(
+        (log) => {
+
+          return {
+
+            type:
+              "log",
+
+            id:
+              log.id ||
+              null,
+
+            title:
+              getRecentLogActivityTitle(
+                log
+              ),
+
+            timestamp:
+              log.timestamp ||
+              null,
+
+            timestampHuman:
+              log.timestamp_human ||
+              "",
+
+            entityType:
+              log.entity_type ||
+              "",
+
+            entityId:
+              log.entity_id ||
+              null,
+
+            raw:
+              log
+
+          };
+
+        }
+      );
+
+
+    // ========================================================
+    // COMBINE TAGS + LOGS
+    // ========================================================
+
+    const combinedActivities = [
+      ...tagActivities,
+      ...logActivities
+    ];
+
+
+    // ========================================================
+    // REMOVE ITEMS WITHOUT A VALID TIMESTAMP
+    // SORT NEWEST FIRST
+    // TAKE ONLY FIRST 10
+    // ========================================================
+
+    const activities =
+      combinedActivities
+        .filter(
+          (activity) => {
+
+            return (
+              activity.timestamp &&
+              parseRecentActivityTimestamp(
+                activity.timestamp
+              ) > 0
+            );
+
+          }
+        )
+        .sort(
+          (a, b) => {
+
+            return (
+              parseRecentActivityTimestamp(
+                b.timestamp
+              ) -
+              parseRecentActivityTimestamp(
+                a.timestamp
+              )
+            );
+
+          }
+        )
+        .slice(
+          0,
+          10
+        );
+
+
+    console.log(
+      "Final recent activities:",
+      activities
+    );
+
+
+    // ========================================================
+    // RENDER
+    // ========================================================
+
+    renderUserRecentActivity(
+      activities,
+      listElementId
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Recent activity error:",
+      error
+    );
+
+
+    list.innerHTML = `
+      <div
+        class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+      >
+        <p
+          class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+        >
+          Unable to load recent activity
+        </p>
+
+        <span
+          class="shrink-0 text-[#98A2B3] text-[12px] leading-[16px] font-medium"
+        >
+          --
+        </span>
+      </div>
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// GET COMPLETED TAG ACTIVITY TITLE
+// ============================================================
+
+function getRecentTagActivityTitle(tag) {
+
+  const tagName =
+    tag.title ||
+    tag.name ||
+    tag.tag_name ||
+    tag.description ||
+    "";
+
+
+  if (tagName) {
+
+    return `${tagName} completed`;
+
+  }
+
+
+  return "Tag completed";
+}
+
+
+// ============================================================
+// GET AUDIT LOG ACTIVITY TITLE
+// ============================================================
+
+function getRecentLogActivityTitle(log) {
+
+  const action =
+    String(
+      log.action || ""
+    ).trim();
+
+
+  // ==========================================================
+  // USER LOGIN
+  // ==========================================================
+
+  if (
+    action.toLowerCase() ===
+    "user_login"
+  ) {
+
+    return "User logged in";
+
+  }
+
+
+  // ==========================================================
+  // USER SIGNUP
+  // ==========================================================
+
+  if (
+    action.toLowerCase() ===
+    "user_signup"
+  ) {
+
+    return "User signed up";
+
+  }
+
+
+  // ==========================================================
+  // USER UPDATED
+  // ==========================================================
+
+  if (
+    action.toLowerCase() ===
+    "updated"
+  ) {
+
+    return "User information updated";
+
+  }
+
+
+  // ==========================================================
+  // USER SUSPENDED
+  // ==========================================================
+
+  if (
+    action.toLowerCase() ===
+    "suspended" ||
+    action.toLowerCase() ===
+    "user_suspended"
+  ) {
+
+    return "User suspended";
+
+  }
+
+
+  // ==========================================================
+  // USER UNSUSPENDED
+  // ==========================================================
+
+  if (
+    action.toLowerCase() ===
+    "unsuspended" ||
+    action.toLowerCase() ===
+    "user_unsuspended"
+  ) {
+
+    return "User unsuspended";
+
+  }
+
+
+  // ==========================================================
+  // FALLBACK
+  // ==========================================================
+
+  if (action) {
+
+    return action
+      .replace(
+        /_/g,
+        " "
+      )
+      .replace(
+        /\b\w/g,
+        (letter) =>
+          letter.toUpperCase()
+      );
+
+  }
+
+
+  return "User activity";
+}
+
+
+// ============================================================
+// PARSE RECENT ACTIVITY TIMESTAMP
+//
+// BACKEND FORMAT:
+// 2026-09-25 15:53:26
+//
+// CONVERT TO:
+// 2026-09-25T15:53:26
+// ============================================================
+
+function parseRecentActivityTimestamp(
+  timestamp
+) {
+
+  if (!timestamp) {
+
+    return 0;
+
+  }
+
+
+  const normalizedTimestamp =
+    String(
+      timestamp
+    )
+      .trim()
+      .replace(
+        " ",
+        "T"
+      );
+
+
+  const time =
+    new Date(
+      normalizedTimestamp
+    ).getTime();
+
+
+  if (
+    Number.isNaN(
+      time
+    )
+  ) {
+
+    return 0;
+
+  }
+
+
+  return time;
+}
+
+
+// ============================================================
+// RENDER RECENT ACTIVITY
+// ============================================================
+
+function renderUserRecentActivity(
+  activities,
+  listElementId
+) {
+
+  const list =
+    document.getElementById(
+      listElementId
+    );
+
+
+  if (!list) {
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // NO ACTIVITY
+  // ==========================================================
+
+  if (
+    !activities.length
+  ) {
+
+    list.innerHTML = `
+      <div
+        class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+      >
+        <p
+          class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+        >
+          No recent activity yet
+        </p>
+
+        <span
+          class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium"
+        >
+          --
+        </span>
+      </div>
+    `;
+
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // RENDER ACTIVITY ROWS
+  // ==========================================================
+
+  list.innerHTML =
+    activities
+      .map(
+        (activity) => {
+
+          const activityData =
+            encodeURIComponent(
+              JSON.stringify(
+                activity
+              )
+            );
+
+
+          const isTag =
+            activity.type ===
+            "tag";
+
+
+          const activityTypeText =
+            isTag
+              ? "Completed Tag"
+              : "Audit Log";
+
+
+          const activityIcon =
+            isTag
+              ? "fa-solid fa-tag"
+              : "fa-solid fa-clock-rotate-left";
+
+
+          const activityIconStyle =
+            isTag
+              ? "bg-[#EAFBFD] text-[#30BBC7]"
+              : "bg-[#F2F4F7] text-[#667085]";
+
+
+          return `
+            <button
+              type="button"
+              class="recentUserActivityItem w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px] text-left cursor-pointer hover:bg-[#F8FAFC] transition"
+              data-activity="${activityData}"
+            >
+
+              <div
+                class="min-w-0 flex items-center gap-[10px]"
+              >
+
+                <div
+                  class="w-[30px] h-[30px] rounded-full ${activityIconStyle} flex items-center justify-center shrink-0"
+                >
+
+                  <i
+                    class="${activityIcon} text-[11px]"
+                  ></i>
+
+                </div>
+
+
+                <div
+                  class="min-w-0"
+                >
+
+                  <p
+                    class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+                  >
+                    ${escapeRecentActivityHtml(
+                      activity.title
+                    )}
+                  </p>
+
+
+                  <p
+                    class="mt-[2px] text-[#98A2B3] text-[11px] leading-[16px] font-medium"
+                  >
+                    ${activityTypeText}
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div
+                class="shrink-0 flex items-center gap-[10px]"
+              >
+
+                <span
+                  class="text-[#30BBC7] text-[12px] leading-[16px] font-medium"
+                >
+                  ${formatRecentActivityTime(
+                    activity.timestamp
+                  )}
+                </span>
+
+              </div>
+
+            </button>
+          `;
+
+        }
+      )
+      .join("");
+
+}
+
+
+// ============================================================
+// FORMAT RECENT ACTIVITY TIME
+// ============================================================
+
+function formatRecentActivityTime(
+  timestamp
+) {
+
+  if (!timestamp) {
+
+    return "--";
+
+  }
+
+
+  const normalizedTimestamp =
+    String(
+      timestamp
+    )
+      .trim()
+      .replace(
+        " ",
+        "T"
+      );
+
+
+  const date =
+    new Date(
+      normalizedTimestamp
+    );
+
+
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
+
+    return "--";
+
+  }
+
+
+  return date.toLocaleString(
+    "en-GB",
+    {
+
+      day:
+        "2-digit",
+
+      month:
+        "short",
+
+      year:
+        "numeric",
+
+      hour:
+        "2-digit",
+
+      minute:
+        "2-digit"
+
+    }
+  );
+
+}
+
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeRecentActivityHtml(
+  value
+) {
+
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
+}
+
+
+// ============================================================
+// RECENT ACTIVITY CLICK
+// ============================================================
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    const item =
+      event.target.closest(
+        ".recentUserActivityItem"
+      );
+
+
+    if (!item) {
+
+      return;
+
+    }
+
+
+    const encodedActivity =
+      item.dataset.activity;
+
+
+    if (!encodedActivity) {
+
+      return;
+
+    }
+
+
+    try {
+
+      const activity =
+        JSON.parse(
+          decodeURIComponent(
+            encodedActivity
+          )
+        );
+
+
+      handleRecentActivityClick(
+        activity
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Unable to open recent activity:",
+        error
+      );
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// HANDLE RECENT ACTIVITY CLICK
+// ============================================================
+
+function handleRecentActivityClick(
+  activity
+) {
+
+  console.log(
+    "Recent activity clicked:",
+    activity
+  );
+
+
+  // ==========================================================
+  // COMPLETED TAG
+  // ==========================================================
+
+  if (
+    activity.type ===
+    "tag"
+  ) {
+
+    /*
+      We already have:
+
+      activity.id
+      activity.entityId
+      activity.raw
+
+      Once the exact completed-tag response contains
+      an item, we can connect this to the exact tag
+      details route without guessing the backend field.
+    */
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // AUDIT LOG
+  // ==========================================================
+
+  if (
+    activity.type ===
+    "log"
+  ) {
+
+    /*
+      We already have:
+
+      activity.id
+      activity.entityType
+      activity.entityId
+      activity.raw
+
+      We will connect this to the exact audit-log
+      destination once the existing audit-log route
+      is confirmed.
+    */
+
+    return;
+
+  }
+
+}
+
+
+// ============================================================
+// END OF LOAD RECENT ACTIVITY
+// ============================================================
 
 async function fetchDrivers(customUrl = null) {
   showGlobalLoader();
@@ -4207,7 +5976,7 @@ function renderDriverTable(drivers) {
     const row = document.createElement("div");
     row.className = `w-full min-h-[56px] flex items-center ${index !== drivers.length - 1 ? "border-b border-black/5" : ""}`;
 
-    const address = driver.address || "No address";
+    const totalCompletedTags = driver.total_completed_tags ?? 0;
     const rating = Number(driver.average_rating || 0).toFixed(1);
     const deliveries = driver.total_deliveries ?? 0;
     const earnings = formatCurrency(driver.total_earnings || 0);
@@ -4225,7 +5994,7 @@ function renderDriverTable(drivers) {
 
       <div class="w-[115px] px-[8px] py-[10px] text-[#11313B] text-[12px] leading-[16px] font-medium break-words">${escapeHTML(driver.email || "No Email")}</div>
 
-      <div class="w-[160px] px-[8px] py-[10px] text-[#11313B] text-[12px] leading-[16px] font-medium break-words">${escapeHTML(address)}</div>
+      <div class="w-[160px] px-[8px] py-[10px] text-[#11313B] text-[12px] leading-[16px] font-medium break-words">${escapeHTML(totalCompletedTags)}</div>
 
       <div class="w-[88px] px-[8px] py-[10px] flex flex-col gap-[4px]">
         <span class="w-[61px] h-[2px] rounded-[10px] bg-[#E5E7EB] overflow-hidden">
@@ -4259,6 +6028,8 @@ function renderDriverTable(drivers) {
 
   attachViewButtonEvents();
 }
+
+
 
 /* =========================
    GET STATUS BADGE
@@ -4413,37 +6184,220 @@ async function fetchDriverDetailsById(driverId) {
 let allDocuments = [];
 
 /* ================= OPEN DRIVER DETAILS ================= */
-async function openDriverDetails(driverProfileId, updateUrl = true) {
-    showGlobalLoader();
-  const profile = await fetchDriverDetailsById(driverProfileId);
 
-  if (!profile) return;
+async function openDriverDetails(
+  driverProfileId,
+  updateUrl = true
+) {
 
-  selectedDriverProfile = profile;
-  selectedDriverProfile.was_driver_approved_before =
-  profile.approval_status === "approved";
+  showGlobalLoader();
 
-  renderDriverInformation(profile);
-  renderDriverPerformance(profile);
-  renderDriverKycReview(profile);
-  renderDriverDocumentsFromProfile(profile);
 
-  updatePersonalInfoButtonsState();
-  updateVehicleInfoButtonsState();
+  try {
 
-  showDashboardSection("driverDetailsSection", false);
+    // ============================================================
+    // FETCH DRIVER PROFILE
+    // ============================================================
 
-  resetSidebarMenuStyles();
-  activateSidebarMenu(
-    "sidebarDriversLink",
-    "sidebarDriversIcon",
-    "sidebarDriversText"
-  );
+    const profile =
+      await fetchDriverDetailsById(
+        driverProfileId
+      );
 
-  if (updateUrl) {
-    window.location.hash = `drivers/details/${driverProfileId}`;
+
+    if (!profile) {
+      return;
+    }
+
+
+    // ============================================================
+    // STORE SELECTED DRIVER
+    // ============================================================
+
+    selectedDriverProfile =
+      profile;
+
+
+    selectedDriverProfile.was_driver_approved_before =
+      profile.approval_status ===
+      "approved";
+
+
+    // ============================================================
+    // RENDER DRIVER DETAILS
+    // ============================================================
+
+    renderDriverInformation(
+      profile
+    );
+
+
+    renderDriverPerformance(
+      profile
+    );
+
+
+    renderDriverKycReview(
+      profile
+    );
+
+
+    renderDriverDocumentsFromProfile(
+      profile
+    );
+
+
+    // ============================================================
+    // UPDATE BUTTON STATES / PERMISSIONS
+    // ============================================================
+
+    updatePersonalInfoButtonsState();
+
+
+    updateVehicleInfoButtonsState();
+
+
+    applyDriverManagementPermissions();
+
+
+    // ============================================================
+    // SHOW DRIVER DETAILS SECTION
+    // ============================================================
+
+    showDashboardSection(
+      "driverDetailsSection",
+      false
+    );
+
+
+    resetSidebarMenuStyles();
+
+
+    activateSidebarMenu(
+      "sidebarDriversLink",
+      "sidebarDriversIcon",
+      "sidebarDriversText"
+    );
+
+
+    // ============================================================
+    // RECENT ACTIVITY
+    // LOAD COMPLETED TAGS + RECENT AUDIT LOGS FOR THIS DRIVER
+    // ============================================================
+
+    const recentActivityList =
+      document.getElementById(
+        "driverRecentActivityList"
+      );
+
+
+    // Reset the previous driver's activity immediately.
+    if (recentActivityList) {
+
+      recentActivityList.innerHTML = `
+        <div
+          class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center"
+        >
+          <p
+            class="text-[#7C8AA0] text-[13px] leading-[20px] font-medium"
+          >
+            Loading recent activity...
+          </p>
+        </div>
+      `;
+
+    }
+
+
+    // ============================================================
+    // IMPORTANT:
+    // ACTIVITY ENDPOINTS REQUIRE USER ID,
+    // NOT DRIVER PROFILE ID
+    // ============================================================
+
+    const driverUserId =
+      profile?.user?.id;
+
+
+    if (driverUserId) {
+
+      console.log(
+        "Loading driver recent activity for user:",
+        driverUserId
+      );
+
+
+      loadUserRecentActivity(
+        driverUserId,
+        "driverRecentActivityList"
+      );
+
+    } else {
+
+      console.error(
+        "Cannot load driver recent activity: profile.user.id is missing.",
+        profile
+      );
+
+
+      if (recentActivityList) {
+
+        recentActivityList.innerHTML = `
+          <div
+            class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+          >
+            <p
+              class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+            >
+              No recent activity yet
+            </p>
+
+            <span
+              class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium"
+            >
+              --
+            </span>
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    // ============================================================
+    // UPDATE URL
+    // ============================================================
+
+    if (updateUrl) {
+
+      window.location.hash =
+        `drivers/details/${driverProfileId}`;
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Error opening driver details:",
+      error
+    );
+
+
+    showActionPopupMessage(
+      error.message ||
+      "Unable to open driver details.",
+      "error"
+    );
+
+
+  } finally {
+
+    hideGlobalLoader();
+
   }
-  hideGlobalLoader();
+
 }
 /* ================= RENDER DRIVER INFORMATION CARD ================= */
 function renderDriverInformation(profile) {
@@ -5790,39 +7744,7 @@ function setupDriverDetailsBackButton() {
   };
 }
 
-async function openDriverDetails(driverProfileId, updateUrl = true) {
-  const profile = await fetchDriverDetailsById(driverProfileId);
 
-  if (!profile) return;
-
-  selectedDriverProfile = profile;
-
-  renderDriverInformation(profile);
-  renderDriverPerformance(profile);
-  renderDriverKycReview(profile);
-  renderDriverDocumentsFromProfile(profile);
-
-  updatePersonalInfoButtonsState();
-  updateVehicleInfoButtonsState();
-
-  showDashboardSection("driverDetailsSection", false);
-
-  resetSidebarMenuStyles();
-  activateSidebarMenu(
-    "sidebarDriversLink",
-    "sidebarDriversIcon",
-    "sidebarDriversText"
-  );
-
-  if (updateUrl) {
-  const currentPage = getDriverPageFromUrl();
-  window.history.pushState(
-    null,
-    "",
-    `#drivers/details/${driverProfileId}?page=${currentPage}`
-  );
-}
-}
 document.addEventListener("DOMContentLoaded", setupDriverDetailsBackButton);
 
 
@@ -7429,8 +9351,8 @@ function mapApiUserToSender(user) {
         user.last_login_at
       ),
 
-    orders:
-      0,
+total_completed_tags:
+user.total_completed_tags ?? 0,
 
     role:
       user.role || "user",
@@ -7669,7 +9591,7 @@ function renderSenders(list = senders) {
 
       <div class="w-[80px] px-[10px]">
 
-        ${sender.orders}
+        ${sender.total_completed_tags ?? 0}
 
       </div>
 
@@ -7817,16 +9739,125 @@ nextBtn.className =
   paginationWrap.appendChild(nextBtn);
 }
 
-function renderSenderStats(stats) {
-  const totalUsers = document.getElementById("senderTotalUsers");
-  const activeUsers = document.getElementById("senderActiveUsers");
-  const disabledUsers = document.getElementById("senderDisabledUsers");
-  const newThisMonth = document.getElementById("senderNewThisMonth");
+async function loadSenderStats() {
+  showGlobalLoader();
 
-  if (totalUsers) totalUsers.textContent = stats.totalCustomers || 0;
-  if (activeUsers) activeUsers.textContent = stats.activeCustomers || 0;
-  if (disabledUsers) disabledUsers.textContent = stats.disabledCustomers || 0;
-  if (newThisMonth) newThisMonth.textContent = stats.newThisMonth || 0;
+  try {
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/analytics/overview`,
+      {
+        method: "GET",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      }
+    );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+      throw new Error(
+        result.message ||
+        "Failed to load customer statistics"
+      );
+    }
+
+
+    const usersStats =
+      result.data?.users || {};
+
+
+    renderSenderStats({
+      totalCustomers:
+        Number(
+          usersStats.total_customers ?? 0
+        ),
+
+      activeCustomers:
+        Number(
+          usersStats.active_customers ?? 0
+        ),
+
+      newThisWeek:
+        Number(
+          usersStats.new_customers_this_week ?? 0
+        ),
+
+      newThisMonth:
+        Number(
+          usersStats.new_customers_this_month ?? 0
+        )
+    });
+
+
+  } catch (error) {
+
+    console.error(
+      "Error loading sender stats:",
+      error
+    );
+
+  } finally {
+
+    hideGlobalLoader();
+
+  }
+}
+
+
+function renderSenderStats(stats) {
+
+  const totalUsers =
+    document.getElementById(
+      "senderTotalUsers"
+    );
+
+  const activeUsers =
+    document.getElementById(
+      "senderActiveUsers"
+    );
+
+  const newThisWeek =
+    document.getElementById(
+      "senderNewThisWeek"
+    );
+
+  const newThisMonth =
+    document.getElementById(
+      "senderNewThisMonth"
+    );
+
+
+  if (totalUsers) {
+    totalUsers.textContent =
+      stats.totalCustomers ?? 0;
+  }
+
+
+  if (activeUsers) {
+    activeUsers.textContent =
+      stats.activeCustomers ?? 0;
+  }
+
+
+  if (newThisWeek) {
+    newThisWeek.textContent =
+      stats.newThisWeek ?? 0;
+  }
+
+
+  if (newThisMonth) {
+    newThisMonth.textContent =
+      stats.newThisMonth ?? 0;
+  }
 }
 
 
@@ -7984,44 +10015,208 @@ function openSenderDetails(sender) {
   ).textContent =
     sender.address ||
     "No address";
+
+
+  // ============================================================
+  // RECENT ACTIVITY
+  // LOAD COMPLETED TAGS + RECENT AUDIT LOGS FOR THIS CUSTOMER
+  // ============================================================
+
+  const recentActivityList =
+    document.getElementById(
+      "senderRecentActivityList"
+    );
+
+
+  // Reset the previous customer's activity immediately.
+  if (recentActivityList) {
+
+    recentActivityList.innerHTML = `
+      <div
+        class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center"
+      >
+        <p
+          class="text-[#7C8AA0] text-[13px] leading-[20px] font-medium"
+        >
+          Loading recent activity...
+        </p>
+      </div>
+    `;
+
+  }
+
+
+  // sender.id is the USER ID used by:
+  // /admin/tags/user/{userId}/completed
+  // /admin/audit-logs/user/{userId}/recent
+
+  if (sender.id) {
+
+    console.log(
+      "Loading sender recent activity for user:",
+      sender.id
+    );
+
+
+    loadUserRecentActivity(
+      sender.id,
+      "senderRecentActivityList"
+    );
+
+  } else {
+
+    console.error(
+      "Cannot load sender recent activity: sender.id is missing.",
+      sender
+    );
+
+
+    if (recentActivityList) {
+
+      recentActivityList.innerHTML = `
+        <div
+          class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+        >
+          <p
+            class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+          >
+            No recent activity yet
+          </p>
+
+          <span
+            class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium"
+          >
+            --
+          </span>
+        </div>
+      `;
+
+    }
+
+  }
 }
 
 
 async function openSenderDetailsById(senderId) {
-    showGlobalLoader();
+
+  showGlobalLoader();
+
   try {
-    const response = await fetch(`${API_BASE_URL}/admin/users/${senderId}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${AUTH_TOKEN}`
-      }
-    });
 
-    const result = await response.json();
+    const response =
+      await fetch(
+        `${API_BASE_URL}/admin/users/${senderId}`,
+        {
+          method: "GET",
 
-    if (!response.ok || result.success === false || !result.data) {
-      throw new Error(result.message || "Failed to load sender details");
+          headers: {
+            Accept:
+              "application/json",
+
+            Authorization:
+              `Bearer ${AUTH_TOKEN}`
+          }
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      result.success === false ||
+      !result.data
+    ) {
+
+      throw new Error(
+        result.message ||
+        "Failed to load sender details"
+      );
+
     }
 
-    const sender = mapApiUserToSender(result.data);
-    openSenderDetails(sender);
+
+    const sender =
+      mapApiUserToSender(
+        result.data
+      );
+
+
+    // ============================================================
+    // IMPORTANT
+    // PRESERVE THE ACTUAL USER ID
+    // ============================================================
+
+    sender.id =
+      result.data.id ||
+      sender.id ||
+      senderId;
+
+
+    console.log(
+      "Sender loaded for details:",
+      sender
+    );
+
+
+    openSenderDetails(
+      sender
+    );
+
+
   } catch (error) {
-    console.error("Error loading sender details:", error);
-    showActionPopupMessage(error.message || "Unable to load sender details.", "error");
-  }
+
+    console.error(
+      "Error loading sender details:",
+      error
+    );
+
+
+    showActionPopupMessage(
+      error.message ||
+      "Unable to load sender details.",
+      "error"
+    );
+
+  } finally {
+
     hideGlobalLoader();
+
+  }
 }
 
+
 function closeSenderDetails() {
-  const listView = document.querySelector("#customersSection > div:first-child");
-  const detailsView = document.getElementById("senderDetailsView");
 
-  if (detailsView) detailsView.classList.add("hidden");
-  if (listView) listView.classList.remove("hidden");
+  const listView =
+    document.querySelector(
+      "#customersSection > div:first-child"
+    );
 
-  
-  window.location.hash = "customers";
+  const detailsView =
+    document.getElementById(
+      "senderDetailsView"
+    );
+
+
+  if (detailsView) {
+    detailsView.classList.add(
+      "hidden"
+    );
+  }
+
+
+  if (listView) {
+    listView.classList.remove(
+      "hidden"
+    );
+  }
+
+
+  window.location.hash =
+    "customers";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8381,7 +10576,91 @@ async function viewTag(id, updateUrl = true) {
     }
 
     const data = result.data;
+/* ============================================================
+   ASSIGNED DRIVER DETAILS
+============================================================ */
 
+const driver =
+  data.driver;
+
+const driverProfile =
+  driver?.driver_profile;
+
+
+const assignedDriverSection =
+  document.getElementById(
+    "tagAssignedDriverSection"
+  );
+
+
+if (driver) {
+
+  assignedDriverSection?.classList.remove(
+    "hidden"
+  );
+
+
+  document.getElementById(
+    "tagDriverName"
+  ).textContent =
+    driver.full_name || "N/A";
+
+
+  document.getElementById(
+    "tagDriverEmail"
+  ).textContent =
+    driver.email || "N/A";
+
+
+  document.getElementById(
+    "tagDriverPhone"
+  ).textContent =
+    driver.phone || "N/A";
+
+
+  document.getElementById(
+    "tagDriverVehicleType"
+  ).textContent =
+    driverProfile?.vehicle_type || "N/A";
+
+
+  document.getElementById(
+    "tagDriverVehicleMake"
+  ).textContent =
+    driverProfile?.vehicle_make || "N/A";
+
+
+  document.getElementById(
+    "tagDriverVehicleModel"
+  ).textContent =
+    driverProfile?.vehicle_model || "N/A";
+
+
+  document.getElementById(
+    "tagDriverVehicleYear"
+  ).textContent =
+    driverProfile?.vehicle_year || "N/A";
+
+
+  document.getElementById(
+    "tagDriverPlateNumber"
+  ).textContent =
+    driverProfile?.vehicle_plate_number || "N/A";
+
+
+  document.getElementById(
+    "tagDriverVehicleColor"
+  ).textContent =
+    driverProfile?.vehicle_color || "N/A";
+
+
+} else {
+
+  assignedDriverSection?.classList.add(
+    "hidden"
+  );
+
+}
     document.getElementById("tagDetailsOrderNumber").textContent = `#${data.order_number || "N/A"}`;
     document.getElementById("tagDetailsStatus").innerHTML = getDeliveryStatusBadge(data.status);
     document.getElementById("tagDetailsPrice").textContent = `$${Number(data.total_price || 0).toLocaleString()}`;
@@ -8475,43 +10754,945 @@ imagesWrap.querySelectorAll(".tagPreviewImage").forEach((img) => {
 }
 
 function applyDeliveryFilters() {
-  const search = document.getElementById("deliverySearch").value.toLowerCase();
-  const status = document.getElementById("statusFilter").value;
-  const sort = document.getElementById("sortFilter").value;
 
-  filteredDeliveries = allDeliveries.filter((item) => {
-    const order = item.order_number?.toLowerCase() || "";
-    const name = item.customer?.full_name?.toLowerCase() || "";
-    const phone = item.customer?.phone?.toLowerCase() || "";
-    const pickup = item.pickup_address?.toLowerCase() || "";
-    const dropoff = item.dropoff_address?.toLowerCase() || "";
-    const itemStatus = item.status?.toLowerCase() || "";
+  const search =
+    (
+      document.getElementById(
+        "deliverySearch"
+      )?.value || ""
+    ).toLowerCase();
 
-    const matchesSearch =
-      order.includes(search) ||
-      name.includes(search) ||
-      phone.includes(search) ||
-      pickup.includes(search) ||
-      dropoff.includes(search);
 
-    const matchesStatus = status ? itemStatus === status : true;
+  const status =
+    selectedDeliveryStatus;
 
-    return matchesSearch && matchesStatus;
-  });
 
-  // SORT
-  if (sort === "newest") {
-    filteredDeliveries.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const sort =
+    document.getElementById(
+      "sortFilter"
+    )?.value || "";
+
+
+  filteredDeliveries =
+    allDeliveries.filter(
+      function (item) {
+
+        const order =
+          String(
+            item.order_number || ""
+          ).toLowerCase();
+
+
+        const name =
+          String(
+            item.customer?.full_name || ""
+          ).toLowerCase();
+
+
+        const phone =
+          String(
+            item.customer?.phone || ""
+          ).toLowerCase();
+
+
+        const pickup =
+          String(
+            item.pickup_address || ""
+          ).toLowerCase();
+
+
+        const dropoff =
+          String(
+            item.dropoff_address || ""
+          ).toLowerCase();
+
+
+        const itemStatus =
+          String(
+            item.status || ""
+          ).toLowerCase();
+
+
+        /* =====================================
+           SEARCH
+        ===================================== */
+
+        const matchesSearch =
+          order.includes(search) ||
+          name.includes(search) ||
+          phone.includes(search) ||
+          pickup.includes(search) ||
+          dropoff.includes(search);
+
+
+        /* =====================================
+           STATUS
+        ===================================== */
+
+        let matchesStatus =
+          true;
+
+
+        /*
+          IN PROGRESS itself selected.
+
+          Match every status returned
+          under backend data.in_progress.
+        */
+
+        if (
+          status === "in_progress"
+        ) {
+
+          matchesStatus =
+            deliveryInProgressStatuses.includes(
+              itemStatus
+            );
+
+        }
+
+
+        /*
+          Specific status selected.
+
+          This works for normal statuses
+          AND an In Progress child such as:
+
+          accepted
+          driver_arriving
+          arrived
+          picked_up
+          in_transit
+        */
+
+        else if (status) {
+
+          matchesStatus =
+            itemStatus === status;
+
+        }
+
+
+        return (
+          matchesSearch &&
+          matchesStatus
+        );
+
+      }
+    );
+
+
+  /* =====================================================
+     SORT NEWEST
+  ===================================================== */
+
+  if (
+    sort === "newest"
+  ) {
+
+    filteredDeliveries.sort(
+      function (a, b) {
+
+        return (
+          new Date(b.created_at) -
+          new Date(a.created_at)
+        );
+
+      }
+    );
+
   }
 
-  if (sort === "oldest") {
-    filteredDeliveries.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+  /* =====================================================
+     SORT OLDEST
+  ===================================================== */
+
+  if (
+    sort === "oldest"
+  ) {
+
+    filteredDeliveries.sort(
+      function (a, b) {
+
+        return (
+          new Date(a.created_at) -
+          new Date(b.created_at)
+        );
+
+      }
+    );
+
   }
 
-  currentDeliveryPage = 1;
+
+  currentDeliveryPage =
+    1;
+
+
   renderDeliveryPage();
 }
 
+/* =========================================================
+   DELIVERY STATUS FILTER
+========================================================= */
+
+let selectedDeliveryStatus = "";
+
+let deliveryInProgressStatuses = [];
+
+
+/* =========================================================
+   LOAD STATUSES FROM BACKEND
+========================================================= */
+
+async function loadDeliveryStatuses() {
+
+  const dropdown =
+    document.getElementById(
+      "statusFilterDropdown"
+    );
+
+
+  if (!dropdown) {
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        `${API_BASE_URL}/admin/tags/statuses`,
+        {
+          method: "GET",
+
+          headers: {
+            Accept: "application/json",
+
+            Authorization:
+              `Bearer ${AUTH_TOKEN}`
+          }
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "DELIVERY STATUS RESPONSE:",
+      result
+    );
+
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+
+      throw new Error(
+        result.message ||
+        "Failed to load delivery statuses"
+      );
+    }
+
+
+    const statuses =
+      Array.isArray(
+        result.data?.statuses
+      )
+        ? result.data.statuses
+        : [];
+
+
+    const inProgress =
+      Array.isArray(
+        result.data?.in_progress
+      )
+        ? result.data.in_progress
+        : [];
+
+
+    /* =====================================================
+       SAVE ALL STATUSES THAT BELONG TO IN PROGRESS
+    ===================================================== */
+
+    deliveryInProgressStatuses =
+      inProgress.map(
+        function (status) {
+
+          return String(
+            status.slug || ""
+          ).toLowerCase();
+
+        }
+      );
+
+
+    /* =====================================================
+       RENDER DROPDOWN
+    ===================================================== */
+
+    renderDeliveryStatuses(
+      statuses,
+      inProgress
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Error loading delivery statuses:",
+      error
+    );
+
+  }
+}
+
+
+/* =========================================================
+   RENDER MAIN STATUS DROPDOWN
+========================================================= */
+
+function renderDeliveryStatuses(
+  statuses,
+  inProgress
+) {
+
+  const dropdown =
+    document.getElementById(
+      "statusFilterDropdown"
+    );
+
+
+  if (!dropdown) {
+    return;
+  }
+
+
+  dropdown.innerHTML = "";
+
+
+  /* =====================================================
+     ALL STATUS
+  ===================================================== */
+
+  const allStatusButton =
+    document.createElement(
+      "button"
+    );
+
+
+  allStatusButton.type =
+    "button";
+
+
+  allStatusButton.className =
+    "w-full px-[12px] py-[9px] text-left text-[12px] text-[#11313B] hover:bg-[#F1F5F8] cursor-pointer";
+
+
+  allStatusButton.textContent =
+    "All Status";
+
+
+  allStatusButton.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+
+      selectDeliveryStatus(
+        "",
+        "All Status"
+      );
+
+    }
+  );
+
+
+  dropdown.appendChild(
+    allStatusButton
+  );
+
+
+  /* =====================================================
+     KEEP TRACK OF WHETHER IN PROGRESS
+     HAS ALREADY BEEN RENDERED
+  ===================================================== */
+
+  let inProgressRendered =
+    false;
+
+
+  /* =====================================================
+     RENDER BACKEND STATUSES
+  ===================================================== */
+
+  statuses.forEach(
+    function (status) {
+
+      const slug =
+        String(
+          status.slug || ""
+        ).toLowerCase();
+
+
+      const name =
+        status.name ||
+        slug;
+
+
+      /* =================================================
+         STATUS BELONGS TO IN PROGRESS
+      ================================================= */
+
+      if (
+        deliveryInProgressStatuses.includes(
+          slug
+        )
+      ) {
+
+        /*
+          Instead of rendering:
+
+          Accepted
+          Driver Arriving
+          Arrived
+          Picked Up
+          In Transit
+
+          separately in the main menu,
+          render ONE In Progress dropdown.
+        */
+
+        if (!inProgressRendered) {
+
+          renderInProgressOption(
+            dropdown,
+            inProgress
+          );
+
+
+          inProgressRendered =
+            true;
+        }
+
+
+        return;
+      }
+
+
+      /* =================================================
+         NORMAL STATUS
+      ================================================= */
+
+      const option =
+        document.createElement(
+          "button"
+        );
+
+
+      option.type =
+        "button";
+
+
+      option.className =
+        "w-full px-[12px] py-[9px] text-left text-[12px] text-[#11313B] hover:bg-[#F1F5F8] cursor-pointer";
+
+
+      option.textContent =
+        name;
+
+
+      option.addEventListener(
+        "click",
+        function (event) {
+
+          event.stopPropagation();
+
+
+          selectDeliveryStatus(
+            slug,
+            name
+          );
+
+        }
+      );
+
+
+      dropdown.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  /*
+    Safety:
+
+    If backend returned an
+    in_progress array but none
+    of its items appeared in
+    statuses, still show the
+    In Progress option.
+  */
+
+  if (
+    !inProgressRendered &&
+    inProgress.length > 0
+  ) {
+
+    renderInProgressOption(
+      dropdown,
+      inProgress
+    );
+
+  }
+}
+
+
+/* =========================================================
+   RENDER IN PROGRESS DROPDOWN
+========================================================= */
+
+function renderInProgressOption(
+  dropdown,
+  inProgress
+) {
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.className =
+    "w-full";
+
+
+  /* ==========================================
+     IN PROGRESS MAIN ROW
+  ========================================== */
+
+  const row =
+    document.createElement("div");
+
+  row.className =
+    "w-full flex items-center hover:bg-[#F1F5F8]";
+
+
+  /* ==========================================
+     IN PROGRESS TEXT
+
+     Clicking this filters ALL
+     In Progress statuses.
+  ========================================== */
+
+  const mainButton =
+    document.createElement("button");
+
+  mainButton.type =
+    "button";
+
+  mainButton.className =
+    "flex-1 px-[12px] py-[9px] text-left text-[12px] text-[#11313B] cursor-pointer";
+
+  mainButton.textContent =
+    "In Progress";
+
+
+  mainButton.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+      selectDeliveryStatus(
+        "in_progress",
+        "In Progress"
+      );
+
+    }
+  );
+
+
+  /* ==========================================
+     IN PROGRESS DROPDOWN BUTTON
+  ========================================== */
+
+  const dropdownButton =
+    document.createElement("button");
+
+  dropdownButton.type =
+    "button";
+
+  dropdownButton.className =
+    "w-[32px] self-stretch flex items-center justify-center text-[#7C8AA0] cursor-pointer";
+
+  dropdownButton.innerHTML = `
+    <i
+      class="fa-solid fa-chevron-down text-[8px] transition-transform duration-200"
+    ></i>
+  `;
+
+
+  /* ==========================================
+     CHILD OPTIONS CONTAINER
+  ========================================== */
+
+  const childDropdown =
+    document.createElement("div");
+
+  childDropdown.className =
+    "hidden mx-[10px] mt-[2px] mb-[5px] py-[4px] px-[4px] rounded-[7px] bg-[#F8FAFB]";
+
+
+  /* ==========================================
+     CHILD OPTIONS FROM BACKEND
+  ========================================== */
+
+  inProgress.forEach(
+    function (status) {
+
+      const slug =
+        String(
+          status.slug || ""
+        ).toLowerCase();
+
+
+      const name =
+        status.name || slug;
+
+
+      const option =
+        document.createElement("button");
+
+      option.type =
+        "button";
+
+
+      option.className =
+        "block w-full px-[12px] py-[7px]  rounded-[5px] text-left text-[11px] leading-[15px] font-medium text-[#7C8AA0] hover:bg-white hover:text-[#11313B] cursor-pointer transition-colors duration-150";
+
+
+      option.textContent =
+        name;
+
+
+      option.addEventListener(
+        "click",
+        function (event) {
+
+          event.stopPropagation();
+
+          selectDeliveryStatus(
+            slug,
+            name
+          );
+
+        }
+      );
+
+
+      childDropdown.appendChild(
+        option
+      );
+
+    }
+  );
+
+
+  /* ==========================================
+     OPEN / CLOSE CHILD DROPDOWN
+  ========================================== */
+
+  dropdownButton.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+
+      const isClosed =
+        childDropdown.classList.contains(
+          "hidden"
+        );
+
+
+      const icon =
+        dropdownButton.querySelector("i");
+
+
+      if (isClosed) {
+
+        childDropdown.classList.remove(
+          "hidden"
+        );
+
+
+        if (icon) {
+
+          icon.classList.add(
+            "rotate-180"
+          );
+
+        }
+
+      } else {
+
+        childDropdown.classList.add(
+          "hidden"
+        );
+
+
+        if (icon) {
+
+          icon.classList.remove(
+            "rotate-180"
+          );
+
+        }
+
+      }
+
+    }
+  );
+
+
+  /* ==========================================
+     BUILD OPTION
+  ========================================== */
+
+  row.appendChild(
+    mainButton
+  );
+
+
+  row.appendChild(
+    dropdownButton
+  );
+
+
+  wrapper.appendChild(
+    row
+  );
+
+
+  wrapper.appendChild(
+    childDropdown
+  );
+
+
+  dropdown.appendChild(
+    wrapper
+  );
+}
+
+
+/* =========================================================
+   SELECT A STATUS
+========================================================= */
+
+function selectDeliveryStatus(
+  value,
+  label
+) {
+
+  selectedDeliveryStatus =
+    value;
+
+
+  const labelElement =
+    document.getElementById(
+      "statusFilterLabel"
+    );
+
+
+  const dropdown =
+    document.getElementById(
+      "statusFilterDropdown"
+    );
+
+
+  const mainIcon =
+    document.getElementById(
+      "statusFilterIcon"
+    );
+
+
+  if (labelElement) {
+
+    labelElement.textContent =
+      label;
+
+  }
+
+
+  if (dropdown) {
+
+    dropdown.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (mainIcon) {
+
+    mainIcon.className =
+      "fa-solid fa-chevron-down text-[9px] shrink-0";
+
+  }
+
+
+  currentDeliveryPage =
+    1;
+
+
+  applyDeliveryFilters();
+}
+
+
+/* =========================================================
+   OPEN / CLOSE MAIN STATUS DROPDOWN
+========================================================= */
+
+const statusFilterButton =
+  document.getElementById(
+    "statusFilterButton"
+  );
+
+
+const statusFilterDropdown =
+  document.getElementById(
+    "statusFilterDropdown"
+  );
+
+
+const statusFilterIcon =
+  document.getElementById(
+    "statusFilterIcon"
+  );
+
+
+if (
+  statusFilterButton &&
+  statusFilterDropdown
+) {
+
+  statusFilterButton.addEventListener(
+    "click",
+    function (event) {
+
+      event.stopPropagation();
+
+
+      const currentlyClosed =
+        statusFilterDropdown
+          .classList
+          .contains(
+            "hidden"
+          );
+
+
+      if (currentlyClosed) {
+
+        statusFilterDropdown
+          .classList
+          .remove(
+            "hidden"
+          );
+
+
+        if (statusFilterIcon) {
+
+          statusFilterIcon.className =
+            "fa-solid fa-chevron-up text-[9px] shrink-0";
+
+        }
+
+      } else {
+
+        statusFilterDropdown
+          .classList
+          .add(
+            "hidden"
+          );
+
+
+        if (statusFilterIcon) {
+
+          statusFilterIcon.className =
+            "fa-solid fa-chevron-down text-[9px] shrink-0";
+
+        }
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   CLOSE STATUS MENU WHEN CLICKING OUTSIDE
+========================================================= */
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    const filter =
+      document.getElementById(
+        "statusFilter"
+      );
+
+
+    const dropdown =
+      document.getElementById(
+        "statusFilterDropdown"
+      );
+
+
+    const icon =
+      document.getElementById(
+        "statusFilterIcon"
+      );
+
+
+    if (
+      filter &&
+      dropdown &&
+      !filter.contains(
+        event.target
+      )
+    ) {
+
+      dropdown.classList.add(
+        "hidden"
+      );
+
+
+      if (icon) {
+
+        icon.className =
+          "fa-solid fa-chevron-down text-[9px] shrink-0";
+
+      }
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   LOAD THE BACKEND STATUSES
+========================================================= */
+
+loadDeliveryStatuses();
 function setupTagSearch() {
   const searchInput = document.getElementById("deliverySearch");
   const searchBtn = document.getElementById("deliverySearchBtn");
@@ -9229,7 +12410,7 @@ async function openPayoutDetailsPage(payoutId, updateUrl = true) {
       payout.bank_account?.account_type || "N/A";
 
     document.getElementById("payoutDetailsMaskedAccount").textContent =
-      payout.bank_account?.account_number || "N/A";
+      payout.bank_account?.masked_account_number || "N/A";
 
     document.getElementById("payoutDetailsAdminNotes").textContent =
       payout.admin_notes || "No admin notes";
@@ -11728,7 +14909,7 @@ function renderAdminUsers(users = []) {
 
 
         <div class="w-[115px] px-[8px]">
-          ${getAdminRoleBadge(user.role)}
+          ${getAdminRoleBadge(user.admin_role_slug)}
         </div>
 
 
@@ -11834,8 +15015,6 @@ function renderAdminUsers(users = []) {
               </span>
 
             </button>
-
-
 
 
           </div>
@@ -12098,255 +15277,1638 @@ document.addEventListener("click", async function (event) {
   window.location.hash = `#admin-users/${adminId}`;
 });
 
-async function openUpdateAdminModal(adminId) {
-  try {
-    showGlobalLoader();
+// ============================================================
+// ADMIN ROLES + RIGHTS
+// ============================================================
 
-    const response = await fetch(`${API_BASE_URL}/admin/admin-users/${adminId}`, {
+let availableAdminRoles = [];
+let availableAdminRights = [];
+
+
+// ============================================================
+// FETCH ADMIN ROLES
+// ============================================================
+
+async function fetchAdminRoles() {
+
+  const response = await fetch(
+    `${API_BASE_URL}/admin/admin-users/roles`,
+    {
       method: "GET",
       headers: adminUsersAuthHeaders()
-    });
-
-    const result = await response.json();
-
-    if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Failed to load admin user.");
     }
+  );
 
-    const user = result.data?.user;
-    if (!user) throw new Error("Admin user not found.");
+  const result = await response.json();
 
-    fillUpdateAdminModal(user);
+  console.log(
+    "ROLE ENDPOINT STATUS:",
+    response.status
+  );
 
-    updateModal.classList.remove("hidden");
-    document.body.classList.add("overflow-hidden");
+  console.log(
+    "ROLE ENDPOINT RESPONSE:",
+    result
+  );
+
+  if (
+    !response.ok ||
+    result.success === false
+  ) {
+    throw new Error(
+      result.message ||
+      "Failed to load admin roles."
+    );
+  }
+
+  return Array.isArray(result.data)
+    ? result.data
+    : [];
+}
+
+
+// ============================================================
+// FETCH ADMIN RIGHTS
+// ============================================================
+
+async function fetchAdminRights() {
+
+  const response = await fetch(
+    `${API_BASE_URL}/admin/admin-users/rights`,
+    {
+      method: "GET",
+      headers: adminUsersAuthHeaders()
+    }
+  );
+
+  const result = await response.json();
+
+  if (
+    !response.ok ||
+    result.success === false
+  ) {
+    throw new Error(
+      result.message ||
+      "Failed to load admin rights."
+    );
+  }
+
+  return Array.isArray(result.data)
+    ? result.data
+    : [];
+}
+
+
+// ============================================================
+// LOAD ROLE + RIGHTS OPTIONS
+// ============================================================
+
+async function loadAdminRoleAndRightOptions() {
+
+  // =========================
+  // LOAD ROLES
+  // =========================
+
+  try {
+
+    const roles =
+      await fetchAdminRoles();
+
+    availableAdminRoles =
+      roles;
+
+    renderAdminRoleOptions();
+
   } catch (error) {
-    console.error("Open update admin modal error:", error);
-    showActionPopupMessage(error.message || "Unable to open admin user.", "error");
-  } finally {
-    hideGlobalLoader();
+
+    console.error(
+      "Failed to load admin roles:",
+      error
+    );
+
   }
+
+
+  // =========================
+  // LOAD RIGHTS
+  // =========================
+
+  try {
+
+    const rights =
+      await fetchAdminRights();
+
+    availableAdminRights =
+      rights;
+
+    renderUpdateAdminRights();
+    renderCreateAdminRights();
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load admin rights:",
+      error
+    );
+
+  }
+
 }
 
-function closeUpdateModal() {
-  updateModal.classList.add("hidden");
-  document.body.classList.remove("overflow-hidden");
 
-  if (window.location.hash.startsWith("#admin-users/")) {
-    window.location.hash = "#admin-users";
+// ============================================================
+// RENDER ROLES
+// ============================================================
+function renderAdminRoleOptions() {
+
+  const updateRoleSelect =
+    document.getElementById(
+      "updateAdminRole"
+    );
+
+  const createRoleSelect =
+    document.getElementById(
+      "adminRoleInput"
+    );
+
+
+  // =========================================
+  // UPDATE ADMIN ROLE OPTIONS
+  // Keep slug for Update Admin
+  // =========================================
+
+  const updateOptions =
+    availableAdminRoles
+      .map((role) => {
+        return `
+          <option value="${role.slug}">
+            ${role.name}
+          </option>
+        `;
+      })
+      .join("");
+
+
+  // =========================================
+  // CREATE ADMIN ROLE OPTIONS
+  // Create endpoint expects the role NAME
+  // =========================================
+
+  const createOptions =
+    availableAdminRoles
+      .map((role) => {
+        return `
+          <option value="${role.name}">
+            ${role.name}
+          </option>
+        `;
+      })
+      .join("");
+
+
+  // =========================================
+  // UPDATE ADMIN
+  // =========================================
+
+  if (updateRoleSelect) {
+
+    updateRoleSelect.innerHTML = `
+      <option value="">
+        Select role
+      </option>
+      ${updateOptions}
+    `;
+
   }
+
+
+  // =========================================
+  // CREATE ADMIN
+  // =========================================
+
+  if (createRoleSelect) {
+
+    createRoleSelect.innerHTML = `
+      <option value="">
+        Select role
+      </option>
+      ${createOptions}
+    `;
+
+  }
+
 }
 
-document
-  .getElementById("closeUpdateAdminModalBtn")
-  ?.addEventListener("click", closeUpdateModal);
 
-document
-  .getElementById("cancelUpdateAdminBtn")
-  ?.addEventListener("click", closeUpdateModal);
+// ============================================================
+// RENDER UPDATE ADMIN RIGHTS
+// ============================================================
 
-updateModal?.addEventListener("click", function (event) {
-  if (event.target === updateModal) {
-    closeUpdateModal();
-  }
-});
+function renderUpdateAdminRights(
+  currentRights = {}
+) {
 
-function fillUpdateAdminModal(user) {
-  document.getElementById("updateAdminUserForm").dataset.adminId = user.id;
+  const container =
+    document.getElementById(
+      "updateAdminRightsContainer"
+    );
 
-  document.getElementById("updateAdminFirstName").value = user.first_name || "";
-  document.getElementById("updateAdminLastName").value = user.last_name || "";
-  document.getElementById("updateAdminEmail").value = user.email || "";
-  document.getElementById("updateAdminRole").value = user.role || "admin";
+  if (!container) return;
 
-  const phone = user.phone || "";
-  const phoneCode = phone.startsWith("+1") ? "+1" : "+234";
-  const phoneNumber = phone.replace(phoneCode, "");
 
-  document.getElementById("updatePhoneCode").value = phoneCode;
-  document.getElementById("updateAdminPhone").value = phoneNumber;
-}
+  if (!availableAdminRights.length) {
 
-document
-  .getElementById("updateAdminUserForm")
-  ?.addEventListener("submit", updateAdminRights);
+    container.innerHTML = `
+      <div class="px-[16px] py-[10px] text-[#7C8AA0] text-[12px]">
+        No rights available.
+      </div>
+    `;
 
-async function updateAdminRights(event) {
-  event.preventDefault();
-
-  const form = event.target;
-  const adminId = form.dataset.adminId;
-
-  if (!adminId) {
-    showActionPopupMessage("Admin ID not found.", "error");
     return;
   }
 
-  const rights = {
-    can_manage_drivers:
-      document.querySelector('input[name="drivers"]:checked')?.value === "yes",
 
-    can_manage_support_ticket:
-      document.querySelector('input[name="support"]:checked')?.value === "yes",
+  container.innerHTML =
+    availableAdminRights
+      .map((right, index) => {
 
-    can_manage_payouts:
-      document.querySelector('input[name="payouts"]:checked')?.value === "yes",
+        const enabled =
+          currentRights?.[right.slug] === true;
 
-    can_create_admins:
-      document.querySelector('input[name="admins"]:checked')?.value === "yes",
+        const hasBottomBorder =
+          index <
+          availableAdminRights.length - 1;
 
-      can_view_logs:
-      document.querySelector('input[name="logs"]:checked')?.value === "yes",
+        return `
+          <div
+            class="flex items-center justify-between px-[16px] py-[10px] bg-white ${
+              hasBottomBorder
+                ? "border-b border-[#E5E7EB]"
+                : ""
+            }"
+          >
+            <span
+              class="text-[#11313B] text-[13px] font-medium"
+            >
+              ${right.name}
+            </span>
 
-      suspend_users:
-      document.querySelector('input[name="suspendUsers"]:checked')?.value === "yes"
-      
-  };
+            <div
+              class="flex items-center gap-[18px]"
+            >
+
+              <label
+                class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="updateRight_${right.slug}"
+                  value="true"
+                  data-right-slug="${right.slug}"
+                  class="updateAdminRightInput accent-[#3BB273]"
+                  ${enabled ? "checked" : ""}
+                >
+                Yes
+              </label>
+
+              <label
+                class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="updateRight_${right.slug}"
+                  value="false"
+                  data-right-slug="${right.slug}"
+                  class="updateAdminRightInput accent-[#3BB273]"
+                  ${!enabled ? "checked" : ""}
+                >
+                No
+              </label>
+
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+}
+
+
+// ============================================================
+// RENDER CREATE ADMIN RIGHTS
+// ============================================================
+
+function renderCreateAdminRights() {
+
+  const container =
+    document.getElementById(
+      "createAdminRightsContainer"
+    );
+
+  if (!container) return;
+
+
+  if (!availableAdminRights.length) {
+
+    container.innerHTML = `
+      <div class="px-[16px] py-[14px] text-[#7C8AA0] text-[12px]">
+        No rights available.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  container.innerHTML =
+    availableAdminRights
+      .map((right, index) => {
+
+        const hasBottomBorder =
+          index <
+          availableAdminRights.length - 1;
+
+        return `
+          <div
+            class="flex items-center justify-between px-[16px] py-[14px] bg-white ${
+              hasBottomBorder
+                ? "border-b border-[#E5E7EB]"
+                : ""
+            }"
+          >
+
+            <span
+              class="text-[#11313B] text-[13px] font-medium"
+            >
+              ${right.name}
+            </span>
+
+            <div
+              class="flex items-center gap-[18px]"
+            >
+
+              <label
+                class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="createRight_${right.slug}"
+                  value="true"
+                  data-right-slug="${right.slug}"
+                  class="createAdminRightInput accent-[#3BB273]"
+                >
+                Yes
+              </label>
+
+              <label
+                class="flex items-center gap-[6px] text-[13px] text-[#667085] cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="createRight_${right.slug}"
+                  value="false"
+                  data-right-slug="${right.slug}"
+                  class="createAdminRightInput accent-[#3BB273]"
+                  checked
+                >
+                No
+              </label>
+
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+}
+
+
+// ============================================================
+// COLLECT UPDATE RIGHTS
+// ============================================================
+
+function getUpdateAdminRights() {
+
+  const rights = {};
+
+  availableAdminRights.forEach(
+    (right) => {
+
+      const selected =
+        document.querySelector(
+          `input[name="updateRight_${right.slug}"]:checked`
+        );
+
+      rights[right.slug] =
+        selected?.value === "true";
+    }
+  );
+
+  return rights;
+}
+
+
+// ============================================================
+// OPEN UPDATE ADMIN MODAL
+// ============================================================
+
+async function openUpdateAdminModal(adminId) {
 
   try {
+
     showGlobalLoader();
 
+
+    // =========================================
+    // GET THE ADMIN FIRST
+    // =========================================
+
     const response = await fetch(
-      `${API_BASE_URL}/admin/admin-users/${adminId}/rights`,
+      `${API_BASE_URL}/admin/admin-users/${adminId}`,
       {
-        method: "POST",
-        headers: {
-          ...adminUsersAuthHeaders(),
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ rights })
+        method: "GET",
+        headers: adminUsersAuthHeaders()
       }
     );
 
-    const result = await response.json();
 
-    if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Failed to update admin rights.");
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+
+      throw new Error(
+        result.message ||
+        "Failed to load admin user."
+      );
+
     }
 
-    showActionPopupMessage("Admin rights updated successfully.", "success");
 
-    closeUpdateModal();
-    loadAdminUsers();
+    const user =
+      result.data?.user;
+
+
+    if (!user) {
+
+      throw new Error(
+        "Admin user not found."
+      );
+
+    }
+
+
+    // =========================================
+    // TRY TO LOAD AVAILABLE ROLES + RIGHTS
+    // =========================================
+
+    try {
+
+      await loadAdminRoleAndRightOptions();
+
+    } catch (metadataError) {
+
+      console.error(
+        "Unable to load admin roles/rights:",
+        metadataError
+      );
+
+    }
+
+
+    // =========================================
+    // FILL ADMIN DATA
+    // =========================================
+
+    fillUpdateAdminModal(user);
+
+
+    // =========================================
+    // OPEN MODAL
+    // =========================================
+
+    updateModal.classList.remove(
+      "hidden"
+    );
+
+    document.body.classList.add(
+      "overflow-hidden"
+    );
+
+
   } catch (error) {
-    console.error("Update admin rights error:", error);
-    showActionPopupMessage(error.message || "Unable to update admin rights.", "error");
+
+    console.error(
+      "Open update admin modal error:",
+      error
+    );
+
+
+    showActionPopupMessage(
+      error.message ||
+      "Unable to open admin user.",
+      "error"
+    );
+
+
   } finally {
+
     hideGlobalLoader();
+
   }
+
 }
 
-document.getElementById("openCreateAdminFormBtn")?.addEventListener("click", function () {
-  window.location.hash = "#admin-users/create";
-});
 
-document.getElementById("backToAdminUsersBtn")?.addEventListener("click", function () {
-  window.location.hash = "#admin-users";
-});
+// ============================================================
+// CLOSE UPDATE ADMIN MODAL
+// ============================================================
 
-document.getElementById("cancelCreateAdminBtn")?.addEventListener("click", function () {
-  window.location.hash = "#admin-users";
-});
+function closeUpdateModal() {
+
+  updateModal.classList.add(
+    "hidden"
+  );
+
+  document.body.classList.remove(
+    "overflow-hidden"
+  );
 
 
-// ================= CREATE ADMIN USER =================
+  if (
+    window.location.hash.startsWith(
+      "#admin-users/"
+    )
+  ) {
+
+    window.location.hash =
+      "#admin-users";
+
+  }
+
+}
+
+
+// ============================================================
+// CLOSE UPDATE MODAL BUTTON
+// ============================================================
 
 document
-  .getElementById("createAdminUserForm")
-  ?.addEventListener("submit", createAdminUser);
+  .getElementById(
+    "closeUpdateAdminModalBtn"
+  )
+  ?.addEventListener(
+    "click",
+    closeUpdateModal
+  );
 
-// Generate random 8-digit password
-function generateRandomPassword() {
-  return Math.floor(10000000 + Math.random() * 90000000).toString();
+
+// ============================================================
+// CANCEL UPDATE MODAL BUTTON
+// ============================================================
+
+document
+  .getElementById(
+    "cancelUpdateAdminBtn"
+  )
+  ?.addEventListener(
+    "click",
+    closeUpdateModal
+  );
+
+
+// ============================================================
+// CLOSE MODAL WHEN OVERLAY IS CLICKED
+// ============================================================
+
+updateModal?.addEventListener(
+  "click",
+  function (event) {
+
+    if (
+      event.target === updateModal
+    ) {
+
+      closeUpdateModal();
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// FILL UPDATE ADMIN MODAL
+// ============================================================
+
+function fillUpdateAdminModal(user) {
+
+
+  document
+    .getElementById(
+      "updateAdminUserForm"
+    )
+    .dataset.adminId =
+      user.id;
+
+
+  // ================= FIRST NAME =================
+
+  document.getElementById(
+    "updateAdminFirstName"
+  ).value =
+    user.first_name || "";
+
+
+  // ================= LAST NAME =================
+
+  document.getElementById(
+    "updateAdminLastName"
+  ).value =
+    user.last_name || "";
+
+
+  // ================= EMAIL =================
+
+  document.getElementById(
+    "updateAdminEmail"
+  ).value =
+    user.email || "";
+
+
+  // ================= ROLE =================
+  // IMPORTANT:
+  // Use admin_role_slug for Update Admin.
+  // Example:
+  // customer_support
+  // finance_staff
+  // staff
+
+  document.getElementById(
+    "updateAdminRole"
+  ).value =
+    user.admin_role_slug || "";
+
+
+  // ================= PHONE =================
+
+  const phone =
+    user.phone || "";
+
+
+  const phoneCode =
+    phone.startsWith("+1")
+      ? "+1"
+      : "+234";
+
+
+  const phoneNumber =
+    phone.replace(
+      phoneCode,
+      ""
+    );
+
+
+  document.getElementById(
+    "updatePhoneCode"
+  ).value =
+    phoneCode;
+
+
+  document.getElementById(
+    "updateAdminPhone"
+  ).value =
+    phoneNumber;
+
+
+  // ================= RIGHTS =================
+
+  renderUpdateAdminRights(
+    user.rights || {}
+  );
+
 }
 
-async function createAdminUser(e) {
-  e.preventDefault();
 
-  const phoneCode = document
-    .getElementById("adminPhoneCodeInput")
-    .value.split(" ")[1];
+// ============================================================
+// UPDATE ADMIN FORM SUBMIT
+// ============================================================
 
-  const rawPhone = document
-    .getElementById("adminPhoneInput")
-    .value.trim()
-    .replace(/\D/g, "");
+document
+  .getElementById(
+    "updateAdminUserForm"
+  )
+  ?.addEventListener(
+    "submit",
+    updateAdminRights
+  );
 
-  if (rawPhone.length !== 11) {
-    showActionPopupMessage("Phone number must be exactly 11 digits.", "error");
+
+// ============================================================
+// UPDATE ADMIN
+// ============================================================
+
+async function updateAdminRights(event) {
+
+  event.preventDefault();
+
+
+  const form =
+    event.target;
+
+
+  const adminId =
+    form.dataset.adminId;
+
+
+  // ==========================================================
+  // VALIDATE ADMIN ID
+  // ==========================================================
+
+  if (!adminId) {
+
+    showActionPopupMessage(
+      "Admin ID not found.",
+      "error"
+    );
+
     return;
+
   }
 
-  const phoneWithoutFirstDigit = rawPhone.slice(1);
-  const password = generateRandomPassword();
+
+  // ==========================================================
+  // GET SELECTED ROLE
+  // ==========================================================
+
+  const roleInput =
+    document.getElementById(
+      "updateAdminRole"
+    );
+
+
+  const role =
+    roleInput
+      ?.value
+      ?.trim() || "";
+
+
+  // ==========================================================
+  // VALIDATE ROLE
+  // ==========================================================
+
+  if (!role) {
+
+    showActionPopupMessage(
+      "Please select an admin role.",
+      "error"
+    );
+
+    roleInput?.focus();
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // GET DYNAMIC ADMIN RIGHTS
+  // ==========================================================
+
+  const rights =
+    getUpdateAdminRights();
+
+
+  // ==========================================================
+  // BUILD UPDATE PAYLOAD
+  // ==========================================================
 
   const payload = {
-    first_name: document.getElementById("adminFirstNameInput").value.trim(),
-    last_name: document.getElementById("adminLastNameInput").value.trim(),
-    email: document.getElementById("adminEmailInput").value.trim(),
-    phone: phoneCode + phoneWithoutFirstDigit,
-    role: document.getElementById("adminRoleInput").value,
 
-    password,
-    password_confirmation: password,
+    role:
+      role,
 
-    rights: JSON.stringify({
-      can_manage_drivers:
-        document.querySelector('input[name="canManageDrivers"]:checked')?.value === "true",
+    rights:
+      rights
 
-      can_manage_support_ticket:
-        document.querySelector('input[name="canManageSupportTicket"]:checked')?.value === "true",
-
-      can_manage_payouts:
-        document.querySelector('input[name="canManagePayouts"]:checked')?.value === "true",
-
-      can_create_admins:
-        document.querySelector('input[name="canCreateAdmins"]:checked')?.value === "true",
-        
-      can_view_logs:
-        document.querySelector('input[name="canViewLogs"]:checked')?.value === "true",
-
-        suspend_users:
-      document.querySelector('input[name="suspendUsers"]:checked')?.value === "yes"
-
-    })
   };
 
+
   try {
+
     showGlobalLoader();
 
-    const response = await fetch(`${API_BASE_URL}/admin/admin-users/create-standalone`, {
-      method: "POST",
-      headers: {
-        ...adminUsersAuthHeaders(),
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
 
-    const result = await response.json();
+    // ========================================================
+    // SEND UPDATE ADMIN REQUEST
+    // ========================================================
 
-    if (!response.ok || result.success === false) {
-      throw new Error(result.message || "Unable to create admin user.");
+    const response =
+      await fetch(
+        `${API_BASE_URL}/admin/admin-users/${adminId}/rights`,
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            ...adminUsersAuthHeaders(),
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    // ========================================================
+    // API ERROR
+    // ========================================================
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+
+      throw new Error(
+        result.message ||
+        "Failed to update admin."
+      );
+
     }
 
-    showActionPopupMessage("Admin user created successfully.", "success");
 
-    document.getElementById("createAdminUserForm").reset();
-    window.location.hash = "#admin-users";
+    // ========================================================
+    // SUCCESS
+    // ========================================================
 
-    if (typeof loadAdminUsers === "function") {
-      loadAdminUsers();
+    showActionPopupMessage(
+      result.message ||
+      "Admin updated successfully.",
+      "success"
+    );
+
+
+    // ========================================================
+    // CLOSE UPDATE MODAL
+    // ========================================================
+
+    closeUpdateModal();
+
+
+    // ========================================================
+    // RELOAD ADMIN USERS
+    // ========================================================
+
+    if (
+      typeof loadAdminUsers ===
+      "function"
+    ) {
+
+      await loadAdminUsers();
+
     }
+
+
   } catch (error) {
-    console.error("Create Admin User Error:", error);
-    showActionPopupMessage(error.message || "Something went wrong.", "error");
+
+    // ========================================================
+    // ERROR
+    // ========================================================
+
+    console.error(
+      "Update Admin Error:",
+      error
+    );
+
+
+    showActionPopupMessage(
+      error.message ||
+      "Unable to update admin.",
+      "error"
+    );
+
+
   } finally {
+
+    // ========================================================
+    // ALWAYS HIDE LOADER
+    // ========================================================
+
     hideGlobalLoader();
+
   }
+
 }
 
 
+/* ============================================================
+   CREATE NEW ADMIN
+============================================================ */
+
+
+/* ============================================================
+   GENERATE RANDOM PASSWORD
+============================================================ */
+
+function generateRandomPassword() {
+
+  return String(
+    Math.floor(
+      10000000 +
+      Math.random() * 90000000
+    )
+  );
+
+}
+
+
+/* ============================================================
+   GET CREATE ADMIN RIGHTS
+============================================================ */
+
+function getCreateAdminRights() {
+
+  return {
+
+    can_manage_drivers:
+      document.querySelector(
+        'input[name="canManageDrivers"]:checked'
+      )?.value === "yes",
+
+    can_manage_support_ticket:
+      document.querySelector(
+        'input[name="canManageSupportTicket"]:checked'
+      )?.value === "yes",
+
+    can_manage_payouts:
+      document.querySelector(
+        'input[name="canManagePayouts"]:checked'
+      )?.value === "yes",
+
+    can_create_admins:
+      document.querySelector(
+        'input[name="canCreateAdmins"]:checked'
+      )?.value === "yes",
+
+    can_view_logs:
+      document.querySelector(
+        'input[name="canViewLogs"]:checked'
+      )?.value === "yes",
+
+    suspend_users:
+      document.querySelector(
+        'input[name="suspendUsers"]:checked'
+      )?.value === "yes"
+
+  };
+
+}
+
+
+/* ============================================================
+   CREATE ADMIN USER
+============================================================ */
+
+/* ============================================================
+   CREATE ADMIN USER
+============================================================ */
+
+
+/* ============================================================
+   GENERATE RANDOM 8-DIGIT PASSWORD
+============================================================ */
+
+function generateRandomPassword() {
+
+  return Math.floor(
+    10000000 +
+    Math.random() * 90000000
+  ).toString();
+
+}
+
+
+/* ============================================================
+   COLLECT CREATE ADMIN RIGHTS
+============================================================ */
+
+function getCreateAdminRights() {
+
+  const rights = {};
+
+
+  availableAdminRights.forEach(
+    (right) => {
+
+      const selected =
+        document.querySelector(
+          `input[name="createRight_${right.slug}"]:checked`
+        );
+
+
+      rights[right.slug] =
+        selected?.value === "true";
+
+    }
+  );
+
+
+  return rights;
+
+}
+
+
+/* ============================================================
+   CREATE ADMIN USER
+============================================================ */
+
+async function createAdminUser(e) {
+
+  e.preventDefault();
+
+
+  // ==========================================================
+  // FIRST NAME
+  // ==========================================================
+
+  const firstName =
+    document
+      .getElementById(
+        "adminFirstNameInput"
+      )
+      ?.value
+      .trim();
+
+
+  // ==========================================================
+  // LAST NAME
+  // ==========================================================
+
+  const lastName =
+    document
+      .getElementById(
+        "adminLastNameInput"
+      )
+      ?.value
+      .trim();
+
+
+  // ==========================================================
+  // EMAIL
+  // ==========================================================
+
+  const email =
+    document
+      .getElementById(
+        "adminEmailInput"
+      )
+      ?.value
+      .trim();
+
+
+  // ==========================================================
+  // PHONE CODE
+  //
+  // The select value can contain something like:
+  // Nigeria +234
+  //
+  // We need only +234.
+  // ==========================================================
+
+  const phoneCodeValue =
+    document
+      .getElementById(
+        "adminPhoneCodeInput"
+      )
+      ?.value || "";
+
+
+  const phoneCodeParts =
+    phoneCodeValue
+      .trim()
+      .split(" ");
+
+
+  const phoneCode =
+    phoneCodeParts.length > 1
+      ? phoneCodeParts[
+          phoneCodeParts.length - 1
+        ]
+      : phoneCodeValue.trim();
+
+
+  // ==========================================================
+  // PHONE NUMBER
+  // ==========================================================
+
+  const rawPhone =
+    document
+      .getElementById(
+        "adminPhoneInput"
+      )
+      ?.value
+      .trim()
+      .replace(/\D/g, "") || "";
+
+
+  // ==========================================================
+  // ROLE
+  //
+  // Create Admin uses the ROLE NAME from
+  // renderAdminRoleOptions().
+  // ==========================================================
+
+  const role =
+    document
+      .getElementById(
+        "adminRoleInput"
+      )
+      ?.value;
+
+
+  // ==========================================================
+  // VALIDATION
+  // ==========================================================
+
+  if (
+    !firstName ||
+    !lastName ||
+    !email ||
+    !rawPhone ||
+    !role
+  ) {
+
+    showActionPopupMessage(
+      "Please fill in all required fields.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // EMAIL VALIDATION
+  // ==========================================================
+
+  if (
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+      email
+    )
+  ) {
+
+    showActionPopupMessage(
+      "Please enter a valid email address.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // PHONE VALIDATION
+  //
+  // User enters 11 digits.
+  // Example:
+  // 08012345678
+  // ==========================================================
+
+  if (
+    rawPhone.length !== 11
+  ) {
+
+    showActionPopupMessage(
+      "Phone number must be exactly 11 digits.",
+      "error"
+    );
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // REMOVE FIRST DIGIT
+  //
+  // 08012345678
+  // becomes
+  // 8012345678
+  // ==========================================================
+
+  const phoneWithoutFirstDigit =
+    rawPhone.slice(1);
+
+
+  // ==========================================================
+  // COMPLETE PHONE
+  //
+  // +234 + 8012345678
+  // ==========================================================
+
+  const fullPhone =
+    `${phoneCode}${phoneWithoutFirstDigit}`;
+
+
+  // ==========================================================
+  // GENERATE PASSWORD
+  // ==========================================================
+
+  const password =
+    generateRandomPassword();
+
+
+  // ==========================================================
+  // GET CREATE ADMIN RIGHTS
+  // ==========================================================
+
+  const rights =
+    getCreateAdminRights();
+
+
+  // ==========================================================
+  // PAYLOAD
+  //
+  // IMPORTANT:
+  // rights stays JSON.stringify(rights).
+  // ==========================================================
+
+  const payload = {
+
+    first_name:
+      firstName,
+
+    last_name:
+      lastName,
+
+    email:
+      email,
+
+    phone:
+      fullPhone,
+
+    role:
+      role,
+
+    password:
+      password,
+
+    password_confirmation:
+      password,
+
+    rights:
+      JSON.stringify(
+        rights
+      )
+
+  };
+
+
+  console.log(
+    "Create Admin Payload:",
+    payload
+  );
+
+
+  try {
+
+    showGlobalLoader();
+
+
+    // ========================================================
+    // CREATE ADMIN REQUEST
+    // ========================================================
+
+    const response =
+      await fetch(
+        `${API_BASE_URL}/admin/admin-users/create-standalone`,
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            ...adminUsersAuthHeaders(),
+
+            "Content-Type":
+              "application/json"
+
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            )
+
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    // ========================================================
+    // HANDLE API ERROR
+    // ========================================================
+
+    if (
+      !response.ok ||
+      result.success === false
+    ) {
+
+      throw new Error(
+        result.message ||
+        "Unable to create admin user."
+      );
+
+    }
+
+
+    // ========================================================
+    // SUCCESS
+    // ========================================================
+
+    showActionPopupMessage(
+      "Admin user created successfully.",
+      "success"
+    );
+
+
+    // ========================================================
+    // RESET FORM
+    // ========================================================
+
+    const form =
+      document.getElementById(
+        "createAdminUserForm"
+      );
+
+
+    if (form) {
+
+      form.reset();
+
+    }
+
+
+    // ========================================================
+    // RETURN TO ADMIN USERS
+    // ========================================================
+
+    window.location.hash =
+      "#admin-users";
+
+
+    // ========================================================
+    // RELOAD ADMIN USERS
+    // ========================================================
+
+    if (
+      typeof loadAdminUsers ===
+      "function"
+    ) {
+
+      await loadAdminUsers();
+
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      "Create Admin User Error:",
+      error
+    );
+
+
+    showActionPopupMessage(
+      error.message ||
+      "Unable to create admin user.",
+      "error"
+    );
+
+
+  } finally {
+
+    hideGlobalLoader();
+
+  }
+
+}
+
+
+/* ============================================================
+   OPEN CREATE ADMIN
+============================================================ */
+
+document
+  .getElementById(
+    "openCreateAdminFormBtn"
+  )
+  ?.addEventListener(
+    "click",
+    async function () {
+
+      try {
+
+        showGlobalLoader();
+
+
+        // Load roles and rights BEFORE
+        // opening Create Admin.
+
+        await loadAdminRoleAndRightOptions();
+
+
+        window.location.hash =
+          "#admin-users/create";
+
+
+      } catch (error) {
+
+        console.error(
+          "Unable to load Create Admin options:",
+          error
+        );
+
+
+        showActionPopupMessage(
+          error.message ||
+          "Unable to load admin roles and rights.",
+          "error"
+        );
+
+
+      } finally {
+
+        hideGlobalLoader();
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   BACK TO ADMIN USERS
+============================================================ */
+
+document
+  .getElementById(
+    "backToAdminUsersBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      window.location.hash =
+        "#admin-users";
+
+    }
+  );
+
+
+/* ============================================================
+   CANCEL CREATE ADMIN
+============================================================ */
+
+document
+  .getElementById(
+    "cancelCreateAdminBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      window.location.hash =
+        "#admin-users";
+
+    }
+  );
+
+
+/* ============================================================
+   CREATE ADMIN FORM SUBMIT
+============================================================ */
+
+document
+  .getElementById(
+    "createAdminUserForm"
+  )
+  ?.addEventListener(
+    "submit",
+    createAdminUser
+  );
+
+
+/* ============================================================
+   CREATE ADMIN PAGE EVENTS
+============================================================ */
+
+const openCreateAdminFormBtn =
+  document.getElementById(
+    "openCreateAdminFormBtn"
+  );
+
+
+if (openCreateAdminFormBtn) {
+
+  openCreateAdminFormBtn.onclick =
+    async function () {
+
+      await loadAdminRoleAndRightOptions();
+
+      window.location.hash =
+        "#admin-users/create";
+
+    };
+
+}
+
+
+/* ============================================================
+   BACK BUTTON
+============================================================ */
+
+const backToAdminUsersBtn =
+  document.getElementById(
+    "backToAdminUsersBtn"
+  );
+
+
+if (backToAdminUsersBtn) {
+
+  backToAdminUsersBtn.onclick =
+    function () {
+
+      window.location.hash =
+        "#admin-users";
+
+    };
+
+}
+
+
+/* ============================================================
+   CANCEL BUTTON
+============================================================ */
+
+const cancelCreateAdminBtn =
+  document.getElementById(
+    "cancelCreateAdminBtn"
+  );
+
+
+if (cancelCreateAdminBtn) {
+
+  cancelCreateAdminBtn.onclick =
+    function () {
+
+      window.location.hash =
+        "#admin-users";
+
+    };
+
+}
+
+
+/* ============================================================
+   CREATE ADMIN FORM SUBMIT
+============================================================ */
+
+const createAdminUserForm =
+  document.getElementById(
+    "createAdminUserForm"
+  );
+
+
+if (createAdminUserForm) {
+
+  createAdminUserForm.addEventListener(
+    "submit",
+    createAdminUser
+  );
+
+}
 /* ================= AUDIT LOG SECTION================= */
 let auditLogs = [];
 let currentAuditLogPagination = null;
