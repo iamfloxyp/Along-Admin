@@ -4062,6 +4062,7 @@ async function fetchDashboardAnalytics() {
 function setupDashboardTileNavigation() {
 
   const tileRoutes = [
+
     {
       ids: [
         "dashboardTotalDrivers",
@@ -4095,13 +4096,15 @@ function setupDashboardTileNavigation() {
 
     {
       ids: [
-        "dashboardTotalRevenue",
+        "dashboardTotalPayout",
         "dashboardPendingPayouts",
         "dashboardCompletedPayouts"
       ],
       route: "#payout"
     }
+
   ];
+
 
   tileRoutes.forEach(({ ids, route }) => {
 
@@ -4112,6 +4115,7 @@ function setupDashboardTileNavigation() {
 
       if (!valueElement) return;
 
+
       const tile =
         valueElement.closest(
           ".dashboard-tile"
@@ -4119,12 +4123,18 @@ function setupDashboardTileNavigation() {
 
       if (!tile) return;
 
-      tile.style.cursor = "pointer";
+
+      tile.style.cursor =
+        "pointer";
+
 
       tile.addEventListener(
         "click",
         function () {
-          window.location.hash = route;
+
+          window.location.hash =
+            route;
+
         }
       );
 
@@ -4135,86 +4145,272 @@ function setupDashboardTileNavigation() {
 }
 
 function renderDashboardAnalytics(data) {
-  const users = data?.users || {};
-  const drivers = data?.drivers || {};
-  const tags = data?.tags || {};
-  const revenue = data?.revenue || {};
 
-  setDashboardNumber("dashboardTotalDrivers", drivers.total_drivers);
-  setDashboardNumber("dashboardApprovedDrivers", drivers.approved_drivers);
-  setDashboardNumber("dashboardPendingDrivers", drivers.pending_approval);
-  setDashboardNumber("dashboardRejectedDrivers", drivers.rejected_drivers);
+  const users =
+    data?.users || {};
 
-  setDashboardNumber("dashboardTotalCustomers", users.total_customers);
-  setDashboardNumber("dashboardActiveCustomers", users.active_customers);
-  setDashboardNumber("dashboardNewCustomersThisWeek", users.new_customers_this_week);
-  setDashboardNumber("dashboardNewCustomersThisMonth", users.new_customers_this_month);
+  const drivers =
+    data?.drivers || {};
 
-  setDashboardNumber("dashboardTotalDeliveries", tags.total_tags);
-  setDashboardNumber("dashboardInProgressDeliveries", tags.in_progress);
-  setDashboardNumber("dashboardCompletedDeliveries", tags.completed);
-  setDashboardNumber("dashboardTodayDeliveries", tags.today);
-  setDashboardNumber("dashboardFailedDeliveries", tags.failed);
+  const tags =
+    data?.tags || {};
 
-  setDashboardText("dashboardTotalRevenue", formatDashboardMoney(revenue.total_revenue));
-  setDashboardText("dashboardPendingPayouts", formatDashboardMoney(revenue.pending_payouts));
-  setDashboardText("dashboardCompletedPayouts", formatDashboardMoney(revenue.completed_payouts));
+  const revenue =
+    data?.revenue || {};
+
+
+  // ============================================================
+  // DRIVERS
+  // ============================================================
+
+  setDashboardNumber(
+    "dashboardTotalDrivers",
+    drivers.total_drivers
+  );
+
+  setDashboardNumber(
+    "dashboardApprovedDrivers",
+    drivers.approved_drivers
+  );
+
+  setDashboardNumber(
+    "dashboardPendingDrivers",
+    drivers.pending_approval
+  );
+
+  setDashboardNumber(
+    "dashboardRejectedDrivers",
+    drivers.rejected_drivers
+  );
+
+
+  // ============================================================
+  // CUSTOMERS
+  // ============================================================
+
+  setDashboardNumber(
+    "dashboardTotalCustomers",
+    users.total_customers
+  );
+
+  setDashboardNumber(
+    "dashboardActiveCustomers",
+    users.active_customers
+  );
+
+  setDashboardNumber(
+    "dashboardNewCustomersThisWeek",
+    users.new_customers_this_week
+  );
+
+  setDashboardNumber(
+    "dashboardNewCustomersThisMonth",
+    users.new_customers_this_month
+  );
+
+
+  // ============================================================
+  // DELIVERIES / TAGS
+  // ============================================================
+
+  setDashboardNumber(
+    "dashboardTotalDeliveries",
+    tags.total_tags
+  );
+
+  setDashboardNumber(
+    "dashboardInProgressDeliveries",
+    tags.in_progress
+  );
+
+  setDashboardNumber(
+    "dashboardCompletedDeliveries",
+    tags.completed
+  );
+
+  setDashboardNumber(
+    "dashboardTodayDeliveries",
+    tags.today
+  );
+
+  setDashboardNumber(
+    "dashboardFailedDeliveries",
+    tags.failed
+  );
+
+
+  // ============================================================
+  // PAYOUTS
+  // ============================================================
+
+  setDashboardText(
+    "dashboardTotalPayout",
+    formatDashboardMoney(
+      revenue.total_payout
+    )
+  );
+
+  setDashboardText(
+    "dashboardPendingPayouts",
+    formatDashboardMoney(
+      revenue.pending_payouts
+    )
+  );
+
+  setDashboardText(
+    "dashboardCompletedPayouts",
+    formatDashboardMoney(
+      revenue.completed_payouts
+    )
+  );
+
 }
 
 function renderDashboardCharts(data) {
-  const users = data?.users || {};
-  const drivers = data?.drivers || {};
-  const tags = data?.tags || {};
-  const revenue = data?.revenue || {};
 
-  driversChartInstance = renderBarChart(
-    "driversChart",
-    driversChartInstance,
-    ["Approved", "Pending", "Rejected"],
-    [
-      drivers.approved_drivers || 0,
-      drivers.pending_approval || 0,
-      drivers.rejected_drivers || 0
-    ],
-    ["#3BB273", "#F2B66D", "#E57373"]
-  );
+  const users =
+    data?.users || {};
 
-  sendersChartInstance = renderBarChart(
-  "sendersChart",
-  sendersChartInstance,
-  ["Total", "Active", "This Week", "This Month"],
-  [
-    users.total_customers || 0,
-    users.active_customers || 0,
-    users.new_customers_this_week || 0,
-    users.new_customers_this_month || 0
-  ],
-  ["#30BBC7", "#3BB273", "#F2B66D", "#9B51E0"]
-);
+  const drivers =
+    data?.drivers || {};
 
-  deliveriesChartInstance = renderDoughnutChart(
-    "deliveriesChart",
-    deliveriesChartInstance,
-    ["In Progress", "Completed", "Failed"],
-    [
-      tags.in_progress || 0,
-      tags.completed || 0,
-      tags.failed || 0
-    ],
-    ["#F2B66D", "#3BB273", "#E57373"]
-  );
+  const tags =
+    data?.tags || {};
 
-  paymentsChartInstance = renderPieChart(
-    "paymentsChart",
-    paymentsChartInstance,
-    ["Total Revenue", "Pending", "Completed"],
-    [
-      revenue.total_revenue || 0,
-      revenue.pending_payouts || 0,
-      revenue.completed_payouts || 0
-    ],
-    ["#30BBC7", "#9B51E0", "#3BB273"]
-  );
+  const revenue =
+    data?.revenue || {};
+
+
+  // ============================================================
+  // DRIVERS CHART
+  // ============================================================
+
+  driversChartInstance =
+    renderBarChart(
+
+      "driversChart",
+
+      driversChartInstance,
+
+      [
+        "Approved",
+        "Pending",
+        "Rejected"
+      ],
+
+      [
+        drivers.approved_drivers || 0,
+        drivers.pending_approval || 0,
+        drivers.rejected_drivers || 0
+      ],
+
+      [
+        "#3BB273",
+        "#F2B66D",
+        "#E57373"
+      ]
+
+    );
+
+
+  // ============================================================
+  // CUSTOMERS CHART
+  // ============================================================
+
+  sendersChartInstance =
+    renderBarChart(
+
+      "sendersChart",
+
+      sendersChartInstance,
+
+      [
+        "Total",
+        "Active",
+        "This Week",
+        "This Month"
+      ],
+
+      [
+        users.total_customers || 0,
+        users.active_customers || 0,
+        users.new_customers_this_week || 0,
+        users.new_customers_this_month || 0
+      ],
+
+      [
+        "#30BBC7",
+        "#3BB273",
+        "#F2B66D",
+        "#9B51E0"
+      ]
+
+    );
+
+
+  // ============================================================
+  // DELIVERIES CHART
+  // ============================================================
+
+  deliveriesChartInstance =
+    renderDoughnutChart(
+
+      "deliveriesChart",
+
+      deliveriesChartInstance,
+
+      [
+        "In Progress",
+        "Completed",
+        "Failed"
+      ],
+
+      [
+        tags.in_progress || 0,
+        tags.completed || 0,
+        tags.failed || 0
+      ],
+
+      [
+        "#F2B66D",
+        "#3BB273",
+        "#E57373"
+      ]
+
+    );
+
+
+  // ============================================================
+  // PAYOUT CHART
+  // ============================================================
+
+  paymentsChartInstance =
+    renderPieChart(
+
+      "paymentsChart",
+
+      paymentsChartInstance,
+
+      [
+        "Total Payout",
+        "Pending Payouts",
+        "Completed Payouts"
+      ],
+
+      [
+        revenue.total_payout || 0,
+        revenue.pending_payouts || 0,
+        revenue.completed_payouts || 0
+      ],
+
+      [
+        "#30BBC7",
+        "#9B51E0",
+        "#3BB273"
+      ]
+
+    );
+
 }
 
 function renderBarChart(canvasId, oldChart, labels, values, colors) {
@@ -4484,8 +4680,6 @@ fetchDashboardAnalytics();
    FETCH DRIVERS FROM API
 ========================= */
 
-let currentDriverPagination = null;
-
 // ============================================================
 // RECENT ACTIVITY
 // DRIVER + CUSTOMER
@@ -4506,10 +4700,8 @@ async function fetchUserCompletedTags(userId) {
     }
   );
 
-
   const result =
     await response.json();
-
 
   if (
     !response.ok ||
@@ -4522,7 +4714,6 @@ async function fetchUserCompletedTags(userId) {
     );
 
   }
-
 
   return result;
 }
@@ -4542,10 +4733,8 @@ async function fetchUserRecentAuditLogs(userId) {
     }
   );
 
-
   const result =
     await response.json();
-
 
   if (
     !response.ok ||
@@ -4559,32 +4748,90 @@ async function fetchUserRecentAuditLogs(userId) {
 
   }
 
-
   return result;
 }
 
 
 // ============================================================
-// LOAD USER RECENT ACTIVITY
-// COMBINES:
-// 1. COMPLETED TAGS
-// 2. AUDIT LOGS
+// RECENT ACTIVITY STATE
 //
-// THEN:
-// SORTS NEWEST FIRST
-// DISPLAYS ONLY FIRST 10
+// DRIVER + CUSTOMER USE THE SAME DATA LOGIC.
+//
+// source:
+// "driver"
+// "sender"
+//
+// THE EXISTING DRIVER-NAMED DEDICATED PAGES ARE SHARED:
+// driverCompletedTagsPage
+// driverActivityLogsPage
+// ============================================================
+
+let currentRecentActivityUserId = null;
+
+let currentRecentActivityTab =
+  "tags";
+
+let currentRecentActivitySource =
+  "driver";
+
+let currentRecentActivityListElementId =
+  "driverRecentActivityList";
+
+let recentCompletedTagActivities = [];
+
+let recentAuditLogActivities = [];
+
+
+// ==========================================================
+// SHARED COMPLETED TAGS PAGE STATE
+// ==========================================================
+
+let driverCompletedTagsAll = [];
+let driverCompletedTagsFiltered = [];
+let driverCompletedTagsCurrentPage = 1;
+
+const DRIVER_COMPLETED_TAGS_PER_PAGE = 10;
+
+
+// ==========================================================
+// SHARED ACTIVITY LOGS PAGE STATE
+// ==========================================================
+
+let driverActivityLogsAll = [];
+let driverActivityLogsFiltered = [];
+let driverActivityLogsCurrentPage = 1;
+
+const DRIVER_ACTIVITY_LOGS_PER_PAGE = 10;
+
+
+// ============================================================
+// LOAD USER RECENT ACTIVITY
+//
+// DRIVER:
+// loadUserRecentActivity(
+//   driverUserId,
+//   "driverRecentActivityList",
+//   "driver"
+// );
+//
+// CUSTOMER:
+// loadUserRecentActivity(
+//   customerUserId,
+//   "senderRecentActivityList",
+//   "sender"
+// );
 // ============================================================
 
 async function loadUserRecentActivity(
   userId,
-  listElementId
+  listElementId,
+  source = "driver"
 ) {
 
   const list =
     document.getElementById(
       listElementId
     );
-
 
   if (
     !list ||
@@ -4597,17 +4844,53 @@ async function loadUserRecentActivity(
 
 
   // ==========================================================
+  // STORE CURRENT USER / SOURCE
+  // ==========================================================
+
+  currentRecentActivityUserId =
+    userId;
+
+  currentRecentActivitySource =
+    source;
+
+  currentRecentActivityListElementId =
+    listElementId;
+
+  currentRecentActivityTab =
+    "tags";
+
+
+  // ==========================================================
+  // RESET PREVIOUS DATA
+  // ==========================================================
+
+  recentCompletedTagActivities = [];
+
+  recentAuditLogActivities = [];
+
+
+  // ==========================================================
+  // SET DEFAULT TAB VISUALLY
+  // ==========================================================
+
+  setUserRecentActivityTab(
+    "tags",
+    source
+  );
+
+
+  // ==========================================================
   // LOADING STATE
   // ==========================================================
 
   list.innerHTML = `
     <div
-      class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center"
+      class="w-full min-h-[58px] border-b border-[#F0F2F4] px-[20px] py-[14px] flex items-center"
     >
       <p
         class="text-[#7C8AA0] text-[13px] leading-[20px] font-medium"
       >
-        Loading recent activity...
+        Loading completed tags...
       </p>
     </div>
   `;
@@ -4617,6 +4900,7 @@ async function loadUserRecentActivity(
 
     // ========================================================
     // FETCH TAGS + LOGS TOGETHER
+    // THEY REMAIN SEPARATE
     // ========================================================
 
     const [
@@ -4641,7 +4925,6 @@ async function loadUserRecentActivity(
 
     let completedTags = [];
 
-
     if (
       completedTagsResult.status ===
       "fulfilled"
@@ -4649,7 +4932,6 @@ async function loadUserRecentActivity(
 
       const result =
         completedTagsResult.value;
-
 
       completedTags =
         Array.isArray(
@@ -4685,7 +4967,6 @@ async function loadUserRecentActivity(
 
     let auditLogs = [];
 
-
     if (
       auditLogsResult.status ===
       "fulfilled"
@@ -4693,7 +4974,6 @@ async function loadUserRecentActivity(
 
       const result =
         auditLogsResult.value;
-
 
       auditLogs =
         Array.isArray(
@@ -4723,7 +5003,6 @@ async function loadUserRecentActivity(
       completedTags
     );
 
-
     console.log(
       "Recent audit logs:",
       auditLogs
@@ -4732,128 +5011,62 @@ async function loadUserRecentActivity(
 
     // ========================================================
     // NORMALIZE COMPLETED TAGS
+    // MAXIMUM 10 ON RECENT ACTIVITY
     // ========================================================
 
-    const tagActivities =
-      completedTags.map(
-        (tag) => {
+    recentCompletedTagActivities =
+      completedTags
+        .map(
+          (tag) => {
 
-          return {
+            return {
 
-            type:
-              "tag",
+              type:
+                "tag",
 
-            id:
-              tag.id ||
-              tag.tag_id ||
-              null,
+              id:
+                tag.id ||
+                tag.tag_id ||
+                tag.tag?.id ||
+                null,
 
-            title:
-              getRecentTagActivityTitle(
+              title:
+                getRecentTagActivityTitle(
+                  tag
+                ),
+
+              timestamp:
+                tag.completed_at ||
+                tag.completedAt ||
+                tag.timestamp ||
+                tag.updated_at ||
+                tag.updatedAt ||
+                tag.created_at ||
+                tag.createdAt ||
+                null,
+
+              timestampHuman:
+                tag.timestamp_human ||
+                tag.completed_at_human ||
+                "",
+
+              entityType:
+                "Tag",
+
+              entityId:
+                tag.id ||
+                tag.tag_id ||
+                tag.tag?.id ||
+                null,
+
+              raw:
                 tag
-              ),
 
-            timestamp:
-              tag.completed_at ||
-              tag.timestamp ||
-              tag.updated_at ||
-              tag.created_at ||
-              null,
+            };
 
-            timestampHuman:
-              tag.timestamp_human ||
-              tag.completed_at_human ||
-              "",
+          }
+        )
 
-            entityType:
-              "Tag",
-
-            entityId:
-              tag.id ||
-              tag.tag_id ||
-              null,
-
-            raw:
-              tag
-
-          };
-
-        }
-      );
-
-
-    // ========================================================
-    // NORMALIZE AUDIT LOGS
-    //
-    // ACTUAL BACKEND RESPONSE USES:
-    // log.timestamp
-    // log.timestamp_human
-    // log.action
-    // log.entity_type
-    // log.entity_id
-    // ========================================================
-
-    const logActivities =
-      auditLogs.map(
-        (log) => {
-
-          return {
-
-            type:
-              "log",
-
-            id:
-              log.id ||
-              null,
-
-            title:
-              getRecentLogActivityTitle(
-                log
-              ),
-
-            timestamp:
-              log.timestamp ||
-              null,
-
-            timestampHuman:
-              log.timestamp_human ||
-              "",
-
-            entityType:
-              log.entity_type ||
-              "",
-
-            entityId:
-              log.entity_id ||
-              null,
-
-            raw:
-              log
-
-          };
-
-        }
-      );
-
-
-    // ========================================================
-    // COMBINE TAGS + LOGS
-    // ========================================================
-
-    const combinedActivities = [
-      ...tagActivities,
-      ...logActivities
-    ];
-
-
-    // ========================================================
-    // REMOVE ITEMS WITHOUT A VALID TIMESTAMP
-    // SORT NEWEST FIRST
-    // TAKE ONLY FIRST 10
-    // ========================================================
-
-    const activities =
-      combinedActivities
         .filter(
           (activity) => {
 
@@ -4866,6 +5079,7 @@ async function loadUserRecentActivity(
 
           }
         )
+
         .sort(
           (a, b) => {
 
@@ -4880,6 +5094,89 @@ async function loadUserRecentActivity(
 
           }
         )
+
+        .slice(
+          0,
+          10
+        );
+
+
+    // ========================================================
+    // NORMALIZE AUDIT LOGS
+    // MAXIMUM 10 ON RECENT ACTIVITY
+    // ========================================================
+
+    recentAuditLogActivities =
+      auditLogs
+        .map(
+          (log) => {
+
+            return {
+
+              type:
+                "log",
+
+              id:
+                log.id ||
+                null,
+
+              title:
+                getRecentLogActivityTitle(
+                  log
+                ),
+
+              timestamp:
+                log.timestamp ||
+                null,
+
+              timestampHuman:
+                log.timestamp_human ||
+                "",
+
+              entityType:
+                log.entity_type ||
+                "",
+
+              entityId:
+                log.entity_id ||
+                null,
+
+              raw:
+                log
+
+            };
+
+          }
+        )
+
+        .filter(
+          (activity) => {
+
+            return (
+              activity.timestamp &&
+              parseRecentActivityTimestamp(
+                activity.timestamp
+              ) > 0
+            );
+
+          }
+        )
+
+        .sort(
+          (a, b) => {
+
+            return (
+              parseRecentActivityTimestamp(
+                b.timestamp
+              ) -
+              parseRecentActivityTimestamp(
+                a.timestamp
+              )
+            );
+
+          }
+        )
+
         .slice(
           0,
           10
@@ -4887,18 +5184,24 @@ async function loadUserRecentActivity(
 
 
     console.log(
-      "Final recent activities:",
-      activities
+      "Final completed tag activities:",
+      recentCompletedTagActivities
+    );
+
+    console.log(
+      "Final audit log activities:",
+      recentAuditLogActivities
     );
 
 
     // ========================================================
-    // RENDER
+    // DEFAULT DISPLAY = COMPLETED TAGS
     // ========================================================
 
-    renderUserRecentActivity(
-      activities,
-      listElementId
+    renderUserRecentActivityTab(
+      "tags",
+      listElementId,
+      source
     );
 
 
@@ -4909,10 +5212,9 @@ async function loadUserRecentActivity(
       error
     );
 
-
     list.innerHTML = `
       <div
-        class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+        class="w-full min-h-[58px] px-[20px] py-[14px] flex items-center justify-between gap-[20px]"
       >
         <p
           class="text-[#11313B] text-[14px] leading-[20px] font-medium"
@@ -4925,6 +5227,957 @@ async function loadUserRecentActivity(
         >
           --
         </span>
+      </div>
+    `;
+
+    updateUserRecentActivityFooter(
+      "tags",
+      0,
+      source
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// SWITCH RECENT ACTIVITY TAB
+// DRIVER + CUSTOMER
+// ============================================================
+
+function renderUserRecentActivityTab(
+  tab,
+  listElementId = currentRecentActivityListElementId,
+  source = currentRecentActivitySource
+) {
+
+  currentRecentActivityTab =
+    tab;
+
+  currentRecentActivitySource =
+    source;
+
+  currentRecentActivityListElementId =
+    listElementId;
+
+
+  setUserRecentActivityTab(
+    tab,
+    source
+  );
+
+
+  // ==========================================================
+  // COMPLETED TAGS
+  // ==========================================================
+
+  if (
+    tab === "tags"
+  ) {
+
+    renderUserRecentActivity(
+      recentCompletedTagActivities,
+      listElementId,
+      "tags"
+    );
+
+    updateUserRecentActivityFooter(
+      "tags",
+      recentCompletedTagActivities.length,
+      source
+    );
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // ACTIVITY LOGS
+  // ==========================================================
+
+  if (
+    tab === "logs"
+  ) {
+
+    renderUserRecentActivity(
+      recentAuditLogActivities,
+      listElementId,
+      "logs"
+    );
+
+    updateUserRecentActivityFooter(
+      "logs",
+      recentAuditLogActivities.length,
+      source
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// UPDATE TAB VISUAL STATE
+// DRIVER + CUSTOMER
+// ============================================================
+
+function setUserRecentActivityTab(
+  tab,
+  source = currentRecentActivitySource
+) {
+
+  const prefix =
+    source === "sender"
+      ? "sender"
+      : "driver";
+
+
+  const completedTagsTab =
+    document.getElementById(
+      `${prefix}CompletedTagsTab`
+    );
+
+  const activityLogsTab =
+    document.getElementById(
+      `${prefix}ActivityLogsTab`
+    );
+
+
+  if (
+    !completedTagsTab ||
+    !activityLogsTab
+  ) {
+
+    return;
+
+  }
+
+
+  // ==========================================================
+  // RESET COMPLETED TAGS TAB
+  // ==========================================================
+
+  completedTagsTab.classList.remove(
+    "bg-white",
+    "border-[#E4E7EC]",
+    "shadow-sm",
+    "border-[#30BBC7]",
+    "text-[#11313B]",
+    "font-semibold"
+  );
+
+  completedTagsTab.classList.add(
+    "border-transparent",
+    "text-[#667085]",
+    "font-medium"
+  );
+
+
+  // ==========================================================
+  // RESET ACTIVITY LOGS TAB
+  // ==========================================================
+
+  activityLogsTab.classList.remove(
+    "bg-white",
+    "border-[#E4E7EC]",
+    "shadow-sm",
+    "border-[#30BBC7]",
+    "text-[#11313B]",
+    "font-semibold"
+  );
+
+  activityLogsTab.classList.add(
+    "border-transparent",
+    "text-[#667085]",
+    "font-medium"
+  );
+
+
+  // ==========================================================
+  // ACTIVATE SELECTED TAB
+  // ==========================================================
+
+  const activeTab =
+    tab === "logs"
+      ? activityLogsTab
+      : completedTagsTab;
+
+
+  activeTab.classList.remove(
+    "border-transparent",
+    "text-[#667085]",
+    "font-medium"
+  );
+
+  activeTab.classList.add(
+    "bg-white",
+    "border-[#E4E7EC]",
+    "shadow-sm",
+    "text-[#11313B]",
+    "font-semibold"
+  );
+
+}
+
+
+// ============================================================
+// UPDATE VIEW ALL FOOTER
+// DRIVER + CUSTOMER
+// ============================================================
+
+function updateUserRecentActivityFooter(
+  tab,
+  itemCount,
+  source = currentRecentActivitySource
+) {
+
+  const prefix =
+    source === "sender"
+      ? "sender"
+      : "driver";
+
+
+  const button =
+    document.getElementById(
+      `${prefix}ViewAllActivityBtn`
+    );
+
+  const text =
+    document.getElementById(
+      `${prefix}ViewAllActivityText`
+    );
+
+
+  if (
+    !button ||
+    !text
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    itemCount === 0
+  ) {
+
+    button.classList.add(
+      "hidden"
+    );
+
+    return;
+
+  }
+
+
+  button.classList.remove(
+    "hidden"
+  );
+
+
+  if (
+    tab === "logs"
+  ) {
+
+    text.textContent =
+      "View all logs";
+
+  } else {
+
+    text.textContent =
+      "View all tags";
+
+  }
+
+}
+
+
+// ============================================================
+// GET CURRENT RECENT ACTIVITY USER NAME
+// ============================================================
+
+function getCurrentRecentActivityUserName() {
+
+  if (
+    currentRecentActivitySource ===
+    "sender"
+  ) {
+
+    const firstName =
+      document
+        .getElementById(
+          "senderFirstName"
+        )
+        ?.textContent
+        ?.trim() ||
+      "";
+
+    const lastName =
+      document
+        .getElementById(
+          "senderLastName"
+        )
+        ?.textContent
+        ?.trim() ||
+      "";
+
+
+    const senderName =
+      `${firstName} ${lastName}`
+        .trim();
+
+
+    return (
+      senderName ||
+      "Customer"
+    );
+
+  }
+
+
+  return (
+    document
+      .getElementById(
+        "driverInformationName"
+      )
+      ?.textContent
+      ?.trim() ||
+    "Driver"
+  );
+
+}
+
+
+// ============================================================
+// VIEW ALL RECENT ACTIVITY
+// DRIVER + CUSTOMER
+//
+// OPENS THE DEDICATED PAGE FOR THE CURRENT ACTIVE TAB.
+// ============================================================
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    const driverButton =
+      event.target.closest(
+        "#driverViewAllActivityBtn"
+      );
+
+    const senderButton =
+      event.target.closest(
+        "#senderViewAllActivityBtn"
+      );
+
+
+    if (
+      !driverButton &&
+      !senderButton
+    ) {
+      return;
+    }
+
+
+    event.preventDefault();
+    event.stopPropagation();
+
+
+    // ========================================================
+    // SET THE CORRECT SOURCE
+    // ========================================================
+
+    if (driverButton) {
+
+      currentRecentActivitySource =
+        "driver";
+
+      currentRecentActivityListElementId =
+        "driverRecentActivityList";
+
+    } else {
+
+      currentRecentActivitySource =
+        "sender";
+
+      currentRecentActivityListElementId =
+        "senderRecentActivityList";
+
+    }
+
+
+    // ========================================================
+    // USER MUST ALREADY BE LOADED
+    // ========================================================
+
+    if (!currentRecentActivityUserId) {
+
+      console.error(
+        "Recent Activity user ID is missing."
+      );
+
+      return;
+
+    }
+
+
+    // ========================================================
+    // DETERMINE WHICH TAB IS CURRENTLY ACTIVE
+    //
+    // THE BUTTON TEXT IS ALREADY UPDATED BY
+    // updateUserRecentActivityFooter():
+    //
+    // View all tags
+    // View all logs
+    // ========================================================
+
+    const buttonText =
+      (
+        driverButton ||
+        senderButton
+      )
+        .textContent
+        .trim()
+        .toLowerCase();
+
+
+    const isLogsTab =
+      currentRecentActivityTab === "logs" ||
+      buttonText.includes("logs");
+
+
+    // ========================================================
+    // OPEN ACTIVITY LOGS DEDICATED PAGE
+    // ========================================================
+
+    if (isLogsTab) {
+
+      currentRecentActivityTab =
+        "logs";
+
+      openDriverActivityLogsPage();
+
+      return;
+
+    }
+
+
+    // ========================================================
+    // OPEN COMPLETED TAGS DEDICATED PAGE
+    // ========================================================
+
+    currentRecentActivityTab =
+      "tags";
+
+    openDriverCompletedTagsPage();
+
+  }
+);
+// ==========================================================
+// DEDICATED RECENT ACTIVITY PAGE VISIBILITY
+//
+// IMPORTANT:
+// The dedicated Completed Tags / Activity Logs page must be
+// the ONLY visible page inside its content container.
+// We therefore hide every visible sibling of the dedicated
+// page and remember exactly what was hidden so Back can
+// restore the correct Driver or Customer view.
+// ==========================================================
+
+// ==========================================================
+// DEDICATED RECENT ACTIVITY PAGE VISIBILITY
+// DRIVER + CUSTOMER
+// ==========================================================
+
+function showRecentActivityDedicatedPage(
+  pageElement
+) {
+
+  if (!pageElement) {
+    console.error(
+      "Dedicated recent activity page was not found."
+    );
+
+    return;
+  }
+
+
+  const driverDetailsSection =
+    document.getElementById(
+      "driverDetailsSection"
+    );
+
+  const customersSection =
+    document.getElementById(
+      "customersSection"
+    );
+
+  const senderDetailsView =
+    document.getElementById(
+      "senderDetailsView"
+    );
+
+
+  // ========================================================
+  // HIDE THE CORRECT SOURCE VIEW
+  // ========================================================
+
+  if (
+    currentRecentActivitySource ===
+    "sender"
+  ) {
+
+    if (senderDetailsView) {
+
+      senderDetailsView.classList.add(
+        "hidden"
+      );
+
+    }
+
+
+    if (customersSection) {
+
+      customersSection.classList.add(
+        "hidden"
+      );
+
+    }
+
+  } else {
+
+    if (driverDetailsSection) {
+
+      driverDetailsSection.classList.add(
+        "hidden"
+      );
+
+    }
+
+  }
+
+
+  // ========================================================
+  // HIDE THE OTHER DEDICATED PAGE
+  // ========================================================
+
+  const completedTagsPage =
+    document.getElementById(
+      "driverCompletedTagsPage"
+    );
+
+  const activityLogsPage =
+    document.getElementById(
+      "driverActivityLogsPage"
+    );
+
+
+  if (
+    completedTagsPage &&
+    completedTagsPage !== pageElement
+  ) {
+
+    completedTagsPage.classList.add(
+      "hidden"
+    );
+
+    completedTagsPage.classList.remove(
+      "flex"
+    );
+
+  }
+
+
+  if (
+    activityLogsPage &&
+    activityLogsPage !== pageElement
+  ) {
+
+    activityLogsPage.classList.add(
+      "hidden"
+    );
+
+    activityLogsPage.classList.remove(
+      "flex"
+    );
+
+  }
+
+
+  // ========================================================
+  // SHOW REQUESTED DEDICATED PAGE
+  // ========================================================
+
+  pageElement.classList.remove(
+    "hidden"
+  );
+
+  pageElement.classList.add(
+    "flex"
+  );
+
+
+  window.scrollTo({
+    top: 0,
+    behavior: "auto"
+  });
+
+}
+
+
+// ==========================================================
+// CLOSE DEDICATED RECENT ACTIVITY PAGE
+// ==========================================================
+
+function closeRecentActivityDedicatedPage(
+  pageElement
+) {
+
+  if (pageElement) {
+
+    pageElement.classList.add(
+      "hidden"
+    );
+
+    pageElement.classList.remove(
+      "flex"
+    );
+
+  }
+
+
+  const driverDetailsSection =
+    document.getElementById(
+      "driverDetailsSection"
+    );
+
+  const customersSection =
+    document.getElementById(
+      "customersSection"
+    );
+
+  const senderDetailsView =
+    document.getElementById(
+      "senderDetailsView"
+    );
+
+
+  // ========================================================
+  // RETURN TO CUSTOMER DETAILS
+  // ========================================================
+
+  if (
+    currentRecentActivitySource ===
+    "sender"
+  ) {
+
+    if (customersSection) {
+
+      customersSection.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    if (senderDetailsView) {
+
+      senderDetailsView.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    return;
+
+  }
+
+
+  // ========================================================
+  // RETURN TO DRIVER DETAILS
+  // ========================================================
+
+  if (driverDetailsSection) {
+
+    driverDetailsSection.classList.remove(
+      "hidden"
+    );
+
+  }
+
+}
+
+
+// ==========================================================
+// OPEN SHARED COMPLETED TAGS PAGE
+//
+// EXISTING HTML ID IS STILL:
+// driverCompletedTagsPage
+// ==========================================================
+
+async function openDriverCompletedTagsPage() {
+
+  if (
+    !currentRecentActivityUserId
+  ) {
+
+    console.error(
+      "User ID is missing."
+    );
+
+    return;
+
+  }
+
+
+  const driverDetailsSection =
+    document.getElementById(
+      "driverDetailsSection"
+    );
+
+  const customersSection =
+    document.getElementById(
+      "customersSection"
+    );
+
+  const senderDetailsView =
+    document.getElementById(
+      "senderDetailsView"
+    );
+
+  const completedTagsPage =
+    document.getElementById(
+      "driverCompletedTagsPage"
+    );
+
+  const completedTagsList =
+    document.getElementById(
+      "driverCompletedTagsPageList"
+    );
+
+  const completedTagsPageName =
+    document.getElementById(
+      "driverCompletedTagsPageName"
+    );
+
+
+  if (
+    !completedTagsPage ||
+    !completedTagsList
+  ) {
+
+    console.error(
+      "Completed Tags page HTML was not found."
+    );
+
+    return;
+
+  }
+
+
+  // ========================================================
+  // USER NAME
+  // ========================================================
+
+  const userName =
+    getCurrentRecentActivityUserName();
+
+
+  if (
+    completedTagsPageName
+  ) {
+
+    completedTagsPageName.textContent =
+      userName;
+
+  }
+
+
+  // ========================================================
+  // SHOW ONLY THE DEDICATED COMPLETED TAGS PAGE
+  // ========================================================
+
+  showRecentActivityDedicatedPage(
+    completedTagsPage
+  );
+
+
+  // ========================================================
+  // RESET SEARCH
+  // ========================================================
+
+  const searchInput =
+    document.getElementById(
+      "driverCompletedTagsSearch"
+    );
+
+
+  if (
+    searchInput
+  ) {
+
+    searchInput.value = "";
+
+  }
+
+
+  // ========================================================
+  // RESET PAGE STATE
+  // ========================================================
+
+  driverCompletedTagsAll = [];
+
+  driverCompletedTagsFiltered = [];
+
+  driverCompletedTagsCurrentPage = 1;
+
+
+  // ========================================================
+  // LOADING STATE
+  // ========================================================
+
+  completedTagsList.innerHTML = `
+    <div
+      class="w-full min-h-[100px] px-[20px] flex items-center justify-center"
+    >
+      <p
+        class="text-[#7C8AA0] text-[13px] font-medium"
+      >
+        Loading completed tags...
+      </p>
+    </div>
+  `;
+
+
+  try {
+
+    // ======================================================
+    // SAME WORKING FETCH FUNCTION
+    // ======================================================
+
+    const result =
+      await fetchUserCompletedTags(
+        currentRecentActivityUserId
+      );
+
+
+    // ======================================================
+    // SAME RESPONSE PARSING
+    // ======================================================
+
+    let completedTags = [];
+
+
+    if (
+      Array.isArray(
+        result?.data
+      )
+    ) {
+
+      completedTags =
+        result.data;
+
+    } else if (
+      Array.isArray(
+        result?.data?.tags
+      )
+    ) {
+
+      completedTags =
+        result.data.tags;
+
+    } else if (
+      Array.isArray(
+        result?.data?.completed_tags
+      )
+    ) {
+
+      completedTags =
+        result.data.completed_tags;
+
+    }
+
+
+    // ======================================================
+    // ALL COMPLETED TAGS RETURNED BY ENDPOINT
+    // NO .slice(0, 10)
+    // ======================================================
+
+    driverCompletedTagsAll =
+      completedTags
+        .map(
+          (tag) => {
+
+            const timestamp =
+              tag.completed_at ||
+              tag.completedAt ||
+              tag.timestamp ||
+              tag.updated_at ||
+              tag.updatedAt ||
+              tag.created_at ||
+              tag.createdAt ||
+              null;
+
+
+            return {
+              ...tag,
+
+              _completedTimestamp:
+                timestamp
+            };
+
+          }
+        )
+        .filter(
+          (tag) =>
+            Boolean(
+              tag._completedTimestamp
+            )
+        )
+        .sort(
+          (a, b) =>
+            parseRecentActivityTimestamp(
+              b._completedTimestamp
+            ) -
+            parseRecentActivityTimestamp(
+              a._completedTimestamp
+            )
+        );
+
+
+    driverCompletedTagsFiltered =
+      [
+        ...driverCompletedTagsAll
+      ];
+
+
+    driverCompletedTagsCurrentPage =
+      1;
+
+
+    renderDriverCompletedTagsPage();
+
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load completed tags:",
+      error
+    );
+
+
+    completedTagsList.innerHTML = `
+      <div
+        class="w-full min-h-[100px] px-[20px] flex items-center justify-center"
+      >
+        <p
+          class="text-[#D92D20] text-[13px] font-medium"
+        >
+          Unable to load completed tags.
+        </p>
       </div>
     `;
 
@@ -4946,16 +6199,775 @@ function getRecentTagActivityTitle(tag) {
     tag.description ||
     "";
 
-
-  if (tagName) {
+  if (
+    tagName
+  ) {
 
     return `${tagName} completed`;
 
   }
 
-
   return "Tag completed";
+
 }
+
+
+// ==========================================================
+// RENDER SHARED COMPLETED TAGS PAGE
+// 10 TAGS PER PAGE
+// ==========================================================
+
+function renderDriverCompletedTagsPage() {
+
+  const list =
+    document.getElementById(
+      "driverCompletedTagsPageList"
+    );
+
+  const paginationText =
+    document.getElementById(
+      "driverCompletedTagsPaginationText"
+    );
+
+  const currentPageText =
+    document.getElementById(
+      "driverCompletedTagsCurrentPage"
+    );
+
+  const previousBtn =
+    document.getElementById(
+      "driverCompletedTagsPreviousBtn"
+    );
+
+  const nextBtn =
+    document.getElementById(
+      "driverCompletedTagsNextBtn"
+    );
+
+
+  if (!list) {
+    return;
+  }
+
+
+  // ========================================================
+  // PAGINATION
+  // ========================================================
+
+  const totalItems =
+    driverCompletedTagsFiltered.length;
+
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        totalItems /
+        DRIVER_COMPLETED_TAGS_PER_PAGE
+      )
+    );
+
+
+  if (
+    driverCompletedTagsCurrentPage >
+    totalPages
+  ) {
+
+    driverCompletedTagsCurrentPage =
+      totalPages;
+
+  }
+
+
+  const startIndex =
+    (
+      driverCompletedTagsCurrentPage - 1
+    ) *
+    DRIVER_COMPLETED_TAGS_PER_PAGE;
+
+
+  const endIndex =
+    startIndex +
+    DRIVER_COMPLETED_TAGS_PER_PAGE;
+
+
+  const pageItems =
+    driverCompletedTagsFiltered.slice(
+      startIndex,
+      endIndex
+    );
+
+
+  // ========================================================
+  // EMPTY STATE
+  // ========================================================
+
+  if (!pageItems.length) {
+
+    list.innerHTML = `
+      <div
+        class="w-full h-[220px] flex flex-col items-center justify-center px-[20px]"
+      >
+
+        <div
+          class="w-[46px] h-[46px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center"
+        >
+          <i
+            class="fa-solid fa-tag text-[14px]"
+          ></i>
+        </div>
+
+
+        <p
+          class="mt-[12px] text-[#11313B] text-[14px] leading-[20px] font-semibold"
+        >
+          No completed tags found
+        </p>
+
+
+        <p
+          class="mt-[4px] text-[#98A2B3] text-[12px] leading-[18px] font-medium"
+        >
+          Completed tags for this user will appear here.
+        </p>
+
+      </div>
+    `;
+
+  } else {
+
+    // ======================================================
+    // TABLE ROWS
+    // ======================================================
+
+    list.innerHTML = `
+      <div
+        class="w-full flex flex-col gap-[14px] py-[16px] bg-[#F8FAFC]"
+      >
+
+        ${pageItems
+          .map(
+            (tag) => {
+
+              // ==================================================
+              // TAG ID
+              // ==================================================
+
+              const tagId =
+                tag.id ||
+                tag.tag_id ||
+                tag.tag?.id ||
+                "";
+
+
+              // ==================================================
+              // TAG REFERENCE
+              // ==================================================
+
+              const tagReference =
+                tag.tag_number ||
+                tag.reference ||
+                tag.code ||
+                tag.name ||
+                tag.title ||
+                tag.tag?.tag_number ||
+                tag.tag?.reference ||
+                tagId ||
+                "Completed Tag";
+
+
+              // ==================================================
+              // COMPLETED TIMESTAMP
+              // ==================================================
+
+              const completedTimestamp =
+                tag._completedTimestamp ||
+                tag.completed_at ||
+                tag.completedAt ||
+                tag.timestamp ||
+                tag.updated_at ||
+                tag.updatedAt ||
+                tag.created_at ||
+                tag.createdAt ||
+                "";
+
+
+              // ==================================================
+              // COMPLETED DATE
+              // ==================================================
+
+              const completedDate =
+                tag.timestamp_human ||
+                tag.completed_at_human ||
+                formatRecentActivityTime(
+                  completedTimestamp
+                ) ||
+                "--";
+
+
+              // ==================================================
+              // ROW
+              // ==================================================
+
+              return `
+  <div
+    class="w-full min-h-[88px] rounded-[12px] bg-white grid items-center"
+    style="
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 0.8fr) 110px;
+      border: 1px solid #EAECF0;
+      box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.04);
+    "
+  >
+
+    <!-- TAG -->
+    <div
+      class="px-[20px] flex items-center gap-[18px] min-w-0"
+    >
+
+      <div
+        class="w-[24px] h-[24px] text-[#30BBC7] flex items-center justify-center shrink-0"
+      >
+        <i class="fa-solid fa-tag text-[15px]"></i>
+      </div>
+
+      <p
+        class="min-w-0 text-[#11313B] text-[13px] leading-[20px] font-semibold truncate"
+        title="${escapeRecentActivityHtml(
+          String(tagReference)
+        )}"
+      >
+        ${escapeRecentActivityHtml(
+          String(tagReference)
+        )}
+      </p>
+
+    </div>
+
+
+    <!-- COMPLETED DATE -->
+    <div class="px-[20px]">
+
+      <p
+        class="text-[#475467] text-[13px] leading-[20px] font-medium"
+      >
+        ${escapeRecentActivityHtml(
+          String(completedDate)
+        )}
+      </p>
+
+    </div>
+
+
+    <!-- STATUS -->
+    <div class="px-[20px]">
+
+      <span
+        class="h-[30px] px-[11px] rounded-[999px] bg-[#EAF8F1] text-[#3BB273] text-[12px] leading-[18px] font-semibold inline-flex items-center gap-[7px]"
+      >
+
+        <span
+          class="w-[6px] h-[6px] rounded-full bg-[#3BB273]"
+        ></span>
+
+        Completed
+
+      </span>
+
+    </div>
+
+
+    <!-- ACTION -->
+    <div
+      class="px-[20px] flex items-center justify-end"
+    >
+
+      <button
+        type="button"
+        class="driverCompletedTagViewBtn"
+        data-tag-id="${escapeRecentActivityHtml(
+          String(tagId)
+        )}"
+        style="
+          height: 36px;
+          min-width: 80px;
+          padding: 0 15px;
+          border-radius: 8px;
+          border: 1px solid #30BBC7;
+          background-color: #30BBC7;
+          color: #FFFFFF;
+          font-size: 12px;
+          line-height: 18px;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          cursor: pointer;
+          font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+        "
+      >
+
+        <span>View</span>
+
+        <i
+          class="fa-solid fa-arrow-right"
+          style="
+            font-size: 9px;
+            color: #FFFFFF;
+          "
+        ></i>
+
+      </button>
+
+    </div>
+
+  </div>
+`;
+
+            }
+          )
+          .join("")}
+
+      </div>
+    `;
+
+  }
+
+
+  // ========================================================
+  // PAGINATION INFORMATION
+  // ========================================================
+
+  if (paginationText) {
+
+    if (totalItems === 0) {
+
+      paginationText.textContent =
+        "Showing 0 of 0";
+
+    } else {
+
+      const visibleStart =
+        startIndex + 1;
+
+
+      const visibleEnd =
+        Math.min(
+          endIndex,
+          totalItems
+        );
+
+
+      paginationText.textContent =
+        `Showing ${visibleStart}-${visibleEnd} of ${totalItems} completed tags`;
+
+    }
+
+  }
+
+
+  // ========================================================
+  // CURRENT PAGE
+  // ========================================================
+
+  if (currentPageText) {
+
+    currentPageText.textContent =
+      driverCompletedTagsCurrentPage;
+
+  }
+
+
+  // ========================================================
+  // PREVIOUS BUTTON
+  // ========================================================
+
+  if (previousBtn) {
+
+    previousBtn.disabled =
+      driverCompletedTagsCurrentPage <= 1;
+
+  }
+
+
+  // ========================================================
+  // NEXT BUTTON
+  // ========================================================
+
+  if (nextBtn) {
+
+    nextBtn.disabled =
+      driverCompletedTagsCurrentPage >=
+      totalPages;
+
+  }
+
+}
+
+// ==========================================================
+// UPDATE COMPLETED TAGS PAGINATION
+// ==========================================================
+
+function updateDriverCompletedTagsPagination(
+  totalItems,
+  totalPages,
+  startIndex,
+  visibleItems
+) {
+
+  const paginationText =
+    document.getElementById(
+      "driverCompletedTagsPaginationText"
+    );
+
+  const currentPage =
+    document.getElementById(
+      "driverCompletedTagsCurrentPage"
+    );
+
+  const previousButton =
+    document.getElementById(
+      "driverCompletedTagsPreviousBtn"
+    );
+
+  const nextButton =
+    document.getElementById(
+      "driverCompletedTagsNextBtn"
+    );
+
+
+  if (
+    paginationText
+  ) {
+
+    if (
+      totalItems === 0
+    ) {
+
+      paginationText.textContent =
+        "Showing 0 of 0";
+
+    } else {
+
+      const firstItem =
+        startIndex + 1;
+
+      const lastItem =
+        startIndex +
+        visibleItems;
+
+
+      paginationText.textContent =
+        `Showing ${firstItem}-${lastItem} of ${totalItems}`;
+
+    }
+
+  }
+
+
+  if (
+    currentPage
+  ) {
+
+    currentPage.textContent =
+      driverCompletedTagsCurrentPage;
+
+  }
+
+
+  if (
+    previousButton
+  ) {
+
+    previousButton.disabled =
+      driverCompletedTagsCurrentPage <= 1;
+
+  }
+
+
+  if (
+    nextButton
+  ) {
+
+    nextButton.disabled =
+      driverCompletedTagsCurrentPage >=
+      totalPages;
+
+  }
+
+}
+
+
+// ==========================================================
+// COMPLETED TAGS PREVIOUS PAGE
+// ==========================================================
+
+document
+  .getElementById(
+    "driverCompletedTagsPreviousBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      if (
+        driverCompletedTagsCurrentPage <=
+        1
+      ) {
+
+        return;
+
+      }
+
+
+      driverCompletedTagsCurrentPage--;
+
+
+      renderDriverCompletedTagsPage();
+
+    }
+  );
+
+
+// ==========================================================
+// COMPLETED TAGS NEXT PAGE
+// ==========================================================
+
+document
+  .getElementById(
+    "driverCompletedTagsNextBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      const totalPages =
+        Math.max(
+          1,
+          Math.ceil(
+            driverCompletedTagsFiltered.length /
+            DRIVER_COMPLETED_TAGS_PER_PAGE
+          )
+        );
+
+
+      if (
+        driverCompletedTagsCurrentPage >=
+        totalPages
+      ) {
+
+        return;
+
+      }
+
+
+      driverCompletedTagsCurrentPage++;
+
+
+      renderDriverCompletedTagsPage();
+
+    }
+  );
+
+
+// ==========================================================
+// COMPLETED TAGS SEARCH
+// ==========================================================
+
+document
+  .getElementById(
+    "driverCompletedTagsSearch"
+  )
+  ?.addEventListener(
+    "input",
+    function () {
+
+      const searchValue =
+        this.value
+          .trim()
+          .toLowerCase();
+
+
+      if (
+        !searchValue
+      ) {
+
+        driverCompletedTagsFiltered =
+          [
+            ...driverCompletedTagsAll
+          ];
+
+      } else {
+
+        driverCompletedTagsFiltered =
+          driverCompletedTagsAll.filter(
+            (tag) => {
+
+              const searchableText =
+                [
+                  tag.id,
+                  tag.tag_id,
+                  tag.tag_number,
+                  tag.reference,
+                  tag.code,
+                  tag.name,
+                  tag.title,
+                  tag.status,
+                  tag.tag?.id,
+                  tag.tag?.tag_number,
+                  tag.tag?.reference
+                ]
+                  .filter(
+                    Boolean
+                  )
+                  .join(
+                    " "
+                  )
+                  .toLowerCase();
+
+
+              return searchableText.includes(
+                searchValue
+              );
+
+            }
+          );
+
+      }
+
+
+      driverCompletedTagsCurrentPage =
+        1;
+
+
+      renderDriverCompletedTagsPage();
+
+    }
+  );
+
+
+// ==========================================================
+// COMPLETED TAG ROW CLICK
+// DRIVER + CUSTOMER USE SAME TAG DETAILS PAGE
+// ==========================================================
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    const button =
+      event.target.closest(
+        ".driverCompletedTagViewBtn"
+      );
+
+    if (!button) {
+      return;
+    }
+
+
+    event.preventDefault();
+    event.stopPropagation();
+
+
+    const tagId =
+      button.dataset.tagId;
+
+
+    if (!tagId) {
+
+      console.error(
+        "Completed Tag ID is missing."
+      );
+
+      return;
+    }
+
+
+    viewTag(
+      tagId
+    );
+
+  }
+);
+
+
+// ==========================================================
+// COMPLETED TAG ROW KEYBOARD SUPPORT
+// ==========================================================
+
+document.addEventListener(
+  "keydown",
+  function (event) {
+
+    if (
+      event.key !== "Enter" &&
+      event.key !== " "
+    ) {
+
+      return;
+
+    }
+
+
+    const row =
+      event.target.closest(
+        ".driverCompletedTagRow"
+      );
+
+
+    if (!row) {
+
+      return;
+
+    }
+
+
+    event.preventDefault();
+
+
+    const tagId =
+      row.dataset.tagId;
+
+
+    if (!tagId) {
+
+      return;
+
+    }
+
+
+    viewTag(
+      tagId
+    );
+
+  }
+);
+
+
+// ==========================================================
+// COMPLETED TAGS BACK BUTTON
+// ==========================================================
+
+document
+  .getElementById(
+    "driverCompletedTagsBackBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      const completedTagsPage =
+        document.getElementById(
+          "driverCompletedTagsPage"
+        );
+
+
+      closeRecentActivityDedicatedPage(
+        completedTagsPage
+      );
+
+    }
+  );
 
 
 // ============================================================
@@ -4970,10 +6982,6 @@ function getRecentLogActivityTitle(log) {
     ).trim();
 
 
-  // ==========================================================
-  // USER LOGIN
-  // ==========================================================
-
   if (
     action.toLowerCase() ===
     "user_login"
@@ -4983,10 +6991,6 @@ function getRecentLogActivityTitle(log) {
 
   }
 
-
-  // ==========================================================
-  // USER SIGNUP
-  // ==========================================================
 
   if (
     action.toLowerCase() ===
@@ -4998,10 +7002,6 @@ function getRecentLogActivityTitle(log) {
   }
 
 
-  // ==========================================================
-  // USER UPDATED
-  // ==========================================================
-
   if (
     action.toLowerCase() ===
     "updated"
@@ -5012,15 +7012,11 @@ function getRecentLogActivityTitle(log) {
   }
 
 
-  // ==========================================================
-  // USER SUSPENDED
-  // ==========================================================
-
   if (
     action.toLowerCase() ===
-    "suspended" ||
+      "suspended" ||
     action.toLowerCase() ===
-    "user_suspended"
+      "user_suspended"
   ) {
 
     return "User suspended";
@@ -5028,15 +7024,11 @@ function getRecentLogActivityTitle(log) {
   }
 
 
-  // ==========================================================
-  // USER UNSUSPENDED
-  // ==========================================================
-
   if (
     action.toLowerCase() ===
-    "unsuspended" ||
+      "unsuspended" ||
     action.toLowerCase() ===
-    "user_unsuspended"
+      "user_unsuspended"
   ) {
 
     return "User unsuspended";
@@ -5044,11 +7036,9 @@ function getRecentLogActivityTitle(log) {
   }
 
 
-  // ==========================================================
-  // FALLBACK
-  // ==========================================================
-
-  if (action) {
+  if (
+    action
+  ) {
 
     return action
       .replace(
@@ -5065,17 +7055,1121 @@ function getRecentLogActivityTitle(log) {
 
 
   return "User activity";
+
 }
+
+
+// ==========================================================
+// OPEN SHARED ACTIVITY LOGS PAGE
+//
+// EXISTING HTML ID IS STILL:
+// driverActivityLogsPage
+// ==========================================================
+
+async function openDriverActivityLogsPage() {
+
+  if (
+    !currentRecentActivityUserId
+  ) {
+
+    console.error(
+      "User ID is missing."
+    );
+
+    return;
+
+  }
+
+
+  const driverDetailsSection =
+    document.getElementById(
+      "driverDetailsSection"
+    );
+
+  const customersSection =
+    document.getElementById(
+      "customersSection"
+    );
+
+  const senderDetailsView =
+    document.getElementById(
+      "senderDetailsView"
+    );
+
+  const activityLogsPage =
+    document.getElementById(
+      "driverActivityLogsPage"
+    );
+
+  const activityLogsList =
+    document.getElementById(
+      "driverActivityLogsPageList"
+    );
+
+  const activityLogsPageName =
+    document.getElementById(
+      "driverActivityLogsPageName"
+    );
+
+
+  if (
+    !activityLogsPage ||
+    !activityLogsList
+  ) {
+
+    console.error(
+      "Activity Logs page HTML was not found."
+    );
+
+    return;
+
+  }
+
+
+  // ========================================================
+  // USER NAME
+  // ========================================================
+
+  const userName =
+    getCurrentRecentActivityUserName();
+
+
+  if (
+    activityLogsPageName
+  ) {
+
+    activityLogsPageName.textContent =
+      userName;
+
+  }
+
+
+  // ========================================================
+  // SHOW ONLY THE DEDICATED ACTIVITY LOGS PAGE
+  // ========================================================
+
+  showRecentActivityDedicatedPage(
+    activityLogsPage
+  );
+
+
+  // ========================================================
+  // RESET SEARCH
+  // ========================================================
+
+  const searchInput =
+    document.getElementById(
+      "driverActivityLogsSearch"
+    );
+
+
+  if (
+    searchInput
+  ) {
+
+    searchInput.value = "";
+
+  }
+
+
+  // ========================================================
+  // RESET ACTIVITY LOG PAGE STATE
+  // ========================================================
+
+  driverActivityLogsAll = [];
+
+  driverActivityLogsFiltered = [];
+
+  driverActivityLogsCurrentPage = 1;
+
+
+  // ========================================================
+  // LOADING STATE
+  // ========================================================
+
+  activityLogsList.innerHTML = `
+    <div
+      class="w-full min-h-[100px] px-[20px] flex items-center justify-center"
+    >
+      <p
+        class="text-[#7C8AA0] text-[13px] font-medium"
+      >
+        Loading activity logs...
+      </p>
+    </div>
+  `;
+
+
+  try {
+
+    // ======================================================
+    // SAME WORKING FETCH FUNCTION
+    // ======================================================
+
+    const result =
+      await fetchUserRecentAuditLogs(
+        currentRecentActivityUserId
+      );
+
+
+    let auditLogs = [];
+
+
+    if (
+      Array.isArray(
+        result?.data
+      )
+    ) {
+
+      auditLogs =
+        result.data;
+
+    } else if (
+      Array.isArray(
+        result?.data?.logs
+      )
+    ) {
+
+      auditLogs =
+        result.data.logs;
+
+    }
+
+
+    // ======================================================
+    // EVERYTHING RETURNED BY ENDPOINT
+    // NO .slice(0, 10)
+    // ======================================================
+
+    driverActivityLogsAll =
+      auditLogs
+        .map(
+          (log) => {
+
+            return {
+
+              ...log,
+
+              _activityTitle:
+                getRecentLogActivityTitle(
+                  log
+                ),
+
+              _activityTimestamp:
+                log.timestamp ||
+                null
+
+            };
+
+          }
+        )
+
+        .filter(
+          (log) => {
+
+            return (
+              log._activityTimestamp &&
+              parseRecentActivityTimestamp(
+                log._activityTimestamp
+              ) > 0
+            );
+
+          }
+        )
+
+        .sort(
+          (a, b) => {
+
+            return (
+              parseRecentActivityTimestamp(
+                b._activityTimestamp
+              ) -
+              parseRecentActivityTimestamp(
+                a._activityTimestamp
+              )
+            );
+
+          }
+        );
+
+
+    driverActivityLogsFiltered =
+      [
+        ...driverActivityLogsAll
+      ];
+
+
+    driverActivityLogsCurrentPage =
+      1;
+
+
+    renderDriverActivityLogsPage();
+
+
+  } catch (error) {
+
+    console.error(
+      "Failed to load activity logs:",
+      error
+    );
+
+
+    activityLogsList.innerHTML = `
+      <div
+        class="w-full min-h-[100px] px-[20px] flex items-center justify-center"
+      >
+        <p
+          class="text-[#D92D20] text-[13px] font-medium"
+        >
+          Unable to load activity logs.
+        </p>
+      </div>
+    `;
+
+  }
+
+}
+
+
+// ==========================================================
+// RENDER SHARED ACTIVITY LOGS PAGE
+// 10 LOGS PER PAGE
+// ==========================================================
+function renderDriverActivityLogsPage() {
+
+  const list =
+    document.getElementById(
+      "driverActivityLogsPageList"
+    );
+
+  const paginationText =
+    document.getElementById(
+      "driverActivityLogsPaginationText"
+    );
+
+  const currentPageText =
+    document.getElementById(
+      "driverActivityLogsCurrentPage"
+    );
+
+  const previousBtn =
+    document.getElementById(
+      "driverActivityLogsPreviousBtn"
+    );
+
+  const nextBtn =
+    document.getElementById(
+      "driverActivityLogsNextBtn"
+    );
+
+
+  if (!list) {
+    return;
+  }
+
+
+  // ========================================================
+  // PAGINATION
+  // ========================================================
+
+  const totalItems =
+    driverActivityLogsFiltered.length;
+
+
+  const totalPages =
+    Math.max(
+      1,
+      Math.ceil(
+        totalItems /
+        DRIVER_ACTIVITY_LOGS_PER_PAGE
+      )
+    );
+
+
+  if (
+    driverActivityLogsCurrentPage >
+    totalPages
+  ) {
+
+    driverActivityLogsCurrentPage =
+      totalPages;
+
+  }
+
+
+  const startIndex =
+    (
+      driverActivityLogsCurrentPage - 1
+    ) *
+    DRIVER_ACTIVITY_LOGS_PER_PAGE;
+
+
+  const endIndex =
+    startIndex +
+    DRIVER_ACTIVITY_LOGS_PER_PAGE;
+
+
+  const pageItems =
+    driverActivityLogsFiltered.slice(
+      startIndex,
+      endIndex
+    );
+
+
+  // ========================================================
+  // EMPTY STATE
+  // ========================================================
+
+  if (!pageItems.length) {
+
+    list.innerHTML = `
+      <div
+        class="w-full h-[220px] flex flex-col items-center justify-center px-[20px]"
+      >
+
+        <div
+          class="w-[46px] h-[46px] rounded-full bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center"
+        >
+          <i
+            class="fa-solid fa-clock-rotate-left text-[14px]"
+          ></i>
+        </div>
+
+
+        <p
+          class="mt-[12px] text-[#11313B] text-[14px] leading-[20px] font-semibold"
+        >
+          No activity logs found
+        </p>
+
+
+        <p
+          class="mt-[4px] text-[#98A2B3] text-[12px] leading-[18px] font-medium"
+        >
+          Activity logs for this user will appear here.
+        </p>
+
+      </div>
+    `;
+
+  } else {
+
+
+    // ======================================================
+    // LOG ROWS
+    // ======================================================
+
+    list.innerHTML = `
+      <div
+        class="w-full flex flex-col gap-[14px] px-[14px] py-[16px] bg-[#F8FAFC]"
+      >
+
+        ${pageItems
+          .map(
+            (log) => {
+
+
+              // ==================================================
+              // LOG ID
+              // IMPORTANT:
+              // USE THE AUDIT LOG ID, NOT ENTITY_ID
+              // ==================================================
+
+              const logId =
+                log.id ||
+                log.raw?.id ||
+                "";
+
+
+              // ==================================================
+              // ACTIVITY
+              // ==================================================
+
+              const activityTitle =
+                log.title ||
+                getRecentLogActivityTitle(
+                  log.raw || log
+                ) ||
+                "User activity";
+
+
+              // ==================================================
+              // ENTITY
+              // ==================================================
+
+              const entityType =
+                log.entityType ||
+                log.entity_type ||
+                log.raw?.entity_type ||
+                "";
+
+
+              const entityId =
+                log.entityId ||
+                log.entity_id ||
+                log.raw?.entity_id ||
+                "";
+
+
+              let entityText = "--";
+
+
+              if (
+                entityType &&
+                entityId
+              ) {
+
+                entityText =
+                  `${entityType} #${entityId}`;
+
+              } else if (entityType) {
+
+                entityText =
+                  entityType;
+
+              } else if (entityId) {
+
+                entityText =
+                  entityId;
+
+              }
+
+
+              // ==================================================
+              // IP ADDRESS
+              // ==================================================
+
+              const ipAddress =
+                log.ip_address ||
+                log.ipAddress ||
+                log.raw?.ip_address ||
+                log.raw?.ipAddress ||
+                "--";
+
+
+              // ==================================================
+              // TIMESTAMP
+              // ==================================================
+
+              const timestamp =
+                log.timestamp ||
+                log.created_at ||
+                log.createdAt ||
+                log.raw?.timestamp ||
+                log.raw?.created_at ||
+                log.raw?.createdAt ||
+                "";
+
+
+              const dateTime =
+  timestamp
+    ? new Date(timestamp).toLocaleString(
+        "en-GB",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true
+        }
+      )
+    : "--";
+
+
+              // ==================================================
+              // ROW
+              // ==================================================
+
+              return `
+                <div
+                  class="w-full min-h-[88px] rounded-[12px] bg-white grid items-center"
+                  style="
+                    grid-template-columns:
+                      minmax(0, 1.45fr)
+                      minmax(0, 0.85fr)
+                      minmax(0, 1fr)
+                      minmax(0, 1.15fr)
+                      110px;
+
+                    border: 1px solid #EAECF0;
+                    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.04);
+                  "
+                >
+
+
+                  <!-- ==========================================
+                       ACTIVITY
+                  =========================================== -->
+
+                  <div
+                    class="px-[20px] flex items-center gap-[18px] min-w-0"
+                  >
+
+                    <!-- ICON -->
+                    <div
+                      class="w-[24px] h-[24px] text-[#30BBC7] flex items-center justify-center shrink-0"
+                    >
+                      <i
+                        class="fa-solid fa-clock-rotate-left text-[14px]"
+                      ></i>
+                    </div>
+
+
+                    <!-- ACTIVITY TITLE -->
+                    <p
+                      class="min-w-0 text-[#11313B] text-[13px] leading-[20px] font-semibold truncate"
+                      title="${escapeRecentActivityHtml(
+                        String(activityTitle)
+                      )}"
+                    >
+                      ${escapeRecentActivityHtml(
+                        String(activityTitle)
+                      )}
+                    </p>
+
+                  </div>
+
+
+                  <!-- ==========================================
+                       ENTITY
+                  =========================================== -->
+
+                  <div
+                    class="px-[20px] min-w-0"
+                  >
+
+                    <p
+                      class="text-[#475467] text-[13px] leading-[20px] font-medium truncate"
+                      title="${escapeRecentActivityHtml(
+                        String(entityText)
+                      )}"
+                    >
+                      ${escapeRecentActivityHtml(
+                        String(entityText)
+                      )}
+                    </p>
+
+                  </div>
+
+
+                  <!-- ==========================================
+                       IP ADDRESS
+                  =========================================== -->
+
+                  <div
+                    class="px-[20px] min-w-0"
+                  >
+
+                    <p
+                      class="text-[#475467] text-[13px] leading-[20px] font-medium truncate"
+                      title="${escapeRecentActivityHtml(
+                        String(ipAddress)
+                      )}"
+                    >
+                      ${escapeRecentActivityHtml(
+                        String(ipAddress)
+                      )}
+                    </p>
+
+                  </div>
+
+
+                  <!-- ==========================================
+                       DATE / TIME
+                  =========================================== -->
+
+                  <div
+                    class="px-[20px] min-w-0"
+                  >
+
+                    <p
+                      class="text-[#475467] text-[13px] leading-[20px] font-medium"
+                    >
+                      ${escapeRecentActivityHtml(
+                        String(dateTime)
+                      )}
+                    </p>
+
+                  </div>
+
+
+                  <!-- ==========================================
+                       ACTION
+                  =========================================== -->
+
+                  <div
+                    class="px-[20px] flex items-center justify-end"
+                  >
+
+                    <button
+                      type="button"
+                      class="driverActivityLogViewBtn"
+                      data-log-id="${escapeRecentActivityHtml(
+                        String(logId)
+                      )}"
+                      style="
+                        height: 36px;
+                        min-width: 80px;
+                        padding: 0 15px;
+                        border-radius: 8px;
+                        border: 1px solid #30BBC7;
+                        background-color: #30BBC7;
+                        color: #FFFFFF;
+                        font-size: 12px;
+                        line-height: 18px;
+                        font-weight: 600;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 8px;
+                        cursor: pointer;
+                        font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+                      "
+                    >
+
+                      <span>
+                        View
+                      </span>
+
+
+                      <i
+                        class="fa-solid fa-arrow-right"
+                        style="
+                          font-size: 9px;
+                          color: #FFFFFF;
+                        "
+                      ></i>
+
+                    </button>
+
+                  </div>
+
+
+                </div>
+              `;
+
+            }
+          )
+          .join("")}
+
+      </div>
+    `;
+
+  }
+
+
+  // ========================================================
+  // PAGINATION INFORMATION
+  // ========================================================
+
+  if (paginationText) {
+
+    if (totalItems === 0) {
+
+      paginationText.textContent =
+        "Showing 0 of 0 activity logs";
+
+    } else {
+
+      const visibleStart =
+        startIndex + 1;
+
+
+      const visibleEnd =
+        Math.min(
+          endIndex,
+          totalItems
+        );
+
+
+      paginationText.textContent =
+        `Showing ${visibleStart}-${visibleEnd} of ${totalItems} activity logs`;
+
+    }
+
+  }
+
+
+  // ========================================================
+  // CURRENT PAGE
+  // ========================================================
+
+  if (currentPageText) {
+
+    currentPageText.textContent =
+      driverActivityLogsCurrentPage;
+
+  }
+
+
+  // ========================================================
+  // PREVIOUS BUTTON
+  // ========================================================
+
+  if (previousBtn) {
+
+    previousBtn.disabled =
+      driverActivityLogsCurrentPage <= 1;
+
+  }
+
+
+  // ========================================================
+  // NEXT BUTTON
+  // ========================================================
+
+  if (nextBtn) {
+
+    nextBtn.disabled =
+      driverActivityLogsCurrentPage >=
+      totalPages;
+
+  }
+
+}
+
+// ==========================================================
+// ACTIVITY LOG VIEW BUTTON
+// ==========================================================
+
+document.addEventListener(
+  "click",
+  async function (event) {
+
+    const button =
+      event.target.closest(
+        ".driverActivityLogViewBtn"
+      );
+
+    if (!button) {
+      return;
+    }
+
+    const logId =
+      button.dataset.logId;
+
+    if (!logId) {
+      console.error(
+        "Audit log ID is missing."
+      );
+      return;
+    }
+
+    await openAuditLogDetailsModal(
+      logId
+    );
+
+  }
+);
+// ==========================================================
+// OPEN INDIVIDUAL ACTIVITY LOG
+// DRIVER + CUSTOMER SHARED ACTIVITY LOG PAGE
+// ==========================================================
+
+document.addEventListener(
+  "click",
+  async function (event) {
+
+    const item =
+      event.target.closest(
+        ".driverActivityLogItem"
+      );
+
+
+    if (!item) {
+      return;
+    }
+
+
+    const logId =
+      item.dataset.logId || "";
+
+
+    if (!logId) {
+
+      showActionPopupMessage(
+        "Audit log ID not found.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    await openAuditLogDetailsModal(
+      logId
+    );
+
+  }
+);
+// ==========================================================
+// UPDATE ACTIVITY LOGS PAGINATION
+// ==========================================================
+
+function updateDriverActivityLogsPagination(
+  totalItems,
+  totalPages,
+  startIndex,
+  visibleItems
+) {
+
+  const paginationText =
+    document.getElementById(
+      "driverActivityLogsPaginationText"
+    );
+
+  const currentPage =
+    document.getElementById(
+      "driverActivityLogsCurrentPage"
+    );
+
+  const previousButton =
+    document.getElementById(
+      "driverActivityLogsPreviousBtn"
+    );
+
+  const nextButton =
+    document.getElementById(
+      "driverActivityLogsNextBtn"
+    );
+
+
+  if (
+    paginationText
+  ) {
+
+    if (
+      totalItems === 0
+    ) {
+
+      paginationText.textContent =
+        "Showing 0 of 0";
+
+    } else {
+
+      const firstItem =
+        startIndex + 1;
+
+      const lastItem =
+        startIndex +
+        visibleItems;
+
+
+      paginationText.textContent =
+        `Showing ${firstItem}-${lastItem} of ${totalItems}`;
+
+    }
+
+  }
+
+
+  if (
+    currentPage
+  ) {
+
+    currentPage.textContent =
+      driverActivityLogsCurrentPage;
+
+  }
+
+
+  if (
+    previousButton
+  ) {
+
+    previousButton.disabled =
+      driverActivityLogsCurrentPage <= 1;
+
+  }
+
+
+  if (
+    nextButton
+  ) {
+
+    nextButton.disabled =
+      driverActivityLogsCurrentPage >=
+      totalPages;
+
+  }
+
+}
+
+
+// ==========================================================
+// ACTIVITY LOGS PREVIOUS PAGE
+// ==========================================================
+
+document
+  .getElementById(
+    "driverActivityLogsPreviousBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      if (
+        driverActivityLogsCurrentPage <=
+        1
+      ) {
+
+        return;
+
+      }
+
+
+      driverActivityLogsCurrentPage--;
+
+
+      renderDriverActivityLogsPage();
+
+    }
+  );
+
+
+// ==========================================================
+// ACTIVITY LOGS NEXT PAGE
+// ==========================================================
+
+document
+  .getElementById(
+    "driverActivityLogsNextBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      const totalPages =
+        Math.max(
+          1,
+          Math.ceil(
+            driverActivityLogsFiltered.length /
+            DRIVER_ACTIVITY_LOGS_PER_PAGE
+          )
+        );
+
+
+      if (
+        driverActivityLogsCurrentPage >=
+        totalPages
+      ) {
+
+        return;
+
+      }
+
+
+      driverActivityLogsCurrentPage++;
+
+
+      renderDriverActivityLogsPage();
+
+    }
+  );
+
+
+// ==========================================================
+// ACTIVITY LOGS SEARCH
+// ==========================================================
+
+document
+  .getElementById(
+    "driverActivityLogsSearch"
+  )
+  ?.addEventListener(
+    "input",
+    function () {
+
+      const searchValue =
+        this.value
+          .trim()
+          .toLowerCase();
+
+
+      if (
+        !searchValue
+      ) {
+
+        driverActivityLogsFiltered =
+          [
+            ...driverActivityLogsAll
+          ];
+
+      } else {
+
+        driverActivityLogsFiltered =
+          driverActivityLogsAll.filter(
+            (log) => {
+
+              const searchableText =
+                [
+                  log._activityTitle,
+                  log.action,
+                  log.entity_type,
+                  log.entity_id,
+                  log.ip_address,
+                  log.timestamp,
+                  log.timestamp_human
+                ]
+                  .filter(
+                    Boolean
+                  )
+                  .join(
+                    " "
+                  )
+                  .toLowerCase();
+
+
+              return searchableText.includes(
+                searchValue
+              );
+
+            }
+          );
+
+      }
+
+
+      driverActivityLogsCurrentPage =
+        1;
+
+
+      renderDriverActivityLogsPage();
+
+    }
+  );
+
+
+// ==========================================================
+// ACTIVITY LOGS BACK BUTTON
+// ==========================================================
+
+document
+  .getElementById(
+    "driverActivityLogsBackBtn"
+  )
+  ?.addEventListener(
+    "click",
+    function () {
+
+      const activityLogsPage =
+        document.getElementById(
+          "driverActivityLogsPage"
+        );
+
+
+      closeRecentActivityDedicatedPage(
+        activityLogsPage
+      );
+
+    }
+  );
 
 
 // ============================================================
 // PARSE RECENT ACTIVITY TIMESTAMP
-//
-// BACKEND FORMAT:
-// 2026-09-25 15:53:26
-//
-// CONVERT TO:
-// 2026-09-25T15:53:26
 // ============================================================
 
 function parseRecentActivityTimestamp(
@@ -5118,71 +8212,378 @@ function parseRecentActivityTimestamp(
 
 
   return time;
+
 }
 
 
 // ============================================================
 // RENDER RECENT ACTIVITY
+// DRIVER + CUSTOMER
 // ============================================================
 
-function renderUserRecentActivity(
-  activities,
-  listElementId
-) {
+// ============================================================
+// RENDER RECENT ACTIVITY
+// DRIVER + CUSTOMER
+// MAXIMUM 5 ITEMS
+// ============================================================
+
+function renderUserRecentActivity() {
 
   const list =
     document.getElementById(
-      listElementId
+      currentRecentActivityListElementId
     );
 
-
   if (!list) {
-
     return;
-
   }
 
 
   // ==========================================================
-  // NO ACTIVITY
+  // GET CURRENT TAB DATA
   // ==========================================================
 
-  if (
-    !activities.length
-  ) {
+  const isTags =
+    currentRecentActivityTab === "tags";
+
+  const activities =
+    isTags
+      ? recentCompletedTagActivities
+      : recentAuditLogActivities;
+
+
+  // ==========================================================
+  // ONLY SHOW 5 ITEMS IN RECENT ACTIVITY
+  // ==========================================================
+
+  const recentActivities =
+    activities.slice(0, 5);
+
+
+  // ==========================================================
+  // EMPTY STATE
+  // ==========================================================
+
+  if (!recentActivities.length) {
 
     list.innerHTML = `
       <div
-        class="w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
+        class="w-full min-h-[76px] flex items-center justify-center"
       >
         <p
-          class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+          class="text-[#98A2B3] text-[13px] leading-[18px] font-medium"
         >
-          No recent activity yet
+          ${
+            isTags
+              ? "No completed tags found."
+              : "No activity logs found."
+          }
         </p>
-
-        <span
-          class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium"
-        >
-          --
-        </span>
       </div>
     `;
 
-
     return;
-
   }
 
 
   // ==========================================================
-  // RENDER ACTIVITY ROWS
+  // COMPLETED TAGS
   // ==========================================================
 
-  list.innerHTML =
-    activities
-      .map(
-        (activity) => {
+  if (isTags) {
+
+    list.innerHTML = `
+      <div
+        class="w-full px-[14px] py-[14px] flex flex-col gap-[10px] bg-[#F8FAFC]"
+      >
+
+        ${recentActivities
+          .map((activity) => {
+
+            const raw =
+              activity.raw ||
+              activity;
+
+
+            // ==================================================
+            // TAG ID
+            // ==================================================
+
+            const tagId =
+              activity.id ||
+              activity.entityId ||
+              raw.id ||
+              raw.tag_id ||
+              raw.tag?.id ||
+              "";
+
+
+            // ==================================================
+            // TAG REFERENCE
+            // ==================================================
+
+            const tagReference =
+              raw.tag_number ||
+              raw.tagNumber ||
+              raw.reference ||
+              raw.reference_number ||
+              raw.code ||
+              raw.name ||
+              raw.title ||
+              raw.tag?.tag_number ||
+              raw.tag?.reference ||
+              tagId ||
+              "--";
+
+
+            // ==================================================
+            // COMPLETED DATE
+            // ==================================================
+
+            const timestamp =
+              activity.timestamp ||
+              raw.completed_at ||
+              raw.completedAt ||
+              raw.timestamp ||
+              raw.updated_at ||
+              raw.updatedAt ||
+              raw.created_at ||
+              raw.createdAt ||
+              "";
+
+
+            const completedDate =
+              timestamp
+                ? new Date(
+                    timestamp
+                  ).toLocaleString(
+                    "en-GB",
+                    {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true
+                    }
+                  )
+                : "--";
+
+
+            // ==================================================
+            // ACTIVITY DATA FOR CLICK
+            // ==================================================
+
+            const activityData =
+              encodeURIComponent(
+                JSON.stringify(
+                  activity
+                )
+              );
+
+
+            // ==================================================
+            // TAG ROW
+            // ==================================================
+
+            return `
+              <button
+                type="button"
+                class="recentUserActivityItem w-full min-h-[68px] rounded-[12px] bg-white flex items-center justify-between gap-[20px] px-[18px] py-[10px] text-left cursor-pointer"
+                style="
+                  border: 1px solid #EAECF0;
+                  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.04);
+                "
+                data-activity="${activityData}"
+                data-activity-type="tag"
+                data-activity-id="${escapeRecentActivityHtml(
+                  String(tagId)
+                )}"
+                data-entity-type="Tag"
+              >
+
+                <!-- ============================================
+                     TAG
+                ============================================= -->
+
+                <div
+                  class="flex items-center gap-[14px] min-w-0 flex-1"
+                >
+
+                  <div
+                    class="w-[36px] h-[36px] rounded-[10px] bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0"
+                  >
+                    <i
+                      class="fa-solid fa-tag text-[13px]"
+                    ></i>
+                  </div>
+
+
+                  <p
+                    class="min-w-0 text-[#11313B] text-[14px] leading-[20px] font-semibold truncate"
+                  >
+                    ${escapeRecentActivityHtml(
+                      String(tagReference)
+                    )}
+                  </p>
+
+                </div>
+
+
+                <!-- ============================================
+                     COMPLETED DATE
+                ============================================= -->
+
+                <p
+                  class="shrink-0 text-[#667085] text-[12px] leading-[18px] font-medium whitespace-nowrap"
+                >
+                  ${escapeRecentActivityHtml(
+                    completedDate
+                  )}
+                </p>
+
+              </button>
+            `;
+
+          })
+          .join("")}
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // ==========================================================
+  // ACTIVITY LOGS
+  // ==========================================================
+
+  list.innerHTML = `
+    <div
+      class="w-full px-[14px] py-[14px] flex flex-col gap-[10px] bg-[#F8FAFC]"
+    >
+
+      ${recentActivities
+        .map((activity) => {
+
+          const raw =
+            activity.raw ||
+            activity;
+
+
+          // ====================================================
+          // AUDIT LOG ID
+          // ====================================================
+
+          const logId =
+            activity.id ||
+            raw.id ||
+            "";
+
+
+          // ====================================================
+          // ACTIVITY TITLE
+          // ====================================================
+
+          const activityTitle =
+            activity.title ||
+            getRecentLogActivityTitle(
+              raw
+            ) ||
+            "User activity";
+
+
+          // ====================================================
+          // ENTITY
+          // ====================================================
+
+          const entityType =
+            activity.entityType ||
+            activity.entity_type ||
+            raw.entity_type ||
+            "";
+
+
+          const entityId =
+            activity.entityId ||
+            activity.entity_id ||
+            raw.entity_id ||
+            "";
+
+
+          let entityText =
+            "";
+
+          if (
+            entityType &&
+            entityId
+          ) {
+
+            entityText =
+              `${entityType} #${entityId}`;
+
+          } else if (
+            entityType
+          ) {
+
+            entityText =
+              entityType;
+
+          } else if (
+            entityId
+          ) {
+
+            entityText =
+              entityId;
+          }
+
+
+          // ====================================================
+          // IP ADDRESS
+          // ====================================================
+
+          const ipAddress =
+            activity.ip_address ||
+            activity.ipAddress ||
+            raw.ip_address ||
+            raw.ipAddress ||
+            "";
+
+
+          // ====================================================
+          // DATE / TIME
+          // ====================================================
+
+          const timestamp =
+            activity.timestamp ||
+            raw.timestamp ||
+            raw.created_at ||
+            raw.createdAt ||
+            "";
+
+
+          const dateTime =
+            timestamp
+              ? new Date(
+                  timestamp
+                ).toLocaleString(
+                  "en-GB",
+                  {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true
+                  }
+                )
+              : "--";
+
+
+          // ====================================================
+          // ACTIVITY DATA FOR CLICK
+          // ====================================================
 
           const activityData =
             encodeURIComponent(
@@ -5192,96 +8593,118 @@ function renderUserRecentActivity(
             );
 
 
-          const isTag =
-            activity.type ===
-            "tag";
-
-
-          const activityTypeText =
-            isTag
-              ? "Completed Tag"
-              : "Audit Log";
-
-
-          const activityIcon =
-            isTag
-              ? "fa-solid fa-tag"
-              : "fa-solid fa-clock-rotate-left";
-
-
-          const activityIconStyle =
-            isTag
-              ? "bg-[#EAFBFD] text-[#30BBC7]"
-              : "bg-[#F2F4F7] text-[#667085]";
-
+          // ====================================================
+          // ACTIVITY LOG ROW
+          // ====================================================
 
           return `
             <button
               type="button"
-              class="recentUserActivityItem w-full min-h-[52px] rounded-[12px] bg-white border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px] text-left cursor-pointer hover:bg-[#F8FAFC] transition"
+              class="recentUserActivityItem w-full min-h-[68px] rounded-[12px] bg-white flex items-center justify-between gap-[20px] px-[18px] py-[10px] text-left cursor-pointer"
+              style="
+                border: 1px solid #EAECF0;
+                box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.04);
+              "
               data-activity="${activityData}"
+              data-activity-type="log"
+              data-activity-id="${escapeRecentActivityHtml(
+                String(logId)
+              )}"
+              data-entity-type="${escapeRecentActivityHtml(
+                String(entityType)
+              )}"
             >
 
+              <!-- ==============================================
+                   ACTIVITY
+              =============================================== -->
+
               <div
-                class="min-w-0 flex items-center gap-[10px]"
+                class="flex items-center gap-[14px] min-w-0 flex-1"
               >
 
                 <div
-                  class="w-[30px] h-[30px] rounded-full ${activityIconStyle} flex items-center justify-center shrink-0"
+                  class="w-[36px] h-[36px] rounded-[10px] bg-[#EAFBFD] text-[#30BBC7] flex items-center justify-center shrink-0"
                 >
-
                   <i
-                    class="${activityIcon} text-[11px]"
+                    class="fa-solid fa-clock-rotate-left text-[13px]"
                   ></i>
-
                 </div>
 
 
                 <div
-                  class="min-w-0"
+                  class="min-w-0 flex-1"
                 >
 
                   <p
-                    class="text-[#11313B] text-[14px] leading-[20px] font-medium"
+                    class="text-[#11313B] text-[14px] leading-[20px] font-semibold truncate"
                   >
                     ${escapeRecentActivityHtml(
-                      activity.title
+                      String(activityTitle)
                     )}
                   </p>
 
 
-                  <p
-                    class="mt-[2px] text-[#98A2B3] text-[11px] leading-[16px] font-medium"
-                  >
-                    ${activityTypeText}
-                  </p>
+                  ${
+                    entityText
+                      ? `
+                        <p
+                          class="mt-[2px] text-[#7C8AA0] text-[12px] leading-[17px] font-medium truncate"
+                        >
+                          ${escapeRecentActivityHtml(
+                            String(entityText)
+                          )}
+                        </p>
+                      `
+                      : ""
+                  }
 
                 </div>
 
               </div>
 
 
+              <!-- ==============================================
+                   DATE + IP
+              =============================================== -->
+
               <div
-                class="shrink-0 flex items-center gap-[10px]"
+                class="shrink-0 flex flex-col items-end"
               >
 
-                <span
-                  class="text-[#30BBC7] text-[12px] leading-[16px] font-medium"
+                <p
+                  class="text-[#667085] text-[12px] leading-[18px] font-medium whitespace-nowrap"
                 >
-                  ${formatRecentActivityTime(
-                    activity.timestamp
+                  ${escapeRecentActivityHtml(
+                    dateTime
                   )}
-                </span>
+                </p>
+
+
+                ${
+                  ipAddress
+                    ? `
+                      <p
+                        class="mt-[2px] text-[#98A2B3] text-[11px] leading-[16px] font-medium whitespace-nowrap"
+                      >
+                        ${escapeRecentActivityHtml(
+                          String(ipAddress)
+                        )}
+                      </p>
+                    `
+                    : ""
+                }
 
               </div>
 
             </button>
           `;
 
-        }
-      )
-      .join("");
+        })
+        .join("")}
 
+    </div>
+  `;
 }
 
 
@@ -5389,7 +8812,139 @@ function escapeRecentActivityHtml(
 
 
 // ============================================================
-// RECENT ACTIVITY CLICK
+// COMPLETED TAGS TAB CLICK
+// DRIVER + CUSTOMER
+// ============================================================
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    const driverTab =
+      event.target.closest(
+        "#driverCompletedTagsTab"
+      );
+
+    const senderTab =
+      event.target.closest(
+        "#senderCompletedTagsTab"
+      );
+
+
+    if (
+      driverTab
+    ) {
+
+      currentRecentActivitySource =
+        "driver";
+
+      currentRecentActivityListElementId =
+        "driverRecentActivityList";
+
+
+      renderUserRecentActivityTab(
+        "tags",
+        "driverRecentActivityList",
+        "driver"
+      );
+
+
+      return;
+
+    }
+
+
+    if (
+      senderTab
+    ) {
+
+      currentRecentActivitySource =
+        "sender";
+
+      currentRecentActivityListElementId =
+        "senderRecentActivityList";
+
+
+      renderUserRecentActivityTab(
+        "tags",
+        "senderRecentActivityList",
+        "sender"
+      );
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// ACTIVITY LOGS TAB CLICK
+// DRIVER + CUSTOMER
+// ============================================================
+
+document.addEventListener(
+  "click",
+  function (event) {
+
+    const driverTab =
+      event.target.closest(
+        "#driverActivityLogsTab"
+      );
+
+    const senderTab =
+      event.target.closest(
+        "#senderActivityLogsTab"
+      );
+
+
+    if (
+      driverTab
+    ) {
+
+      currentRecentActivitySource =
+        "driver";
+
+      currentRecentActivityListElementId =
+        "driverRecentActivityList";
+
+
+      renderUserRecentActivityTab(
+        "logs",
+        "driverRecentActivityList",
+        "driver"
+      );
+
+
+      return;
+
+    }
+
+
+    if (
+      senderTab
+    ) {
+
+      currentRecentActivitySource =
+        "sender";
+
+      currentRecentActivityListElementId =
+        "senderRecentActivityList";
+
+
+      renderUserRecentActivityTab(
+        "logs",
+        "senderRecentActivityList",
+        "sender"
+      );
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// RECENT ACTIVITY ITEM CLICK
 // ============================================================
 
 document.addEventListener(
@@ -5452,74 +9007,91 @@ document.addEventListener(
 // HANDLE RECENT ACTIVITY CLICK
 // ============================================================
 
-function handleRecentActivityClick(
+async function handleRecentActivityClick(
   activity
 ) {
 
-  console.log(
-    "Recent activity clicked:",
-    activity
-  );
+  if (!activity) {
+    return;
+  }
 
 
-  // ==========================================================
+  // ========================================================
   // COMPLETED TAG
-  // ==========================================================
+  // ========================================================
 
   if (
     activity.type ===
     "tag"
   ) {
 
-    /*
-      We already have:
+    const tagId =
+      activity.id ||
+      activity.raw?.id ||
+      activity.raw?.tag_id ||
+      activity.raw?.tag?.id ||
+      "";
 
-      activity.id
-      activity.entityId
-      activity.raw
 
-      Once the exact completed-tag response contains
-      an item, we can connect this to the exact tag
-      details route without guessing the backend field.
-    */
+    if (!tagId) {
+
+      showActionPopupMessage(
+        "Tag ID not found.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    viewTag(
+      tagId
+    );
 
     return;
 
   }
 
 
-  // ==========================================================
+  // ========================================================
   // AUDIT LOG
-  // ==========================================================
+  // ========================================================
 
   if (
     activity.type ===
     "log"
   ) {
 
-    /*
-      We already have:
+    // IMPORTANT:
+    // We need the AUDIT LOG ID,
+    // not entity_id.
 
-      activity.id
-      activity.entityType
-      activity.entityId
-      activity.raw
+    const logId =
+      activity.id ||
+      activity.raw?.id ||
+      "";
 
-      We will connect this to the exact audit-log
-      destination once the existing audit-log route
-      is confirmed.
-    */
 
-    return;
+    if (!logId) {
+
+      showActionPopupMessage(
+        "Audit log ID not found.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    await openAuditLogDetailsModal(
+      logId
+    );
 
   }
 
 }
-
-
-// ============================================================
-// END OF LOAD RECENT ACTIVITY
-// ============================================================
 
 async function fetchDrivers(customUrl = null) {
   showGlobalLoader();
@@ -9180,51 +12752,79 @@ function getUserImage(user) {
 }
 
 async function loadSendersFromAPI(page = 1) {
+
   showGlobalLoader();
 
   try {
-    const searchValue =
-      document.getElementById("senderSearchInput")?.value.trim() || "";
 
-    const params = new URLSearchParams();
+    const searchValue =
+      document
+        .getElementById("senderSearchInput")
+        ?.value.trim() || "";
+
+    const params =
+      new URLSearchParams();
 
     params.set("page", page);
     params.set("per_page", 5);
 
+    // IMPORTANT:
+    // Let the backend paginate CUSTOMERS,
+    // not all users.
+    params.set("role", "customer");
+
     if (searchValue) {
-      params.set("search", searchValue);
+      params.set(
+        "search",
+        searchValue
+      );
     }
 
-    const result = await fetchJSON(
-      `${API_BASE_URL}/admin/users?${params.toString()}`
-    );
+    const result =
+      await fetchJSON(
+        `${API_BASE_URL}/admin/users?${params.toString()}`
+      );
 
-    if (!result.success || !Array.isArray(result.data)) {
-      throw new Error(result.message || "Failed to load users");
+    if (
+      !result.success ||
+      !Array.isArray(result.data)
+    ) {
+      throw new Error(
+        result.message ||
+        "Failed to load customers"
+      );
     }
 
-    // =========================================================
-    // ONLY LOAD CUSTOMERS
-    // =========================================================
+    // Backend already returned customers.
+    // Do NOT filter after pagination.
+    senders =
+      result.data.map(
+        mapApiUserToSender
+      );
 
-    senders = result.data
-      .filter(function (user) {
-        return user.role === "customer";
-      })
-      .map(mapApiUserToSender);
+    currentSenderPagination =
+      result.pagination || null;
 
-    currentSenderPagination = result.pagination || null;
-    currentSenderPage = currentSenderPagination?.current_page || page;
+    currentSenderPage =
+      currentSenderPagination
+        ?.current_page || page;
 
     renderSenders(senders);
-    renderSenderPagination(currentSenderPagination);
+
+    renderSenderPagination(
+      currentSenderPagination
+    );
 
   } catch (error) {
 
-    console.error("Users error:", error);
+    console.error(
+      "Customers error:",
+      error
+    );
 
     showActionPopupMessage(
-      error.message || "Unable to load users.",
+      error.message ||
+      "Unable to load customers.",
       "error"
     );
 
@@ -9233,6 +12833,7 @@ async function loadSendersFromAPI(page = 1) {
     hideGlobalLoader();
 
   }
+
 }
 
 
@@ -9409,60 +13010,7 @@ function getSenderStatusBadge(status) {
   return `<span class="inline-flex items-center justify-center h-[26px] px-[10px] rounded-[6px] bg-[#FDECEF] text-[#E57373] text-[12px] font-medium">Disabled</span>`;
 }
 
-async function loadSenderStats() {
-    showGlobalLoader
-  try {
-    const overviewResponse = await fetch(`${API_BASE_URL}/admin/analytics/overview`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        Authorization: `Bearer ${AUTH_TOKEN}`
-      }
-    });
 
-    const overviewResult = await overviewResponse.json();
-
-    if (!overviewResponse.ok || overviewResult.success === false) {
-      throw new Error(overviewResult.message || "Failed to load overview stats");
-    }
-
-    const usersStats = overviewResult.data?.users || {};
-    const totalCustomers = Number(usersStats.total_customers || 0);
-    const newThisMonth = Number(usersStats.new_users_this_month || 0);
-
-    const customersResponse = await fetch(
-      `${API_BASE_URL}/admin/users?role=customer&per_page=1000`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${AUTH_TOKEN}`
-        }
-      }
-    );
-
-    const customersResult = await customersResponse.json();
-
-    if (!customersResponse.ok || customersResult.success === false) {
-      throw new Error(customersResult.message || "Failed to load customer stats");
-    }
-
-    const customers = customersResult.data || [];
-
-    const activeCustomers = customers.filter((user) => user.is_active === true).length;
-    const disabledCustomers = Math.max(totalCustomers - activeCustomers, 0);
-
-    renderSenderStats({
-      totalCustomers,
-      activeCustomers,
-      disabledCustomers,
-      newThisMonth
-    });
-  } catch (error) {
-    console.error("Error loading sender stats:", error);
-  }
-    hideGlobalLoader();
-}
 
 function renderSenders(list = senders) {
 
@@ -10287,29 +13835,76 @@ async function fetchJSON(url) {
 }
 
 async function loadDeliveryStats() {
+
   try {
-    const result = await fetchJSON(`${API_BASE_URL}/admin/tags/stats`);
+
+    const result = await fetchJSON(
+      `${API_BASE_URL}/admin/analytics/overview`
+    );
 
     if (!result.success) {
-      throw new Error(result.message || "Failed to load delivery stats");
+      throw new Error(
+        result.message ||
+        "Failed to load tag statistics"
+      );
     }
 
-    const summary = result.data?.summary || {};
+    const tagsStats =
+      result.data?.tags || {};
 
-    document.getElementById("activeRequests").textContent =
-      summary.active_requests ?? 0;
 
-    document.getElementById("inTransit").textContent =
-      summary.in_transit_requests ?? 0;
+    // TOTAL TAGS
+    document.getElementById(
+      "activeRequests"
+    ).textContent =
+      Number(
+        tagsStats.total_tags ?? 0
+      );
 
-    document.getElementById("pendingRequests").textContent =
-      summary.pending_requests ?? 0;
 
-    document.getElementById("failedRequests").textContent =
-      summary.failed_requests ?? 0;
+    // IN PROGRESS
+    document.getElementById(
+      "inTransit"
+    ).textContent =
+      Number(
+        tagsStats.in_progress ?? 0
+      );
+
+
+    // COMPLETED
+    document.getElementById(
+      "pendingRequests"
+    ).textContent =
+      Number(
+        tagsStats.completed ?? 0
+      );
+
+
+    // CANCEL / FAILED
+    const cancelFailed =
+      Number(
+        tagsStats.cancelled ?? 0
+      ) +
+      Number(
+        tagsStats.failed ?? 0
+      );
+
+
+    document.getElementById(
+      "failedRequests"
+    ).textContent =
+      cancelFailed;
+
+
   } catch (error) {
-    
+
+    console.error(
+      "Error loading tag statistics:",
+      error
+    );
+
   }
+
 }
 
 let allDeliveries = [];

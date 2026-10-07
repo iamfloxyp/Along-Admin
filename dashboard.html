@@ -775,11 +775,11 @@
           <p class="flex items-center gap-[12px]">
             <span class="flex items-center gap-[7px] text-[#344054]">
               <span class="w-[10px] h-[10px] rounded-[3px] bg-[#30BBC7]"></span>
-              Total Revenue
+              Total Payout
             </span>
 
             <b
-              id="dashboardTotalRevenue"
+              id="dashboardTotalPayout"
               class="text-[#11313B]"
             >
               $0
@@ -1065,7 +1065,7 @@
               >
                 <div id="thDriverName" class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Driver Name</div>
                 <div id="thEmail" class="w-[115px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Email</div>
-                <div id="thTotalCompletedTags" class="w-[160px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Total Completed Tags</div>
+                <div id="thTotalCompletedTags" class="w-[160px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Completed Tags</div>
                 <div id="thRatings" class="w-[88px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Ratings</div>
                 <div id="thDeliveries" class="w-[92px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Deliveries</div>
                 <div id="thEarnings" class="w-[96px] h-[36px] px-[8px] py-[10px] text-[#7C8AA0] text-[12px]">Earnings</div>
@@ -1789,34 +1789,159 @@
 
 
           <!-- RECENT ACTIVITY -->
-          <section
-            id="driverRecentActivitySection"
-            class="w-full rounded-[16px] bg-white p-[20px] flex flex-col"
-          >
-            <h3
-              id="driverRecentActivityTitle"
-              class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
-              style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
-            >
-              Recent Activity
-            </h3>
+<!-- ============================================================
+     RECENT ACTIVITY
+============================================================= -->
 
-            <div
-              id="driverRecentActivityList"
-              class="mt-[20px] flex flex-col gap-[12px]"
-            >
-              <div
-                class="w-full min-h-[52px] rounded-[12px] bg-[#ffffff] border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
-              >
-                <p class="text-[#11313B] text-[14px] leading-[20px] font-medium">
-                  No recent activity yet
-                </p>
-                <span class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium">
-                  --
-                </span>
-              </div>
-            </div>
-          </section>
+
+<section
+  id="driverRecentActivitySection"
+  class="w-full flex flex-col"
+>
+
+  <!-- ======================================================
+       TITLE - OUTSIDE THE ACTIVITY BOX
+  ======================================================= -->
+
+  <h3
+    id="driverRecentActivityTitle"
+    class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
+    style="
+      font-family:
+        'Neue Haas Grotesk Display Pro',
+        'Helvetica Neue',
+        Arial,
+        sans-serif;
+    "
+  >
+    Recent Activity
+  </h3>
+
+
+  <!-- ======================================================
+       ACTIVITY CARD
+  ======================================================= -->
+
+  <div
+    class="mt-[10px] w-full rounded-[16px] bg-white p-[16px]"
+    style="
+      filter: drop-shadow(0px 1px 2px #b2a3a3);
+    "
+  >
+
+    <!-- ====================================================
+     TABS
+===================================================== -->
+
+<div
+  class="inline-flex self-start items-center gap-[8px] rounded-[12px] bg-[#F2F4F7] p-[5px]"
+>
+
+  <!-- COMPLETED TAGS -->
+
+  <button
+    type="button"
+    id="driverCompletedTagsTab"
+    class="h-[42px] px-[22px] bg-white text-[#11313B] text-[15px] leading-[20px] font-bold flex items-center justify-center gap-[8px] cursor-pointer transition-all duration-200"
+    style="
+      border: 1px solid #D0D5DD;
+      border-radius: 10px;
+      box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.08);
+      font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+    "
+  >
+    <i
+      class="fa-solid fa-tag text-[#30BBC7] text-[13px]"
+    ></i>
+
+    <span>
+      Completed Tags
+    </span>
+  </button>
+
+
+  <!-- ACTIVITY LOGS -->
+
+  <button
+    type="button"
+    id="driverActivityLogsTab"
+    class="h-[42px] px-[22px] bg-white text-[#344054] text-[15px] leading-[20px] font-bold flex items-center justify-center gap-[8px] cursor-pointer transition-all duration-200"
+    style="
+      border: 1px solid #D0D5DD;
+      border-radius: 10px;
+      box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.05);
+      font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+    "
+  >
+    <i
+      class="fa-solid fa-clock-rotate-left text-[#667085] text-[13px]"
+    ></i>
+
+    <span>
+      Activity Logs
+    </span>
+  </button>
+
+</div>
+
+
+    <!-- ====================================================
+         ACTIVITY CONTENT
+    ===================================================== -->
+
+    <div
+      id="driverRecentActivityList"
+      class="mt-[14px] w-full rounded-[12px] bg-[#F8FAFC] overflow-hidden"
+    >
+
+      <!-- DEFAULT LOADING STATE -->
+
+      <div
+        class="w-full min-h-[70px] px-[18px] flex items-center justify-center"
+      >
+        <p
+          class="text-[#98A2B3] text-[13px] leading-[18px] font-medium"
+        >
+          Loading recent activity...
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         FOOTER
+    ===================================================== -->
+
+    <div
+      id="driverRecentActivityFooter"
+      class="mt-[10px] flex items-center justify-end"
+    >
+
+      <button
+        type="button"
+        id="driverViewAllActivityBtn"
+        class="hidden h-[34px] px-[10px] rounded-[7px] inline-flex items-center justify-center gap-[7px] text-[#30BBC7] text-[12px] leading-[18px] font-semibold cursor-pointer hover:bg-[#F3FBFC] transition-colors duration-200"
+      >
+
+        <span id="driverViewAllActivityText">
+          View all
+        </span>
+
+        <i
+          class="fa-solid fa-arrow-right text-[9px]"
+        ></i>
+
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= END RECENT ACTIVITY ================= -->
+<!-- ================= END RECENT ACTIVITY ================= -->
 
 
 
@@ -1917,6 +2042,420 @@
         </section>
 
 
+
+      <!-- ============================================================
+     COMPLETED TAGS DEDICATED PAGE
+     SHARED BY DRIVER + CUSTOMER
+============================================================= -->
+
+<section
+  id="driverCompletedTagsPage"
+  class="hidden absolute top-0 left-0 w-[1070px] min-h-[668px] p-[20px] bg-white flex-col rounded-[6px]"
+>
+
+  <!-- ========================================================
+       TOP BAR
+  ========================================================= -->
+
+  <div
+    class="w-full h-[64px] flex items-center"
+  >
+
+    <div class="flex items-center gap-[14px]">
+
+      <button
+        id="driverCompletedTagsBackBtn"
+        type="button"
+        class="w-[36px] h-[36px] rounded-[8px] border border-[#E4E7EC] bg-white flex items-center justify-center text-[#344054] cursor-pointer"
+      >
+        <i class="fa-solid fa-arrow-left text-[12px]"></i>
+      </button>
+
+
+      <div>
+
+        <h1
+          class="text-[#11313B] text-[22px] leading-[28px] font-semibold"
+          style="
+            font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+          "
+        >
+          Completed Tags
+        </h1>
+
+        <p
+          class="mt-[3px] text-[#7C8AA0] text-[13px] leading-[18px] font-medium"
+        >
+          View all tags completed by this user
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================================
+       MAIN TABLE CARD
+  ========================================================= -->
+
+  <div
+    class="mt-[20px] w-full rounded-[14px] bg-white overflow-hidden"
+    style="
+      border: 1px solid #D0D5DD;
+      box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.08);
+    "
+  >
+
+    <!-- ======================================================
+         TABLE HEADER
+    ======================================================= -->
+
+    <div
+      class="w-full h-[52px] bg-[#F8FAFC] px-[24px]"
+    >
+
+      <div
+        class="w-full h-full grid items-center"
+        style="
+          grid-template-columns:
+            minmax(0, 1.6fr)
+            minmax(0, 1fr)
+            minmax(0, 0.8fr)
+            110px;
+        "
+      >
+
+        <!-- TAG -->
+
+        <div
+          class="pl-[18px] pr-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Tag
+        </div>
+
+
+        <!-- COMPLETED DATE -->
+
+        <div
+          class="px-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Completed Date
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div
+          class="px-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Status
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div
+          class="pl-[20px] pr-[12px] text-right text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Action
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         TAG ROWS
+    ======================================================= -->
+
+    <div
+      id="driverCompletedTagsPageList"
+      class="w-full"
+    >
+
+      <div
+        class="w-full h-[120px] px-[24px] flex items-center justify-center"
+      >
+        <p
+          class="text-[#98A2B3] text-[13px]"
+        >
+          Loading completed tags...
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         PAGINATION
+    ======================================================= -->
+
+    <div
+      id="driverCompletedTagsPagination"
+      class="w-full h-[64px] px-[24px] flex items-center justify-between"
+    >
+
+      <p
+        id="driverCompletedTagsPaginationText"
+        class="text-[#667085] text-[12px] leading-[18px] font-medium"
+      >
+        Showing 0 of 0
+      </p>
+
+
+      <div class="flex items-center gap-[8px]">
+
+        <button
+          id="driverCompletedTagsPreviousBtn"
+          type="button"
+          class="h-[34px] px-[13px] rounded-[7px] border border-[#D0D5DD] bg-white text-[#344054] text-[12px] font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+
+
+        <span
+          id="driverCompletedTagsCurrentPage"
+          class="w-[34px] h-[34px] rounded-[7px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-semibold flex items-center justify-center"
+        >
+          1
+        </span>
+
+
+        <button
+          id="driverCompletedTagsNextBtn"
+          type="button"
+          class="h-[34px] px-[13px] rounded-[7px] border border-[#D0D5DD] bg-white text-[#344054] text-[12px] font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= END COMPLETED TAGS PAGE ================= -->
+
+
+
+
+
+<!-- ============================================================
+     ACTIVITY LOGS DEDICATED PAGE
+     SHARED BY DRIVER + CUSTOMER
+============================================================= -->
+
+<section
+  id="driverActivityLogsPage"
+  class="hidden absolute top-0 left-0 w-[1070px] min-h-[668px] p-[20px] bg-white flex-col rounded-[6px]"
+>
+
+  <!-- ========================================================
+       TOP BAR
+  ========================================================= -->
+
+  <div
+    class="w-full h-[64px] flex items-center"
+  >
+
+    <div class="flex items-center gap-[14px]">
+
+      <button
+        id="driverActivityLogsBackBtn"
+        type="button"
+        class="w-[36px] h-[36px] rounded-[8px] border border-[#E4E7EC] bg-white flex items-center justify-center text-[#344054] cursor-pointer"
+      >
+        <i class="fa-solid fa-arrow-left text-[12px]"></i>
+      </button>
+
+
+      <div>
+
+        <h1
+          class="text-[#11313B] text-[22px] leading-[28px] font-semibold"
+          style="
+            font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+          "
+        >
+          Activity Logs
+        </h1>
+
+        <p
+          class="mt-[3px] text-[#7C8AA0] text-[13px] leading-[18px] font-medium"
+        >
+          Review this user's recent account activity
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ========================================================
+       MAIN TABLE CARD
+  ========================================================= -->
+
+  <div
+    class="mt-[20px] w-full rounded-[14px] bg-white overflow-hidden"
+    style="
+      border: 1px solid #EAECF0;
+      box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.06);
+    "
+  >
+
+    <!-- ======================================================
+         TABLE HEADER
+    ======================================================= -->
+
+    <div
+      class="w-full h-[52px] bg-[#F8FAFC] px-[24px]"
+    >
+
+      <div
+        class="w-full h-full grid items-center"
+        style="
+          grid-template-columns:
+            minmax(0, 1.45fr)
+            minmax(0, 0.85fr)
+            minmax(0, 1fr)
+            minmax(0, 1.15fr)
+            110px;
+        "
+      >
+
+        <!-- ACTIVITY -->
+
+        <div
+          class="pl-[18px] pr-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Activity
+        </div>
+
+
+        <!-- ENTITY -->
+
+        <div
+          class="px-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Entity
+        </div>
+
+
+        <!-- IP ADDRESS -->
+
+        <div
+          class="px-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          IP Address
+        </div>
+
+
+        <!-- DATE / TIME -->
+
+        <div
+          class="px-[20px] text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Date / Time
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div
+          class="pl-[20px] pr-[12px] text-right text-[#667085] text-[12px] leading-[18px] font-semibold"
+        >
+          Action
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         LOG ROWS
+    ======================================================= -->
+
+    <div
+      id="driverActivityLogsPageList"
+      class="w-full"
+    >
+
+      <div
+        class="w-full h-[120px] px-[24px] flex items-center justify-center"
+      >
+        <p
+          class="text-[#98A2B3] text-[13px]"
+        >
+          Loading activity logs...
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ======================================================
+         PAGINATION
+    ======================================================= -->
+
+    <div
+      id="driverActivityLogsPagination"
+      class="w-full h-[64px] px-[24px] flex items-center justify-between"
+    >
+
+      <p
+        id="driverActivityLogsPaginationText"
+        class="text-[#667085] text-[12px] leading-[18px] font-medium"
+      >
+        Showing 0 of 0 activity logs
+      </p>
+
+
+      <div class="flex items-center gap-[8px]">
+
+        <button
+          id="driverActivityLogsPreviousBtn"
+          type="button"
+          class="h-[34px] px-[13px] rounded-[7px] border border-[#D0D5DD] bg-white text-[#344054] text-[12px] font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+
+
+        <span
+          id="driverActivityLogsCurrentPage"
+          class="w-[34px] h-[34px] rounded-[7px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-semibold flex items-center justify-center"
+        >
+          1
+        </span>
+
+
+        <button
+          id="driverActivityLogsNextBtn"
+          type="button"
+          class="h-[34px] px-[13px] rounded-[7px] border border-[#D0D5DD] bg-white text-[#344054] text-[12px] font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ================= END ACTIVITY LOGS PAGE ================= -->
 
 <!-- ================= SUSPEND / UNSUSPEND USER MODAL ================= -->
 <div
@@ -2593,7 +3132,7 @@
         </h3>
       </div>
 
-      <!-- DISABLED USERS -->
+      <!-- NEW CUSTOMER THIS WEEK -->
       <div
         class="h-[86px] rounded-[12px] bg-white px-[16px] py-[16px] flex flex-col justify-center"
         style="filter: drop-shadow(0px 1px 2px #b2a3a3);"
@@ -2604,7 +3143,7 @@
           </div>
 
           <p class="text-[#7C8AA0] text-[13px] font-medium">
-            Disabled Customers
+            New Customer This Week
           </p>
         </div>
 
@@ -2741,36 +3280,156 @@
       <div id="senderAddress" class="mt-[8px] h-[54px] rounded-[8px] border border-[#D0D5DD] px-[14px] flex items-center text-[#11313B] font-semibold"></div>
     </div>
 
-    <!-- ================= CUSTOMER RECENT ACTIVITY ================= -->
+   
+<!-- ================= CUSTOMER RECENT ACTIVITY ================= -->
+
 <section
   id="senderRecentActivitySection"
-  class="mt-[24px] w-full rounded-[16px] bg-white p-[20px] flex flex-col"
+  class="mt-[24px] w-full flex flex-col"
 >
+
+  <!-- ======================================================
+       TITLE - OUTSIDE THE ACTIVITY BOX
+  ======================================================= -->
+
   <h3
     id="senderRecentActivityTitle"
     class="text-[#11313B] text-[16px] leading-[24px] tracking-[0.15px] font-semibold"
-    style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
+    style="
+      font-family:
+        'Neue Haas Grotesk Display Pro',
+        'Helvetica Neue',
+        Arial,
+        sans-serif;
+    "
   >
     Recent Activity
   </h3>
 
-  <div
-    id="senderRecentActivityList"
-    class="mt-[20px] flex flex-col gap-[12px]"
-  >
-    <div
-      class="w-full min-h-[52px] rounded-[12px] bg-[#ffffff] border border-[#D1D5DB] px-[16px] py-[14px] flex items-center justify-between gap-[20px]"
-    >
-      <p class="text-[#11313B] text-[14px] leading-[20px] font-medium">
-        No recent activity yet
-      </p>
 
-      <span class="shrink-0 text-[#30BBC7] text-[12px] leading-[16px] font-medium">
-        --
-      </span>
+  <!-- ======================================================
+       ACTIVITY CARD
+  ======================================================= -->
+
+  <div
+    class="mt-[10px] w-full rounded-[16px] bg-white p-[16px]"
+    style="
+      filter: drop-shadow(0px 1px 2px #b2a3a3);
+    "
+  >
+
+    <!-- ====================================================
+         TABS
+    ===================================================== -->
+
+    <div
+      class="inline-flex self-start items-center gap-[8px] rounded-[12px] bg-[#F2F4F7] p-[5px]"
+    >
+
+      <!-- COMPLETED TAGS -->
+
+      <button
+        type="button"
+        id="senderCompletedTagsTab"
+        class="h-[42px] px-[22px] bg-white text-[#11313B] text-[15px] leading-[20px] font-bold flex items-center justify-center gap-[8px] cursor-pointer transition-all duration-200"
+        style="
+          border: 1px solid #D0D5DD;
+          border-radius: 10px;
+          box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.08);
+          font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+        "
+      >
+        <i
+          class="fa-solid fa-tag text-[#30BBC7] text-[13px]"
+        ></i>
+
+        <span>
+          Completed Tags
+        </span>
+      </button>
+
+
+      <!-- ACTIVITY LOGS -->
+
+      <button
+        type="button"
+        id="senderActivityLogsTab"
+        class="h-[42px] px-[22px] bg-white text-[#344054] text-[15px] leading-[20px] font-bold flex items-center justify-center gap-[8px] cursor-pointer transition-all duration-200"
+        style="
+          border: 1px solid #D0D5DD;
+          border-radius: 10px;
+          box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.05);
+          font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;
+        "
+      >
+        <i
+          class="fa-solid fa-clock-rotate-left text-[#667085] text-[13px]"
+        ></i>
+
+        <span>
+          Activity Logs
+        </span>
+      </button>
+
     </div>
+
+
+    <!-- ====================================================
+         ACTIVITY CONTENT
+    ===================================================== -->
+
+    <div
+      id="senderRecentActivityList"
+      class="mt-[14px] w-full rounded-[12px] bg-[#F8FAFC] overflow-hidden"
+    >
+
+      <!-- DEFAULT LOADING STATE -->
+
+      <div
+        class="w-full min-h-[70px] px-[18px] flex items-center justify-center"
+      >
+        <p
+          class="text-[#98A2B3] text-[13px] leading-[18px] font-medium"
+        >
+          Loading recent activity...
+        </p>
+      </div>
+
+    </div>
+
+
+    <!-- ====================================================
+         FOOTER
+    ===================================================== -->
+
+    <div
+      id="senderRecentActivityFooter"
+      class="mt-[10px] flex items-center justify-end"
+    >
+
+      <button
+        type="button"
+        id="senderViewAllActivityBtn"
+        class="hidden h-[34px] px-[10px] rounded-[7px] inline-flex items-center justify-center gap-[7px] text-[#30BBC7] text-[12px] leading-[18px] font-semibold cursor-pointer hover:bg-[#F3FBFC] transition-colors duration-200"
+      >
+
+        <span id="senderViewAllActivityText">
+          View all
+        </span>
+
+        <i
+          class="fa-solid fa-arrow-right text-[9px]"
+        ></i>
+
+      </button>
+
+    </div>
+
   </div>
+
 </section>
+
+<!-- ================= END CUSTOMER RECENT ACTIVITY ================= -->
 <!-- ================= USER DETAILS ACTIONS ================= -->
 <div
   class="mt-[24px] w-full flex items-center justify-between"
@@ -2858,7 +3517,7 @@
               <span class="w-[24px] h-[24px] rounded-full bg-[#EAFBFD] flex items-center justify-center">
                 <i class="fa-solid fa-box text-[#30BBC7] text-[11px]"></i>
               </span>
-              <p class="text-[#7C8AA0] text-[14px] font-medium">Active Requests</p>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">Total Tags</p>
             </div>
             <h3 class="mt-[10px] text-[#11313B] text-[18px] font-semibold" id="activeRequests">--</h3>
           </div>
@@ -2871,7 +3530,7 @@
               <span class="w-[24px] h-[24px] rounded-full bg-[#EAF3FF] flex items-center justify-center">
                 <i class="fa-solid fa-truck-fast text-[#2F80ED] text-[11px]"></i>
               </span>
-              <p class="text-[#7C8AA0] text-[14px] font-medium">In Transit</p>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">In-progress</p>
             </div>
             <h3 class="mt-[10px] text-[#2F80ED] text-[18px] font-semibold" id="inTransit">--</h3>
           </div>
@@ -2884,7 +3543,7 @@
               <span class="w-[24px] h-[24px] rounded-full bg-[#FFF8EE] flex items-center justify-center">
                 <i class="fa-regular fa-clock text-[#F2B66D] text-[11px]"></i>
               </span>
-              <p class="text-[#7C8AA0] text-[14px] font-medium">Pending Requests</p>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">Completed Tags </p>
             </div>
             <h3 class="mt-[10px] text-[#E57373] text-[18px] font-semibold" id="pendingRequests">--</h3>
           </div>
@@ -2897,7 +3556,7 @@
               <span class="w-[24px] h-[24px] rounded-full bg-[#FDECEF] flex items-center justify-center">
                 <i class="fa-solid fa-triangle-exclamation text-[#E57373] text-[11px]"></i>
               </span>
-              <p class="text-[#7C8AA0] text-[14px] font-medium">Failed Requests</p>
+              <p class="text-[#7C8AA0] text-[14px] font-medium">Failed/Cancel Requests</p>
             </div>
             <h3 class="mt-[10px] text-[#E57373] text-[18px] font-semibold" id="failedRequests">--</h3>
           </div>
@@ -3077,59 +3736,7 @@
       </div>
     </div>
 
-    <div class="mt-[18px] grid grid-cols-2 gap-[16px]">
-      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
-        <h3 class="text-[#11313B] text-[16px] font-semibold">Customer Details</h3>
-
-        <div class="mt-[14px] space-y-[12px] text-[13px]">
-          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Name:</span> <span id="tagCustomerName" class="text-[#11313B] font-semibold"></span></p>
-          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Email:</span> <span id="tagCustomerEmail" class="text-[#11313B] font-semibold"></span></p>
-          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Phone:</span> <span id="tagCustomerPhone" class="text-[#11313B] font-semibold"></span></p>
-        </div>
-      </div>
-
-      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
-        <h3 class="text-[#11313B] text-[16px] font-semibold">Recipient Details</h3>
-
-        <div class="mt-[14px] space-y-[12px] text-[13px]">
-          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Name:</span> <span id="tagRecipientName" class="text-[#11313B] font-semibold"></span></p>
-          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Phone:</span> <span id="tagRecipientPhone" class="text-[#11313B] font-semibold"></span></p>
-          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Vehicle:</span> <span id="tagVehiclePreference" class="text-[#11313B] font-semibold"></span></p>
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-[18px] grid grid-cols-2 gap-[16px]">
-      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
-        <h3 class="text-[#11313B] text-[16px] font-semibold">Pick-Up Location</h3>
-        <p id="tagPickupAddress" class="mt-[12px] text-[#11313B] text-[13px] leading-[20px]"></p>
-      </div>
-
-      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
-        <h3 class="text-[#11313B] text-[16px] font-semibold">Drop-Off Location</h3>
-        <p id="tagDropoffAddress" class="mt-[12px] text-[#11313B] text-[13px] leading-[20px]"></p>
-      </div>
-    </div>
-
-    <div class="mt-[18px] rounded-[14px] border border-[#E5E7EB] p-[16px]">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Package Details</h3>
-
-      <div class="mt-[14px] grid grid-cols-4 gap-[12px] text-[13px]">
-        <p><span class="text-[#7C8AA0]">Type:</span><br><span id="tagPackageType" class="font-semibold text-[#11313B]"></span></p>
-        <p><span class="text-[#7C8AA0]">Size:</span><br><span id="tagPackageSize" class="font-semibold text-[#11313B]"></span></p>
-        <p><span class="text-[#7C8AA0]">Weight:</span><br><span id="tagPackageWeight" class="font-semibold text-[#11313B]"></span></p>
-        <p><span class="text-[#7C8AA0]">Distance:</span><br><span id="tagDistance" class="font-semibold text-[#11313B]"></span></p>
-      </div>
-
-      <p id="tagPackageDescription" class="mt-[14px] text-[#7C8AA0] text-[13px] leading-[20px]"></p>
-    </div>
-
-    <div class="mt-[18px] rounded-[14px] border border-[#E5E7EB] p-[16px]">
-      <h3 class="text-[#11313B] text-[16px] font-semibold">Package Images</h3>
-      <div id="tagPackageImages" class="mt-[14px] flex gap-[12px] flex-wrap"></div>
-    </div>
-
-    <!-- Assigned Driver Details -->
+      <!-- Assigned Driver Details -->
 <div
   id="tagAssignedDriverSection"
   class="mt-[18px] rounded-[16px] bg-white p-[22px]"
@@ -3215,6 +3822,60 @@
 
   </div>
 </div>
+
+    <div class="mt-[18px] grid grid-cols-2 gap-[16px]">
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Customer Details</h3>
+
+        <div class="mt-[14px] space-y-[12px] text-[13px]">
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Name:</span> <span id="tagCustomerName" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Email:</span> <span id="tagCustomerEmail" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Phone:</span> <span id="tagCustomerPhone" class="text-[#11313B] font-semibold"></span></p>
+        </div>
+      </div>
+
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Recipient Details</h3>
+
+        <div class="mt-[14px] space-y-[12px] text-[13px]">
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Name:</span> <span id="tagRecipientName" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Phone:</span> <span id="tagRecipientPhone" class="text-[#11313B] font-semibold"></span></p>
+          <p class="flex gap-[20px]"><span class="text-[#7C8AA0]">Vehicle:</span> <span id="tagVehiclePreference" class="text-[#11313B] font-semibold"></span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-[18px] grid grid-cols-2 gap-[16px]">
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Pick-Up Location</h3>
+        <p id="tagPickupAddress" class="mt-[12px] text-[#11313B] text-[13px] leading-[20px]"></p>
+      </div>
+
+      <div class="rounded-[14px] border border-[#E5E7EB] p-[16px]">
+        <h3 class="text-[#11313B] text-[16px] font-semibold">Drop-Off Location</h3>
+        <p id="tagDropoffAddress" class="mt-[12px] text-[#11313B] text-[13px] leading-[20px]"></p>
+      </div>
+    </div>
+
+    <div class="mt-[18px] rounded-[14px] border border-[#E5E7EB] p-[16px]">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Package Details</h3>
+
+      <div class="mt-[14px] grid grid-cols-4 gap-[12px] text-[13px]">
+        <p><span class="text-[#7C8AA0]">Type:</span><br><span id="tagPackageType" class="font-semibold text-[#11313B]"></span></p>
+        <p><span class="text-[#7C8AA0]">Size:</span><br><span id="tagPackageSize" class="font-semibold text-[#11313B]"></span></p>
+        <p><span class="text-[#7C8AA0]">Weight:</span><br><span id="tagPackageWeight" class="font-semibold text-[#11313B]"></span></p>
+        <p><span class="text-[#7C8AA0]">Distance:</span><br><span id="tagDistance" class="font-semibold text-[#11313B]"></span></p>
+      </div>
+
+      <p id="tagPackageDescription" class="mt-[14px] text-[#7C8AA0] text-[13px] leading-[20px]"></p>
+    </div>
+
+    <div class="mt-[18px] rounded-[14px] border border-[#E5E7EB] p-[16px]">
+      <h3 class="text-[#11313B] text-[16px] font-semibold">Package Images</h3>
+      <div id="tagPackageImages" class="mt-[14px] flex gap-[12px] flex-wrap"></div>
+    </div>
+
+  
   </div>
 </section>
         
