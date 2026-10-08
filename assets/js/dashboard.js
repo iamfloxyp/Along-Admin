@@ -18750,6 +18750,8 @@ document.addEventListener("DOMContentLoaded",function () {
 let adminUsers = [];
 
 let selectedAdminUserId = null;
+let currentAdminUsersPage = 1;
+const adminUsersPerPage = 20;
 
 function adminUsersAuthHeaders() {
   return {
@@ -18778,10 +18780,27 @@ async function loadAdminUsers() {
 
   try {
     adminUsers = await fetchAllAdminUsers();
+
+    const lastPage = Math.max(
+      1,
+      Math.ceil(adminUsers.length / adminUsersPerPage)
+    );
+
+    currentAdminUsersPage = Math.min(
+      currentAdminUsersPage,
+      lastPage
+    );
+
     renderAdminUsers(adminUsers);
+
   } catch (error) {
     console.error("Admin users error:", error);
-    showActionPopupMessage(error.message || "Unable to load admin users.", "error");
+
+    showActionPopupMessage(
+      error.message || "Unable to load admin users.",
+      "error"
+    );
+
   } finally {
     hideGlobalLoader();
   }
@@ -18811,6 +18830,11 @@ function getAdminRoleBadge(role) {
   `;
 }
 
+
+/* ============================================================
+   RENDER ADMIN USERS
+============================================================ */
+
 function renderAdminUsers(users = []) {
 
   const body =
@@ -18820,9 +18844,9 @@ function renderAdminUsers(users = []) {
 
   if (!body) return;
 
-
   body.innerHTML = "";
 
+  // ================= NO ADMIN USERS =================
 
   if (!users.length) {
 
@@ -18832,55 +18856,61 @@ function renderAdminUsers(users = []) {
       </div>
     `;
 
+    renderAdminUsersPagination(0);
+
     return;
   }
 
+  // ================= PAGINATION =================
 
-  users.forEach((user, index) => {
+  const startIndex =
+    (currentAdminUsersPage - 1) * adminUsersPerPage;
+
+  const endIndex =
+    startIndex + adminUsersPerPage;
+
+  const paginatedUsers =
+    users.slice(startIndex, endIndex);
+
+  // ================= RENDER USERS =================
+
+  paginatedUsers.forEach((user, index) => {
 
     body.innerHTML += `
 
       <div class="w-full h-[58px] flex items-center border-b border-[#E5E7EB] text-[#11313B] text-[12px]">
 
         <div class="w-[50px] px-[8px]">
-          ${index + 1}
+          ${startIndex + index + 1}
         </div>
-
 
         <div class="w-[115px] px-[8px] font-semibold truncate">
           ${user.first_name || "N/A"}
         </div>
 
-
         <div class="w-[115px] px-[8px] truncate">
           ${user.last_name || "N/A"}
         </div>
-
 
         <div class="w-[200px] px-[8px] truncate">
           ${user.email || "N/A"}
         </div>
 
-
         <div class="w-[160px] px-[8px] truncate">
           ${user.phone || "N/A"}
         </div>
-
 
         <div class="w-[115px] px-[8px]">
           ${getAdminRoleBadge(user.admin_role_slug)}
         </div>
 
-
         <div class="w-[110px] px-[8px]">
           ${getAdminStatusBadge(user.is_active)}
         </div>
 
-
         <!-- ================= ACTIONS ================= -->
 
         <div class="w-[110px] px-[8px] relative">
-
 
           <!-- ACTIONS BUTTON -->
 
@@ -18900,7 +18930,6 @@ function renderAdminUsers(users = []) {
 
           </button>
 
-
           <!-- ACTIONS DROPDOWN -->
 
           <div
@@ -18911,7 +18940,6 @@ function renderAdminUsers(users = []) {
               box-shadow: 0 10px 30px rgba(16, 24, 40, 0.14);
             "
           >
-
 
             <!-- ======================================= -->
             <!-- UPDATE ADMIN -->
@@ -18941,7 +18969,6 @@ function renderAdminUsers(users = []) {
               </span>
 
             </button>
-
 
             <!-- ======================================= -->
             <!-- SUSPEND / UNSUSPEND USER -->
@@ -18975,18 +19002,196 @@ function renderAdminUsers(users = []) {
 
             </button>
 
-
           </div>
 
         </div>
 
         <!-- ================= END ACTIONS ================= -->
 
-
       </div>
     `;
 
   });
+
+  // ================= RENDER PAGINATION =================
+
+  renderAdminUsersPagination(users.length);
+
+}
+
+
+
+/* ================= ADMIN USERS PAGINATION ================= */
+
+function loadAdminUsersPage(page) {
+  const lastPage = Math.max(
+    1,
+    Math.ceil(adminUsers.length / adminUsersPerPage)
+  );
+
+  if (page < 1 || page > lastPage) return;
+
+  currentAdminUsersPage = page;
+
+  renderAdminUsers(adminUsers);
+}
+
+
+/* ================= RENDER ADMIN USERS PAGINATION ================= */
+
+function renderAdminUsersPagination(totalRecords) {
+
+  const numbersWrap =
+    document.getElementById("adminUsersPaginationNumbers");
+
+  const prevBtn =
+    document.getElementById("adminUsersPaginationPrev");
+
+  const nextBtn =
+    document.getElementById("adminUsersPaginationNext");
+
+  const recordText =
+  document.getElementById("adminUsersCountText");
+
+  if (!numbersWrap || !prevBtn || !nextBtn) return;
+
+  numbersWrap.innerHTML = "";
+
+  const lastPage = Math.max(
+    1,
+    Math.ceil(totalRecords / adminUsersPerPage)
+  );
+
+  const currentPage = currentAdminUsersPage;
+
+  // ================= RECORD TEXT =================
+
+  const from = totalRecords === 0
+    ? 0
+    : (currentPage - 1) * adminUsersPerPage + 1;
+
+  const to = Math.min(
+    currentPage * adminUsersPerPage,
+    totalRecords
+  );
+
+  if (recordText) {
+    recordText.textContent =
+      `Showing ${from} to ${to} of ${totalRecords} admin users`;
+  }
+
+  // ================= PREVIOUS =================
+
+  prevBtn.disabled = currentPage <= 1;
+
+  prevBtn.onclick = function () {
+    if (currentPage > 1) {
+      loadAdminUsersPage(currentPage - 1);
+    }
+  };
+
+  // ================= NEXT =================
+
+  nextBtn.disabled = currentPage >= lastPage;
+
+  nextBtn.onclick = function () {
+    if (currentPage < lastPage) {
+      loadAdminUsersPage(currentPage + 1);
+    }
+  };
+
+  // ================= PAGE NUMBER HELPER =================
+
+  function createPageButton(page) {
+
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.textContent = page;
+
+    const isActive = page === currentPage;
+
+    button.className = isActive
+      ? "w-[28px] h-[28px] rounded-[5px] bg-[#3BB273] text-white text-[12px] font-semibold cursor-pointer"
+      : "w-[28px] h-[28px] rounded-[5px] border border-[#D0D5DD] bg-white text-[#667085] text-[12px] font-medium cursor-pointer hover:bg-[#EAF8F1] hover:text-[#3BB273]";
+
+    button.addEventListener("click", function () {
+      if (page !== currentPage) {
+        loadAdminUsersPage(page);
+      }
+    });
+
+    numbersWrap.appendChild(button);
+  }
+
+  // ================= ELLIPSIS HELPER =================
+
+  function createEllipsis() {
+
+    const span = document.createElement("span");
+
+    span.textContent = "...";
+
+    span.className =
+      "w-[24px] h-[28px] flex items-center justify-center text-[#98A2B3] text-[12px]";
+
+    numbersWrap.appendChild(span);
+  }
+
+  // ================= PAGE NUMBERS =================
+
+  if (totalRecords === 0) return;
+
+  // Small amount of pages
+  if (lastPage <= 7) {
+
+    for (let page = 1; page <= lastPage; page++) {
+      createPageButton(page);
+    }
+
+    return;
+  }
+
+  // Near beginning
+  if (currentPage <= 4) {
+
+    for (let page = 1; page <= 5; page++) {
+      createPageButton(page);
+    }
+
+    createEllipsis();
+    createPageButton(lastPage);
+
+    return;
+  }
+
+  // Near end
+  if (currentPage >= lastPage - 3) {
+
+    createPageButton(1);
+    createEllipsis();
+
+    for (let page = lastPage - 4; page <= lastPage; page++) {
+      createPageButton(page);
+    }
+
+    return;
+  }
+
+  // Middle
+  createPageButton(1);
+  createEllipsis();
+
+  for (
+    let page = currentPage - 2;
+    page <= currentPage + 2;
+    page++
+  ) {
+    createPageButton(page);
+  }
+
+  createEllipsis();
+  createPageButton(lastPage);
 }
 
 
