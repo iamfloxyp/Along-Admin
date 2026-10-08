@@ -318,7 +318,7 @@
                 class="text-[14px] leading-[20px] tracking-[0.25px] font-medium text-[#7C8AA0]"
                 style="font-family: 'Neue Haas Grotesk Display Pro', 'Helvetica Neue', Arial, sans-serif;"
               >
-                Settings
+                Profile Settings
               </span>
             </a>
 
@@ -3880,19 +3880,23 @@
 </section>
         
 
-     <!-- ================= PAYOUT SECTION ================= -->
+ 
+<!-- ================= PAYOUT SECTION ================= -->
+
 <section
   id="paymentsSection"
-  class="hidden absolute top-0 left-0 w-[1070px] h-[800px] p-[20px] bg-white  rounded-[6px]"
+  class="hidden absolute top-0 left-0 w-[1070px] min-h-[800px] p-[20px] bg-white rounded-[6px]"
 >
-  <div class="w-full h-full rounded-[16px] bg-white p-[20px] flex flex-col o ">
+  <div class="w-full rounded-[16px] bg-white p-[20px] flex flex-col">
 
-    <div id="paymentsListView" class="w-full h-full flex flex-col ">
+    <div id="paymentsListView" class="w-full flex flex-col">
+
       <div class="flex items-start justify-between shrink-0">
         <div>
           <h1 class="text-[#11313B] text-[34px] leading-[34px] font-semibold">
-             Payout 
+            Payout
           </h1>
+
           <p class="mt-[4px] text-[#7C8AA0] text-[14px] leading-[20px] font-medium">
             View and manage payout and earnings
           </p>
@@ -3901,96 +3905,97 @@
 
       <div class="mt-[18px] px-[4px]">
 
-  <!-- PAYOUT STATS -->
-<div class="grid grid-cols-4 gap-[12px]">
+        <!-- PAYOUT STATS -->
 
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#E8F5FB] flex items-center justify-center">
-        <i class="fa-solid fa-wallet text-[#3BB273] text-[12px]"></i>
+        <div class="grid grid-cols-4 gap-[12px]">
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#E8F5FB] flex items-center justify-center">
+                <i class="fa-solid fa-wallet text-[#3BB273] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">All Payments</p>
+            </div>
+            <h3 id="paymentTotalStats" class="mt-[10px] text-[#11313B] text-[20px] font-semibold">0</h3>
+          </div>
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
+                <i class="fa-solid fa-clock text-[#C76A3A] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Payments</p>
+            </div>
+            <h3 id="paymentPendingStats" class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold">0</h3>
+          </div>
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#EAFBFD] flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-[#30BBC7] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Approved Payments</p>
+            </div>
+            <h3 id="paymentApprovedStats" class="mt-[10px] text-[#30BBC7] text-[20px] font-semibold">0</h3>
+          </div>
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-[#3BB273] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Payments</p>
+            </div>
+            <h3 id="paymentCompletedStats" class="mt-[10px] text-[#3BB273] text-[20px] font-semibold">0</h3>
+          </div>
+
+        </div>
+
+        <div class="mt-[24px] grid grid-cols-4 gap-[12px]">
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
+                <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Rejected Payments</p>
+            </div>
+            <h3 id="paymentFailedStats" class="mt-[10px] text-[#E57373] text-[20px] font-semibold">0</h3>
+          </div>
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
+                <i class="fa-solid fa-money-bill-wave text-[#C76A3A] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Amount</p>
+            </div>
+            <h3 id="paymentPendingAmountStats" class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold">0</h3>
+          </div>
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
+                <i class="fa-solid fa-sack-dollar text-[#3BB273] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Amount</p>
+            </div>
+            <h3 id="paymentCompletedAmountStats" class="mt-[10px] text-[#3BB273] text-[20px] font-semibold">0</h3>
+          </div>
+
+          <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+            <div class="flex items-center gap-[8px]">
+              <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
+                <i class="fa-solid fa-money-bill-transfer text-[#E57373] text-[12px]"></i>
+              </div>
+              <p class="text-[#7C8AA0] text-[13px] font-medium">Rejected Amount</p>
+            </div>
+            <h3 id="paymentRejectedAmountStats" class="mt-[10px] text-[#E57373] text-[20px] font-semibold">0</h3>
+          </div>
+
+        </div>
+
       </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">All Payments</p>
-    </div>
-    <h3 id="paymentTotalStats" class="mt-[10px] text-[#11313B] text-[20px] font-semibold">0</h3>
-  </div>
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
-        <i class="fa-solid fa-clock text-[#C76A3A] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Payments</p>
-    </div>
-    <h3 id="paymentPendingStats" class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold">0</h3>
-  </div>
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#EAFBFD] flex items-center justify-center">
-        <i class="fa-solid fa-circle-check text-[#30BBC7] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Approved Payments</p>
-    </div>
-    <h3 id="paymentApprovedStats" class="mt-[10px] text-[#30BBC7] text-[20px] font-semibold">0</h3>
-  </div>
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
-        <i class="fa-solid fa-circle-check text-[#3BB273] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Payments</p>
-    </div>
-    <h3 id="paymentCompletedStats" class="mt-[10px] text-[#3BB273] text-[20px] font-semibold">0</h3>
-  </div>
-
-</div>
-
-<div class="mt-[24px] grid grid-cols-4 gap-[12px]">
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
-        <i class="fa-solid fa-circle-xmark text-[#E57373] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Rejected Payments</p>
-    </div>
-    <h3 id="paymentFailedStats" class="mt-[10px] text-[#E57373] text-[20px] font-semibold">0</h3>
-  </div>
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#FFF3EB] flex items-center justify-center">
-        <i class="fa-solid fa-money-bill-wave text-[#C76A3A] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Pending Amount</p>
-    </div>
-    <h3 id="paymentPendingAmountStats" class="mt-[10px] text-[#C76A3A] text-[20px] font-semibold">0</h3>
-  </div>
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#EAF8F1] flex items-center justify-center">
-        <i class="fa-solid fa-sack-dollar text-[#3BB273] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Completed Amount</p>
-    </div>
-    <h3 id="paymentCompletedAmountStats" class="mt-[10px] text-[#3BB273] text-[20px] font-semibold">0</h3>
-  </div>
-
-  <div class="h-[86px] rounded-[12px] bg-white p-[16px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
-    <div class="flex items-center gap-[8px]">
-      <div class="w-[28px] h-[28px] rounded-full bg-[#FDEDED] flex items-center justify-center">
-        <i class="fa-solid fa-money-bill-transfer text-[#E57373] text-[12px]"></i>
-      </div>
-      <p class="text-[#7C8AA0] text-[13px] font-medium">Rejected Amount</p>
-    </div>
-    <h3 id="paymentRejectedAmountStats" class="mt-[10px] text-[#E57373] text-[20px] font-semibold">0</h3>
-  </div>
-
-</div>
-
-</div>
 
       <div class="mt-[18px] shrink-0">
         <h2 class="text-[#11313B] text-[18px] leading-[24px] font-semibold">
@@ -4000,75 +4005,97 @@
 
       <div class="mt-[14px] flex items-center justify-between gap-[12px] shrink-0">
 
-  <!-- SEARCH + BUTTON -->
-  <div class="flex items-center gap-[10px]">
+        <!-- SEARCH + BUTTON -->
 
-    <div class="w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
-      <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
+        <div class="flex items-center gap-[10px]">
 
-      <input
-        id="paymentSearchInput"
-        type="text"
-        placeholder="Search by Transaction ID or Driver"
-        class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
-      />
-    </div>
+          <div class="w-[430px] h-[40px] rounded-[8px] bg-[#F1F5F8] px-[12px] flex items-center gap-[8px]">
+            <i class="fa-solid fa-magnifying-glass text-[#7C8AA0] text-[13px]"></i>
 
-    <button
-      id="paymentSearchBtn"
-      type="button"
-      class="h-[40px] px-[18px] rounded-[8px] bg-[#3BB273] text-white text-[13px] font-medium cursor-pointer"
-    >
-      Search
-    </button>
+            <input
+              id="paymentSearchInput"
+              type="text"
+              placeholder="Search by Transaction ID or Driver"
+              class="w-full bg-transparent outline-none text-[#11313B] placeholder:text-[#98A2B3] text-[13px]"
+            />
+          </div>
 
-  </div>
+          <button
+            id="paymentSearchBtn"
+            type="button"
+            class="h-[40px] px-[18px] rounded-[8px] bg-[#3BB273] text-white text-[13px] font-medium cursor-pointer"
+          >
+            Search
+          </button>
 
-  <!-- FILTER -->
-  <div class="flex items-center gap-[10px]">
+        </div>
 
-    <select
-      id="paymentStatusFilter"
-      class="h-[40px] w-[118px] rounded-[8px] bg-[#F1F5F8] px-[10px] text-[13px] text-[#7C8AA0] outline-none"
-    >
-      <option value="all">All Status</option>
-      <option value="pending">Pending</option>
-      <option value="approved">Approved</option>
-      <option value="completed">Completed</option>
-      <option value="rejected">Rejected</option>
-    </select>
+        <!-- FILTER -->
 
-  </div>
+        <div class="flex items-center gap-[10px]">
 
-</div>
-<div class="mt-[16px] w-full shrink-0">
-  <div class="w-full h-[42px] bg-[#F1F5F8] flex items-center text-[#667085] text-[12px] leading-[16px] font-semibold">
-    <div class="w-[160px] px-[10px]">Transaction ID</div>
-    <div class="w-[190px] px-[10px]">Driver Name</div>
-    <div class="w-[130px] px-[10px]">Amount</div>
-    <div class="w-[140px] px-[10px]">Date Requested</div>
-    <div class="w-[140px] px-[10px]">Date Processed</div>
-    <div class="w-[140px] px-[10px]">Status</div>
-    <div class="w-[150px] px-[10px]">Action</div>
-  </div>
+          <select
+            id="paymentStatusFilter"
+            class="h-[40px] w-[118px] rounded-[8px] bg-[#F1F5F8] px-[10px] text-[13px] text-[#7C8AA0] outline-none"
+          >
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+          </select>
 
-  <div id="paymentTableBody" class="w-full h-[280px]"></div>
-</div>
+        </div>
 
-      <div class="mt-[18px] h-[36px] flex items-center justify-between shrink-0">
+      </div>
+
+      <!-- ================= PAYOUT TABLE ================= -->
+
+      <div class="mt-[16px] w-full shrink-0">
+
+        <div class="w-full h-[42px] bg-[#F1F5F8] flex items-center text-[#667085] text-[12px] leading-[16px] font-semibold">
+
+          <div class="w-[15%] min-w-0 shrink-0 px-[10px]">Transaction ID</div>
+
+          <div class="w-[18%] min-w-0 shrink-0 px-[10px]">Driver Name</div>
+
+          <div class="w-[12%] min-w-0 shrink-0 px-[10px]">Amount</div>
+
+          <div class="w-[14%] min-w-0 shrink-0 px-[10px]">Date Requested</div>
+
+          <div class="w-[14%] min-w-0 shrink-0 px-[10px]">Date Processed</div>
+
+          <div class="w-[13%] min-w-0 shrink-0 px-[10px]">Status</div>
+
+          <div class="w-[14%] min-w-0 shrink-0 px-[10px]">Action</div>
+
+        </div>
+
+        <div id="paymentTableBody" class="w-full"></div>
+
+      </div>
+
+      <!-- ================= PAGINATION ================= -->
+
+      <div class="mt-[18px] min-h-[36px] flex items-center justify-between gap-[12px] shrink-0">
+
         <p id="paymentCountText" class="text-[#98A2B3] text-[12px]">
           1-6 of 20 row(s) selected
         </p>
 
         <div
           id="paymentPagination"
-          class="flex items-center gap-[8px] h-[36px] justify-end text-[14px] text-[#11313B]"
+          class="flex items-center gap-[8px] min-h-[36px] justify-end text-[14px] text-[#11313B]"
         ></div>
+
       </div>
+
     </div>
 
     <!-- view payout -->
-    <div id="payoutDetailsView" class="hidden w-full ">
+
+    <div id="payoutDetailsView" class="hidden w-full">
+
       <button
         type="button"
         onclick="closePayoutDetailsPage()"
@@ -4079,39 +4106,59 @@
       </button>
 
       <div class="rounded-[16px] bg-white p-[22px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+
         <h2 class="text-[#11313B] text-[22px] font-semibold">Payout Details</h2>
 
         <div class="mt-[20px] grid grid-cols-2 gap-[16px] text-[13px]">
+
           <div><p class="text-[#7C8AA0]">Payout Number</p><p id="payoutDetailsNumber" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Driver</p><p id="payoutDetailsDriver" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Driver Email</p><p id="payoutDetailsEmail" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Amount</p><p id="payoutDetailsAmount" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Method</p><p id="payoutDetailsMethod" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Status</p><div id="payoutDetailsStatus" class="mt-[5px]"></div></div>
+
           <div><p class="text-[#7C8AA0]">Date Requested</p><p id="payoutDetailsRequestedDate" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Date Processed</p><p id="payoutDetailsProcessedDate" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Transaction Id</p><p id="payoutDetailsTransactionId" class="mt-[5px] font-semibold"></p></div>
-          
+
         </div>
       </div>
 
       <div class="mt-[18px] rounded-[16px] bg-white p-[22px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+
         <h3 class="text-[#11313B] text-[18px] font-semibold">Bank Details</h3>
 
         <div class="mt-[18px] grid grid-cols-2 gap-[16px] text-[13px]">
+
           <div><p class="text-[#7C8AA0]">Bank Name</p><p id="payoutDetailsBankName" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Account Name</p><p id="payoutDetailsAccountName" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Account Type</p><p id="payoutDetailsAccountType" class="mt-[5px] font-semibold capitalize"></p></div>
-          <div><p class="text-[#7C8AA0]"> Account Number</p><p id="payoutDetailsMaskedAccount" class="mt-[5px] font-semibold"></p></div>
+
+          <div><p class="text-[#7C8AA0]">Account Number</p><p id="payoutDetailsMaskedAccount" class="mt-[5px] font-semibold"></p></div>
+
         </div>
       </div>
 
       <div class="mt-[18px] rounded-[16px] bg-white p-[22px]" style="filter: drop-shadow(0px 1px 2px #b2a3a3);">
+
         <h3 class="text-[#11313B] text-[18px] font-semibold">Admin Information</h3>
 
         <div class="mt-[18px] grid grid-cols-1 gap-[16px] text-[13px]">
+
           <div><p class="text-[#7C8AA0]">Admin Notes</p><p id="payoutDetailsAdminNotes" class="mt-[5px] font-semibold"></p></div>
+
           <div><p class="text-[#7C8AA0]">Rejection Reason</p><p id="payoutDetailsRejectionReason" class="mt-[5px] font-semibold"></p></div>
+
         </div>
       </div>
 
@@ -4119,13 +4166,17 @@
         id="payoutDetailsActionWrap"
         class="mt-[22px] flex items-center justify-end gap-[12px]"
       ></div>
+
     </div>
-<!-- reject payout modal -->
+
+    <!-- reject payout modal -->
+
     <div
       id="rejectPayoutOverlay"
       class="hidden fixed inset-0 bg-[#101828]/60 z-[5000] flex items-center justify-center"
     >
       <div class="w-[420px] rounded-[14px] bg-white p-[20px]">
+
         <h3 class="text-[#11313B] text-[18px] font-semibold">
           Reject Payout
         </h3>
@@ -4141,6 +4192,7 @@
         ></textarea>
 
         <div class="mt-[18px] flex items-center justify-end gap-[10px]">
+
           <button
             type="button"
             onclick="closeRejectPayoutModal()"
@@ -4156,16 +4208,21 @@
           >
             Reject Payout
           </button>
+
         </div>
       </div>
     </div>
-<!-- complete payout modal -->
+
+    <!-- complete payout modal -->
+
     <div
       id="completePayoutModal"
       class="hidden fixed inset-0 bg-[#101828]/60 z-[5000] flex items-center justify-center"
     >
       <div class="w-[420px] rounded-[16px] bg-white p-[24px] shadow-xl">
+
         <div class="flex items-center justify-between">
+
           <h3 class="text-[#11313B] text-[18px] font-semibold">
             Complete Payout
           </h3>
@@ -4177,6 +4234,7 @@
           >
             ×
           </button>
+
         </div>
 
         <p class="mt-[8px] text-[#7C8AA0] text-[13px] leading-[20px]">
@@ -4191,11 +4249,11 @@
         />
 
         <div class="mt-[22px] flex items-center justify-end gap-[10px]">
+
           <button
             id="cancelCompletePayoutBtn"
             type="button"
-            class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[13px] font-semibold cursor-pointer "
-            
+            class="h-[40px] px-[16px] rounded-[8px] border border-[#D0D5DD] text-[#7C8AA0] text-[13px] font-semibold cursor-pointer"
           >
             Cancel
           </button>
@@ -4203,16 +4261,18 @@
           <button
             id="submitCompletePayoutBtn"
             type="button"
-            class="h-[40px] px-[16px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font- semibold cursor-pointer"
+            class="h-[40px] px-[16px] rounded-[8px] bg-[#30BBC7] text-white text-[13px] font-semibold cursor-pointer"
           >
             Mark Completed
           </button>
+
         </div>
       </div>
     </div>
 
   </div>
 </section>
+
 
         <!-- ================= SUPPORT REQUESTS SECTION ================= -->
 
@@ -4259,7 +4319,7 @@
           <span class="w-[26px] h-[26px] rounded-full bg-[#EAF8F1] text-[#3BB273] flex items-center justify-center">
             <i class="fa-solid fa-circle-check text-[12px]"></i>
           </span>
-          <p class="text-[#11313B] text-[13px] font-semibold">Resolved Ticket</p>
+          <p class="text-[#11313B] text-[13px] font-semibold">Resolved/Cancelled Ticket</p>
         </div>
 
         <h3 id="supportCompletedTickets" class="mt-[12px] text-[#3BB273] text-[20px] leading-none font-semibold">

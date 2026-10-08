@@ -15521,7 +15521,7 @@ async function fetchPayouts(customUrl = null) {
   if (!url) {
     const query = new URLSearchParams();
 
-    query.append("per_page", 5);
+    query.append("per_page", 20);
 
     if (currentPaymentFilters.search) {
       query.append("search", currentPaymentFilters.search);
@@ -15585,7 +15585,7 @@ function loadPaymentsFromUrl() {
 
   const query = new URLSearchParams();
   query.append("page", page);
-  query.append("per_page", 5);
+  query.append("per_page", 20);
 
   if (currentPaymentFilters.search) {
     query.append("search", currentPaymentFilters.search);
@@ -15683,7 +15683,7 @@ function buildPaymentPaginationQuery(page) {
   const query = new URLSearchParams();
 
   query.append("page", page);
-  query.append("per_page", 5);
+  query.append("per_page", 20);
 
   if (currentPaymentFilters.search) {
     query.append("search", currentPaymentFilters.search);
@@ -15744,125 +15744,210 @@ function getPaymentStatusBadge(status) {
 }
 
 function renderPayments(list = payments) {
+
   const body = document.getElementById("paymentTableBody");
+
   if (!body) return;
 
   body.innerHTML = "";
 
+  // ========================================================
+  // EMPTY STATE
+  // ========================================================
+
+  if (!Array.isArray(list) || list.length === 0) {
+
+    body.innerHTML = `
+      <div
+        class="min-w-[1050px] min-h-[120px] flex items-center justify-center border-t border-[#E5E7EB]"
+      >
+        <p class="text-[#7C8AA0] text-[13px] font-medium">
+          No payouts found.
+        </p>
+      </div>
+    `;
+
+    return;
+  }
+
+  // ========================================================
+  // RENDER PAYOUT ROWS
+  // ========================================================
+
   list.forEach((payment) => {
+
     const row = document.createElement("div");
-    const status = String(payment.status || "").toLowerCase();
-    const isApproved = status === "approved";
-  const isPending =
-  status === "pending" ||
-  status === "awaiting_review";
 
-const isRejected =
-  status === "rejected" ||
-  status === "failed";
+    const status = String(
+      payment.status || ""
+    ).toLowerCase();
 
-const isCompleted =
-  status === "completed";
+    const isApproved =
+      status === "approved";
+
+    const isPending =
+      status === "pending" ||
+      status === "awaiting_review";
+
+    const isRejected =
+      status === "rejected" ||
+      status === "failed";
+
+    const isCompleted =
+      status === "completed";
+
+    // ========================================================
+    // ROW LAYOUT
+    // ========================================================
+
     row.className =
-      "w-full min-h-[56px] flex items-center border-t border-[#E5E7EB] text-[#11313B] text-[12px] relative";
+      "min-w-[1050px] min-h-[56px] flex items-center border-t border-[#E5E7EB] text-[#11313B] text-[12px] relative";
 
     row.innerHTML = `
-      <div class="w-[160px] px-[10px] font-medium">
+
+      <!-- PAYOUT NUMBER -->
+
+      <div class="w-[160px] shrink-0 px-[10px] font-medium">
         ${payment.payout_number || payment.id || "N/A"}
       </div>
 
-      <div class="w-[190px] px-[10px]">
+
+      <!-- DRIVER -->
+
+      <div class="w-[190px] shrink-0 px-[10px]">
         ${getDriverFullName(payment.driver)}
       </div>
 
-      <div class="w-[130px] px-[10px]">
+
+      <!-- AMOUNT -->
+
+      <div class="w-[130px] shrink-0 px-[10px]">
         ${formatPaymentAmount(payment.amount)}
       </div>
 
-      <div class="w-[140px] px-[10px]">
+
+      <!-- REQUESTED DATE -->
+
+      <div class="w-[140px] shrink-0 px-[10px]">
         ${formatPaymentDate(payment.created_at)}
       </div>
 
-      <div class="w-[140px] px-[10px]">
-        ${formatPaymentDate(payment.reviewed_at || payment.completed_at)}
+
+      <!-- PROCESSED DATE -->
+
+      <div class="w-[140px] shrink-0 px-[10px]">
+        ${formatPaymentDate(
+          payment.reviewed_at ||
+          payment.completed_at
+        )}
       </div>
 
-      <div class="w-[140px] px-[10px]">
+
+      <!-- STATUS -->
+
+      <div class="w-[140px] shrink-0 px-[10px]">
         ${getPaymentStatusBadge(payment.status)}
       </div>
 
-     <div class="w-[150px] px-[10px] relative">
 
-  <button
-    type="button"
-    class="updatePayoutStatusBtn inline-flex cursor-pointer items-center gap-[6px] h-[30px] px-[10px] rounded-[6px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-medium whitespace-nowrap"
-    data-id="${payment.id}"
-  >
-    View Details
-    <i class="fa-solid fa-chevron-down text-[10px]"></i>
-  </button>
+      <!-- ACTIONS -->
 
-  <div
-    class="payoutStatusDropdown hidden absolute right-[10px] bottom-[38px] z-[100] w-[170px] rounded-[10px] border border-[#E5E7EB] bg-white shadow-lg overflow-hidden"
-  >
+      <div class="w-[150px] shrink-0 px-[10px] relative">
 
-    <!-- VIEW DETAILS -->
-    <button
-      type="button"
-      class="viewPayoutDetailsBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#30BBC7] hover:bg-[#F1F5F8]"
-      data-id="${payment.id}"
-    >
-      <i class="fa-solid fa-eye mr-[8px] text-[11px]"></i>
-      View Details
-    </button>
+        <button
+          type="button"
+          class="updatePayoutStatusBtn inline-flex cursor-pointer items-center gap-[6px] h-[30px] px-[10px] rounded-[6px] bg-[#EAFBFD] text-[#30BBC7] text-[12px] font-medium whitespace-nowrap"
+          data-id="${payment.id}"
+        >
+          View Details
 
-    ${
-      isPending
-        ? `
-          <button
-            type="button"
-            class="approvePayoutBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#3BB273] hover:bg-[#EAF8F1]"
-            data-id="${payment.id}"
-          >
-            <i class="fa-solid fa-check mr-[8px] text-[11px]"></i>
-            Approve
-          </button>
+          <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        </button>
+
+
+        <!-- ACTION DROPDOWN -->
+
+        <div
+          class="payoutStatusDropdown hidden absolute right-[10px] bottom-[38px] z-[100] w-[170px] rounded-[10px] border border-[#E5E7EB] bg-white shadow-lg overflow-hidden"
+        >
+
+          <!-- VIEW DETAILS -->
 
           <button
             type="button"
-            class="rejectPayoutBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#E57373] hover:bg-[#FDECEF]"
+            class="viewPayoutDetailsBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#30BBC7] hover:bg-[#F1F5F8]"
             data-id="${payment.id}"
           >
-            <i class="fa-solid fa-xmark mr-[8px] text-[11px]"></i>
-            Reject
+            <i class="fa-solid fa-eye mr-[8px] text-[11px]"></i>
+            View Details
           </button>
-        `
-        : ""
-    }
 
-    ${
-      isApproved
-        ? `
-          <button
-            type="button"
-            class="markPayoutCompletedBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#3BB273] hover:bg-[#EAF8F1]"
-            data-id="${payment.id}"
-          >
-            <i class="fa-solid fa-circle-check mr-[8px] text-[11px]"></i>
-            Mark as Completed
-          </button>
-        `
-        : ""
-    }
 
-  </div>
-</div>
+          <!-- PENDING PAYOUT ACTIONS -->
+
+          ${
+            isPending
+              ? `
+
+                <button
+                  type="button"
+                  class="approvePayoutBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#3BB273] hover:bg-[#EAF8F1]"
+                  data-id="${payment.id}"
+                >
+                  <i class="fa-solid fa-check mr-[8px] text-[11px]"></i>
+                  Approve
+                </button>
+
+
+                <button
+                  type="button"
+                  class="rejectPayoutBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#E57373] hover:bg-[#FDECEF]"
+                  data-id="${payment.id}"
+                >
+                  <i class="fa-solid fa-xmark mr-[8px] text-[11px]"></i>
+                  Reject
+                </button>
+
+              `
+              : ""
+          }
+
+
+          <!-- APPROVED PAYOUT ACTION -->
+
+          ${
+            isApproved
+              ? `
+
+                <button
+                  type="button"
+                  class="markPayoutCompletedBtn w-full h-[38px] px-[14px] cursor-pointer text-left text-[12px] text-[#3BB273] hover:bg-[#EAF8F1]"
+                  data-id="${payment.id}"
+                >
+                  <i class="fa-solid fa-circle-check mr-[8px] text-[11px]"></i>
+                  Mark as Completed
+                </button>
+
+              `
+              : ""
+          }
+
+        </div>
+
+      </div>
+
     `;
 
     body.appendChild(row);
+
   });
 
+  // ========================================================
+  // ATTACH EXISTING PAYOUT ACTION EVENTS
+  // ========================================================
+
   attachPayoutStatusEvents();
+
 }
 
 function attachPayoutStatusEvents() {
@@ -16685,7 +16770,9 @@ async function fetchSupportStats() {
 }
 
 
+
 function renderSupportStats(stats = {}) {
+
   document.getElementById("supportTotalTickets").textContent =
     stats.total || 0;
 
@@ -16693,11 +16780,13 @@ function renderSupportStats(stats = {}) {
     stats.open || 0;
 
   document.getElementById("supportCompletedTickets").textContent =
-    stats.resolved || 0;
+    Number(stats.resolved || 0) + Number(stats.closed || 0);
 
   document.getElementById("supportOpenTickets").textContent =
     stats.in_progress || 0;
+
 }
+
 
 function getTicketReplies(ticket) {
   return Array.isArray(ticket.replies) ? ticket.replies : [];
@@ -17243,7 +17332,23 @@ async function openSupportTicketFromAPI(ticketId) {
     document.getElementById("supportChatAvatar").textContent =
       getSupportInitials(name);
 
-    document.getElementById("supportChatName").textContent = name;
+    const supportChatName =
+  document.getElementById("supportChatName");
+
+if (supportChatName) {
+  supportChatName.textContent = name;
+
+  supportChatName.classList.add(
+    "cursor-pointer",
+    "hover:text-[#30BBC7]",
+    "hover:underline",
+    "transition-colors"
+  );
+
+  supportChatName.setAttribute("role", "link");
+  supportChatName.setAttribute("tabindex", "0");
+  supportChatName.title = "View user profile";
+}
 
     document.getElementById("supportChatSubtitle").textContent =
       `${ticket.ticket_number || "N/A"} • ${ticket.category_label || ticket.category || "N/A"} • ${ticket.priority_label || ticket.priority || "N/A"}`;
@@ -17445,6 +17550,140 @@ if (!isResolved) {
         
 }
 
+
+async function openSupportChatUserProfile() {
+
+  const ticket = selectedSupportTicket;
+
+  if (!ticket) {
+    console.error("No support ticket selected.");
+    return;
+  }
+
+  const userId =
+    ticket.user?.id ||
+    ticket.user_id;
+
+  if (!userId) {
+    showActionPopupMessage(
+      "User ID is missing.",
+      "error"
+    );
+    return;
+  }
+
+  showGlobalLoader();
+
+  try {
+
+    // ========================================================
+    // FETCH USER BY ID
+    // ========================================================
+
+    const response = await fetch(
+      `${API_BASE_URL}/admin/users/${userId}`,
+      {
+        method: "GET",
+        headers: supportAuthHeaders()
+      }
+    );
+
+    const result = await response.json();
+
+    if (
+      !response.ok ||
+      result.success === false ||
+      !result.data
+    ) {
+      throw new Error(
+        result.message || "Unable to load user."
+      );
+    }
+
+    const user = result.data;
+
+    // ========================================================
+    // IDENTIFY USER PROFILE
+    // ========================================================
+
+    const driverProfileId =
+      user.driver_profile_id ||
+      user.driver_profile?.id ||
+      user.driver?.id ||
+      ticket.driver_profile_id ||
+      ticket.user?.driver_profile_id ||
+      ticket.user?.driver_profile?.id ||
+      ticket.user?.driver?.id;
+
+    const role = String(
+      user.role ||
+      user.user_type ||
+      user.type ||
+      ticket.user?.role ||
+      ticket.user_role ||
+      ""
+    ).toLowerCase().trim();
+
+    // ========================================================
+    // DRIVER DETAILS
+    // ========================================================
+
+    if (driverProfileId || role === "driver") {
+
+      if (!driverProfileId) {
+        throw new Error(
+          "Driver profile ID was not returned."
+        );
+      }
+
+      await openDriverDetails(driverProfileId);
+
+      return;
+    }
+
+    // ========================================================
+    // CUSTOMER DETAILS
+    // ========================================================
+
+    if (
+      role === "customer" ||
+      role === "sender"
+    ) {
+
+      showDashboardSection(
+        "customersSection",
+        false
+      );
+
+      await openSenderDetailsById(userId);
+
+      return;
+    }
+
+    throw new Error(
+      "The user's account type could not be identified."
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Error opening support user profile:",
+      error
+    );
+
+    showActionPopupMessage(
+      error.message ||
+      "Unable to open user profile.",
+      "error"
+    );
+
+  } finally {
+
+    hideGlobalLoader();
+
+  }
+
+}
 async function markSupportTicketAsResolved(ticketNumber) {
   if (!ticketNumber) {
     showActionPopupMessage(
@@ -17901,32 +18140,157 @@ function getSupportTicketIdFromUrl() {
   return match ? match[1] : null;
 }
 function setupSupportRequestsSection() {
-    setSupportReplyBoxVisible(false);
-    subscribeToSupportTicketList();
+
+  // ========================================================
+  // INITIAL SUPPORT REQUESTS SETUP
+  // ========================================================
+
+  setSupportReplyBoxVisible(false);
+
+  subscribeToSupportTicketList();
+
+
+  // ========================================================
+  // LOAD SUPPORT TICKETS
+  // ========================================================
+
   loadSupportTickets().then(() => {
-    const ticketIdFromUrl = getSupportTicketIdFromUrl();
+
+    const ticketIdFromUrl =
+      getSupportTicketIdFromUrl();
 
     if (ticketIdFromUrl) {
-      openSupportTicketFromAPI(ticketIdFromUrl);
+
+      openSupportTicketFromAPI(
+        ticketIdFromUrl
+      );
+
     }
+
   });
 
+
+  // ========================================================
+  // SEARCH AND FILTERS
+  // ========================================================
+
   setupSupportSearch();
+
   setupSupportFilterButton();
+
+
+  // ========================================================
+  // SEND SUPPORT REPLY BUTTON
+  // ========================================================
 
   document
     .getElementById("sendSupportReplyBtn")
-    ?.addEventListener("click", sendSupportReply);
+    ?.addEventListener(
+      "click",
+      sendSupportReply
+    );
+
+
+  // ========================================================
+  // SEND REPLY WITH ENTER KEY
+  // ========================================================
 
   document
     .getElementById("supportReplyInput")
-    ?.addEventListener("keydown", function (event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        sendSupportReply();
+    ?.addEventListener(
+      "keydown",
+      function (event) {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          sendSupportReply();
+
+        }
+
       }
-    });
+    );
+
+
+  // ========================================================
+  // CLICK USER NAME TO OPEN USER PROFILE
+  // ========================================================
+
+  document.addEventListener(
+    "click",
+    function (event) {
+
+      const supportChatName =
+        event.target.closest(
+          "#supportChatName"
+        );
+
+      if (!supportChatName) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      openSupportChatUserProfile();
+
+    }
+  );
+
+
+  // ========================================================
+  // KEYBOARD ACCESSIBILITY
+  // ========================================================
+
+  document.addEventListener(
+    "keydown",
+    function (event) {
+
+      const supportChatName =
+        event.target.closest(
+          "#supportChatName"
+        );
+
+      if (!supportChatName) {
+        return;
+      }
+
+      if (
+        event.key === "Enter" ||
+        event.key === " "
+      ) {
+
+        event.preventDefault();
+
+        openSupportChatUserProfile();
+
+      }
+
+    }
+  );
+
 }
+
+
+// ==========================================================
+// INITIALIZE SUPPORT REQUESTS
+// ==========================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  setupSupportRequestsSection
+);
+
+
+// ==========================================================
+// INITIALIZE SUPPORT REQUESTS
+// ==========================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  setupSupportRequestsSection
+);
 
 document.addEventListener("DOMContentLoaded", setupSupportRequestsSection);
 
@@ -19498,15 +19862,14 @@ updateModal?.addEventListener(
 // FILL UPDATE ADMIN MODAL
 // ============================================================
 
+
 function fillUpdateAdminModal(user) {
 
+  // ================= ADMIN ID =================
 
   document
-    .getElementById(
-      "updateAdminUserForm"
-    )
-    .dataset.adminId =
-      user.id;
+    .getElementById("updateAdminUserForm")
+    .dataset.adminId = user.id;
 
 
   // ================= FIRST NAME =================
@@ -19534,17 +19897,40 @@ function fillUpdateAdminModal(user) {
 
 
   // ================= ROLE =================
-  // IMPORTANT:
-  // Use admin_role_slug for Update Admin.
-  // Example:
-  // customer_support
-  // finance_staff
-  // staff
+  // Automatically select the admin's current role.
+  // Update Admin uses the role slug.
 
-  document.getElementById(
-    "updateAdminRole"
-  ).value =
-    user.admin_role_slug || "";
+  const updateRoleSelect =
+    document.getElementById(
+      "updateAdminRole"
+    );
+
+  const currentRole =
+    String(user.admin_role_slug || "")
+      .trim()
+      .toLowerCase();
+
+  const matchingOption =
+    Array.from(updateRoleSelect.options).find(
+      (option) =>
+        option.value.trim().toLowerCase() === currentRole
+    );
+
+  if (matchingOption) {
+
+    updateRoleSelect.value =
+      matchingOption.value;
+
+  } else {
+
+    updateRoleSelect.value = "";
+
+    console.warn(
+      "Current admin role not found in available roles:",
+      user.admin_role_slug
+    );
+
+  }
 
 
   // ================= PHONE =================
@@ -19552,12 +19938,10 @@ function fillUpdateAdminModal(user) {
   const phone =
     user.phone || "";
 
-
   const phoneCode =
     phone.startsWith("+1")
       ? "+1"
       : "+234";
-
 
   const phoneNumber =
     phone.replace(
@@ -19566,11 +19950,15 @@ function fillUpdateAdminModal(user) {
     );
 
 
+  // ================= PHONE CODE =================
+
   document.getElementById(
     "updatePhoneCode"
   ).value =
     phoneCode;
 
+
+  // ================= PHONE NUMBER =================
 
   document.getElementById(
     "updateAdminPhone"
@@ -19578,13 +19966,42 @@ function fillUpdateAdminModal(user) {
     phoneNumber;
 
 
+  // ================= DISABLE BASIC INFORMATION =================
+  // Only Role and Rights & Permissions remain editable.
+
+  [
+    "updateAdminFirstName",
+    "updateAdminLastName",
+    "updateAdminEmail",
+    "updatePhoneCode",
+    "updateAdminPhone"
+  ].forEach((id) => {
+
+    const field =
+      document.getElementById(id);
+
+    if (field) {
+      field.disabled = true;
+    }
+
+  });
+
+
+  // ================= ENABLE ROLE =================
+
+  updateRoleSelect.disabled = false;
+
+
   // ================= RIGHTS =================
+  // Load the admin's existing permissions.
+  // Keep Yes / No radio buttons editable.
 
   renderUpdateAdminRights(
     user.rights || {}
   );
 
 }
+
 
 
 // ============================================================
@@ -19875,13 +20292,6 @@ function getCreateAdminRights() {
 }
 
 
-/* ============================================================
-   CREATE ADMIN USER
-============================================================ */
-
-/* ============================================================
-   CREATE ADMIN USER
-============================================================ */
 
 
 /* ============================================================
